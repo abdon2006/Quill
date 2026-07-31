@@ -40,7 +40,6 @@ class QuillApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     /// عشان يسمعو لاي تغيير في الحالة سواء اللغو او الثيم context.watch() هنا احنا خليناهم
-    final themeState = context.watch<ThemeCubit>().state;
     final localeState = context.watch<LocaleCubit>().state;
     return ScreenUtilInit(
       designSize: const Size(390, 844),
@@ -54,7 +53,7 @@ class QuillApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,
-        themeMode: themeState.isDark ? ThemeMode.dark : ThemeMode.light,
+        themeMode: ThemeMode.system,
 
         /// Locale State بياخد اللغة الحالية من ال
         locale: localeState.locale,
