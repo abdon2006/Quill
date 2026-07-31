@@ -1,0 +1,16 @@
+{
+  "app_name": "Quill",
+  "tagline": "اقرأ أعمق. فكّر أوضح.",
+  "home": "الرئيسية",
+  "library": "مكتبتي",
+  "discover": "اكتشف",
+  "profile": "الملف الشخصي",
+  "continue_reading": "متابعة القراءة",
+  "your_books": "كتبك",
+  "recently_added": "أضيف مؤخراً",
+  "import_book": "استيراد كتاب",
+  "search": "بحث",
+  "good_morning": "صباح الخير",
+  "good_afternoon": "مساء الخير",
+  "good_evening": "مساء النور"
+}
