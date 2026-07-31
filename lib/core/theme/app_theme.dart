@@ -1,12 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:quill/core/theme/app_radius.dart';
 import 'app_colors.dart';
 
 abstract class AppTheme {
   // ── Light Theme ──────────────────────────────
   static ThemeData get light => ThemeData(
     useMaterial3: true,
+    splashColor: AppColors.lightAccentPrimary.withValues(alpha: 0.08),
+    highlightColor: Colors.transparent,
+    canvasColor: AppColors.lightBgPrimary,
     brightness: Brightness.light,
     scaffoldBackgroundColor: AppColors.lightBgPrimary,
     colorScheme: const ColorScheme.light(
@@ -16,7 +20,7 @@ abstract class AppTheme {
       tertiary: AppColors.lightGold,
       onSurface: AppColors.lightTextPrimary,
       onPrimary: Colors.white,
-      error: Color(0xFFB00020),
+      error: AppColors.lightError,
     ),
     textTheme: GoogleFonts.plusJakartaSansTextTheme().copyWith(
       displayLarge: GoogleFonts.plusJakartaSans(
@@ -70,7 +74,7 @@ abstract class AppTheme {
     cardTheme: CardThemeData(
       color: AppColors.lightBgSurface,
       elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.xl),
     ),
     appBarTheme: AppBarTheme(
       backgroundColor: AppColors.lightBgPrimary,
@@ -95,7 +99,7 @@ abstract class AppTheme {
       filled: true,
       fillColor: AppColors.lightBgSurface,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: AppRadius.xl,
         borderSide: BorderSide.none,
       ),
       hintStyle: const TextStyle(color: AppColors.lightTextMuted),
@@ -116,6 +120,9 @@ abstract class AppTheme {
   // ── Dark Theme ───────────────────────────────
   static ThemeData get dark => ThemeData(
     useMaterial3: true,
+    splashColor: AppColors.darkAccentPrimary.withValues(alpha: 0.10),
+    highlightColor: Colors.transparent,
+    canvasColor: AppColors.darkBgPrimary,
     brightness: Brightness.dark,
     scaffoldBackgroundColor: AppColors.darkBgPrimary,
     colorScheme: const ColorScheme.dark(
@@ -125,7 +132,7 @@ abstract class AppTheme {
       tertiary: AppColors.darkGold,
       onSurface: AppColors.darkTextPrimary,
       onPrimary: Colors.white,
-      error: Color(0xFFCF6679),
+      error: AppColors.darkError,
     ),
     textTheme: GoogleFonts.plusJakartaSansTextTheme().copyWith(
       displayLarge: GoogleFonts.plusJakartaSans(
@@ -179,7 +186,7 @@ abstract class AppTheme {
     cardTheme: CardThemeData(
       color: AppColors.darkBgSurface,
       elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.xl),
     ),
     appBarTheme: AppBarTheme(
       backgroundColor: AppColors.darkBgPrimary,
@@ -204,7 +211,7 @@ abstract class AppTheme {
       filled: true,
       fillColor: AppColors.darkBgSurface,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: AppRadius.xl,
         borderSide: BorderSide.none,
       ),
       hintStyle: const TextStyle(color: AppColors.darkTextMuted),

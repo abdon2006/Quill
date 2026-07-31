@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class MainShell extends StatelessWidget {
   final Widget child;
@@ -22,19 +23,19 @@ class MainShell extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
+            icon: HugeIcon(icon: HugeIcons.strokeRoundedHome01),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.library_books_outlined),
+            icon: HugeIcon(icon: HugeIcons.strokeRoundedLibrary),
             label: 'Library',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.explore_outlined),
+            icon: HugeIcon(icon: HugeIcons.strokeRoundedDiscoverCircle),
             label: 'Discover',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
+            icon: HugeIcon(icon: HugeIcons.strokeRoundedUser03),
             label: 'Profile',
           ),
         ],
