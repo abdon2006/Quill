@@ -20,6 +20,7 @@ abstract class AppColors {
   static const Color lightGreen = Color(0xFF3D5A3E);
   static const Color lightGreenMuted = Color(0xFF8FAF8F);
   static const Color lightGold = Color(0xFFD4A017);
+  static const Color lightError = Color(0xFFB00020);
 
   // ── Dark Mode ────────────────────────────────
   static const Color darkBgPrimary = Color(0xFF171415);
@@ -35,6 +36,7 @@ abstract class AppColors {
 
   static const Color darkSuccess = Color(0xFF5D8A63);
   static const Color darkGold = Color(0xFFE0B84A);
+  static const Color darkError = Color(0xFFCF6679);
 
   // ── Sentiment Glow ───────────────────────────
   static const Color glowJoy = Color(0xFFFFD166);
