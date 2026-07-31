@@ -1,0 +1,74 @@
+import 'package:dio/dio.dart';
+import 'package:quill/core/constants/api_constants.dart';
+import 'package:quill/core/errors/failures.dart';
+
+/// GET  → query params  (بتطلب/بتفلتر)
+/// POST → body data     (بتبعت/بتنشئ)
+/// PUT  → body data     (بتستبدل كامل)
+/// PATCH → body data    (بتعدل جزء)
+
+class NetworkService {
+  final _dio = Dio(
+    BaseOptions(
+      baseUrl: ApiConstants.baseUrl,
+      connectTimeout: ApiConstants.connectTimeout,
+      receiveTimeout: ApiConstants.receiveTimeout,
+      headers: ApiConstants.headers,
+    ),
+  );
+  Future<Response> dioPost(String endPoint, Map<String, dynamic> data) async {
+    try {
+      final response = await _dio.post(endPoint, data: data);
+      return response;
+    } on DioException catch (e) {
+      throw _handleDioErrors(e);
+    }
+  }
+
+  Future<Response> dioGet(
+    String endPoint,
+    Map<String, dynamic> queryParams,
+  ) async {
+    try {
+      final response = await _dio.get(endPoint, queryParameters: queryParams);
+      return response;
+    } on DioException catch (e) {
+      throw _handleDioErrors(e);
+    }
+  }
+
+  Future<Response> dioPut(String endPoint, Map<String, dynamic> data) async {
+    try {
+      final response = await _dio.put(endPoint, data: data);
+      return response;
+    } on DioException catch (e) {
+      throw _handleDioErrors(e);
+    }
+  }
+
+  Future<Response> dioPatch(String endPoint, Map<String, dynamic> data) async {
+    try {
+      final response = await _dio.patch(endPoint, data: data);
+      return response;
+    } on DioException catch (e) {
+      throw _handleDioErrors(e);
+    }
+  }
+
+  Failure _handleDioErrors(DioException error) {
+    switch (error.type) {
+      case DioExceptionType.connectionTimeout:
+        return const TimeoutFailure(message: 'Connection timeout');
+      case DioExceptionType.receiveTimeout:
+        return const TimeoutFailure(message: 'Server not responding');
+      case DioExceptionType.badResponse:
+        final statusCode = error.response?.statusCode;
+        if (statusCode == 401) {
+          return const UnauthorizedFailure(message: 'Unauthorized');
+        }
+        return ServerFailure(message: 'Server error', statusCode: statusCode);
+      default:
+        return NetworkFailure(message: 'Network error');
+    }
+  }
+}
