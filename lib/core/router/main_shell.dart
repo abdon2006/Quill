@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hugeicons/hugeicons.dart';
+import 'package:quill/core/router/app_router.dart';
+import 'package:quill/core/theme/app_icons.dart';
+import 'package:quill/core/widgets/custom_bottom__nav.dart';
 
 class MainShell extends StatelessWidget {
   final Widget child;
@@ -9,8 +11,26 @@ class MainShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final items = [
+      NavItem(icon: AppIcons.home, label: 'Home', path: AppRoutes.home),
+      NavItem(
+        icon: AppIcons.library,
+        label: 'Library',
+        path: AppRoutes.library,
+      ),
+      NavItem(
+        icon: AppIcons.discover,
+        label: 'Discover',
+        path: AppRoutes.discover,
+      ),
+      NavItem(
+        icon: AppIcons.profile,
+        label: 'Profile',
+        path: AppRoutes.profile,
+      ),
+    ];
     final location = state.uri.path;
-    final index = switch (location) {
+    int index = switch (location) {
       '/' => 0,
       '/library' => 1,
       '/discover' => 2,
@@ -19,33 +39,15 @@ class MainShell extends StatelessWidget {
     };
 
     return Scaffold(
+      extendBody: true,
       body: child,
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: HugeIcon(icon: HugeIcons.strokeRoundedHome01),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: HugeIcon(icon: HugeIcons.strokeRoundedLibrary),
-            label: 'Library',
-          ),
-          BottomNavigationBarItem(
-            icon: HugeIcon(icon: HugeIcons.strokeRoundedDiscoverCircle),
-            label: 'Discover',
-          ),
-          BottomNavigationBarItem(
-            icon: HugeIcon(icon: HugeIcons.strokeRoundedUser03),
-            label: 'Profile',
-          ),
-        ],
+      bottomNavigationBar: CustomBottomNav(
         currentIndex: index,
-        onTap: (index) => switch (index) {
-          0 => context.go('/'),
-          1 => context.go('/library'),
-          2 => context.go('/discover'),
-          3 => context.go('/profile'),
-          _ => null,
+        items: items,
+        onTap: (newIndex) {
+          if (index != newIndex) {
+            context.go(items[newIndex].path);
+          }
         },
       ),
     );
