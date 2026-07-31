@@ -1,10 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:quill/core/constants/storage_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'theme_state.dart';
 
 class ThemeCubit extends Cubit<ThemeState> {
-  static const _key = 'app_theme_mode';
   final SharedPreferences _prefs;
 
   ThemeCubit(this._prefs) : super(const ThemeState()) {
@@ -12,19 +12,19 @@ class ThemeCubit extends Cubit<ThemeState> {
   }
 
   void _loadSavedTheme() {
-    final saved = _prefs.getString(_key);
+    final saved = _prefs.getString(StorageConstants.themeMode);
     if (saved == AppThemeMode.dark.name) {
       emit(state.copyWith(themeMode: AppThemeMode.dark));
     }
   }
 
   void setLight() {
-    _prefs.setString(_key, AppThemeMode.light.name);
+    _prefs.setString(StorageConstants.themeMode, AppThemeMode.light.name);
     emit(state.copyWith(themeMode: AppThemeMode.light));
   }
 
   void setDark() {
-    _prefs.setString(_key, AppThemeMode.dark.name);
+    _prefs.setString(StorageConstants.themeMode, AppThemeMode.dark.name);
     emit(state.copyWith(themeMode: AppThemeMode.dark));
   }
 
