@@ -45,12 +45,11 @@ class CustomBottomNav extends StatelessWidget {
               behavior: HitTestBehavior.opaque,
               child: AnimatedContainer(
                 duration: AppDuration.normal,
-
                 padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                 decoration: BoxDecoration(
                   borderRadius: AppRadius.md,
                   color: isSelected
-                      ? theme.colorScheme.secondary.withValues(alpha: 0.3)
+                      ? theme.colorScheme.primary.withValues(alpha: 0.1)
                       : null,
                 ),
                 child: Column(
