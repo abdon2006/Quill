@@ -48,11 +48,9 @@ class ContinueReading extends StatelessWidget {
                 children: [
                   Text(
                     "Current Book",
-                    style: AppTextStyles.caption(context).copyWith(
-                      color: theme.colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
-                    ),
+                    style: AppTextStyles.label(
+                      context,
+                    ).copyWith(color: theme.colorScheme.primary),
                   ),
                   SizedBox(height: AppSpacing.xs),
                   Text(
@@ -84,7 +82,7 @@ class ContinueReading extends StatelessWidget {
                       const SizedBox(width: AppSpacing.sm),
                       Text(
                         '70 %',
-                        style: AppTextStyles.label(
+                        style: AppTextStyles.caption(
                           context,
                         ).copyWith(color: AppColors.lightTextMuted),
                       ),

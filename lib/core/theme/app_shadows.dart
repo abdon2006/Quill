@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'app_colors.dart';
 
 abstract class AppShadows {
   // ── Light Mode ───────────────────────────────
@@ -21,7 +20,7 @@ abstract class AppShadows {
 
   static List<BoxShadow> bookCover = [
     BoxShadow(
-      color: AppColors.lightAccentPrimary.withValues(alpha: 0.20),
+      color: Colors.black.withValues(alpha: 0.2),
       blurRadius: 12,
       offset: const Offset(0, 4),
     ),
