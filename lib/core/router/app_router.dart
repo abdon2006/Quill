@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quill/core/router/main_shell.dart';
+import 'package:quill/features/home/presentation/screens/home_screen.dart';
 
 part 'app_routes.dart';
 
@@ -14,8 +15,7 @@ final appRouter = GoRouter(
         GoRoute(
           path: AppRoutes.home,
           name: AppRoutes.home,
-          builder: (context, state) =>
-              const Scaffold(body: Center(child: Text('Home'))),
+          builder: (context, state) => HomeScreen(),
         ),
         GoRoute(
           path: AppRoutes.library,
