@@ -48,6 +48,7 @@ dependencies:
   iconsax: ^0.0.8
   hugeicons: ^1.1.7
   google_nav_bar: ^5.0.7
+  dartz: ^0.10.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
