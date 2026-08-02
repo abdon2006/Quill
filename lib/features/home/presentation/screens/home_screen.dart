@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:quill/core/theme/app_spacing.dart';
+import 'package:quill/core/widgets/premium_background.dart';
 import 'package:quill/features/home/presentation/widgets/book_grid_card.dart';
 import 'package:quill/features/home/presentation/widgets/continue_reading.dart';
 import 'package:quill/features/home/presentation/widgets/home_header.dart';
@@ -46,46 +48,52 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-              child: HomeHeader(),
-            ),
-            SizedBox(height: AppSpacing.lg),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-              child: ContinueReading(ontap: () {}),
-            ),
-            SizedBox(height: AppSpacing.lg),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-              child: SectionHeader(
-                title: 'Recently Added',
-                viewAllOnTap: () {},
-              ),
-            ),
-            SizedBox(height: AppSpacing.lg),
-            SizedBox(
-              height: 230.h,
-              child: ListView.builder(
+    return PremiumAuroraBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
+            children: [
+              Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-                scrollDirection: Axis.horizontal,
-                itemCount: mockBooks.length,
-                itemBuilder: (context, i) {
-                  final item = mockBooks[i];
-                  return BookGridCard(
-                    bookCover: item['cover']!,
-                    bookTitle: item['title']!,
-                    bookAuthor: item['author']!,
-                  );
-                },
+                child: HomeHeader(),
               ),
-            ),
-          ],
+              SizedBox(height: AppSpacing.lg),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+                child: ContinueReading(ontap: () {}),
+              ),
+              SizedBox(height: AppSpacing.lg),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+                child: SectionHeader(
+                  title: 'Recently Added',
+                  viewAllOnTap: () {},
+                ),
+              ),
+              SizedBox(height: AppSpacing.lg),
+              SizedBox(
+                height: 230.h,
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xl,
+                  ),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: mockBooks.length,
+                  itemBuilder: (context, i) {
+                    final item = mockBooks[i];
+                    return BookGridCard(
+                      onTap: () => context.push('/bookDeatails'),
+                      bookCover: item['cover']!,
+                      bookTitle: item['title']!,
+                      bookAuthor: item['author']!,
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
