@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:quill/core/constants/api_constants.dart';
 import 'package:quill/core/errors/failures.dart';
+import 'package:quill/core/network/auth_interceptor.dart';
 
 /// GET  → query params  (بتطلب/بتفلتر)
 /// POST → body data     (بتبعت/بتنشئ)
@@ -8,17 +8,15 @@ import 'package:quill/core/errors/failures.dart';
 /// PATCH → body data    (بتعدل جزء)
 
 class NetworkService {
-  final _dio = Dio(
-    BaseOptions(
-      baseUrl: ApiConstants.baseUrl,
-      connectTimeout: ApiConstants.connectTimeout,
-      receiveTimeout: ApiConstants.receiveTimeout,
-      headers: ApiConstants.headers,
-    ),
-  );
+  final AuthInterceptor authInterceptor;
+  final Dio dio;
+  NetworkService({required this.authInterceptor, required this.dio}) {
+    dio.interceptors.add(authInterceptor);
+  }
+
   Future<Response> dioPost(String endPoint, Map<String, dynamic> data) async {
     try {
-      final response = await _dio.post(endPoint, data: data);
+      final response = await dio.post(endPoint, data: data);
       return response;
     } on DioException catch (e) {
       throw _handleDioErrors(e);
@@ -30,7 +28,7 @@ class NetworkService {
     Map<String, dynamic> queryParams,
   ) async {
     try {
-      final response = await _dio.get(endPoint, queryParameters: queryParams);
+      final response = await dio.get(endPoint, queryParameters: queryParams);
       return response;
     } on DioException catch (e) {
       throw _handleDioErrors(e);
@@ -39,7 +37,7 @@ class NetworkService {
 
   Future<Response> dioPut(String endPoint, Map<String, dynamic> data) async {
     try {
-      final response = await _dio.put(endPoint, data: data);
+      final response = await dio.put(endPoint, data: data);
       return response;
     } on DioException catch (e) {
       throw _handleDioErrors(e);
@@ -48,7 +46,7 @@ class NetworkService {
 
   Future<Response> dioPatch(String endPoint, Map<String, dynamic> data) async {
     try {
-      final response = await _dio.patch(endPoint, data: data);
+      final response = await dio.patch(endPoint, data: data);
       return response;
     } on DioException catch (e) {
       throw _handleDioErrors(e);
