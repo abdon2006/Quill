@@ -8,9 +8,9 @@ class HomeInitial extends HomeState {
   List<Object?> get props => [];
 }
 
-class HomeFailure extends HomeState {
+class HomeError extends HomeState {
   final String message;
-  HomeFailure({required this.message});
+  HomeError({required this.message});
   @override
   List<Object?> get props => [message];
 }

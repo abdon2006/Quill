@@ -12,7 +12,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(HomeLoading());
       final response = await fetchBooksUsecase(NoParams());
       response.fold(
-        (failure) => emit(HomeFailure(message: failure.message)),
+        (failure) => emit(HomeError(message: failure.message)),
         (books) => emit(FetchBooksSuccess(books: books)),
       );
     });

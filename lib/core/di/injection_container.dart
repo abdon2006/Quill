@@ -1,5 +1,12 @@
 import 'package:get_it/get_it.dart';
 import 'package:quill/core/network/network_service.dart';
+import 'package:quill/features/auth/data/datasource/auth_remote_datasource.dart';
+import 'package:quill/features/auth/data/datasource/auth_remote_datasource_impl.dart';
+import 'package:quill/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:quill/features/auth/domain/repositories/auth_repository.dart';
+import 'package:quill/features/auth/domain/usecases/login_usecase.dart';
+import 'package:quill/features/auth/domain/usecases/signup_usecase.dart';
+import 'package:quill/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:quill/features/home/data/dataSources/book_remote_data_source_impl.dart';
 import 'package:quill/features/home/data/dataSources/book_remote_datasource.dart';
 import 'package:quill/features/home/data/repositories/book_repository_impl.dart';
@@ -22,7 +29,10 @@ Future<void> setupDI() async {
   sl.registerLazySingleton<ThemeCubit>(() => ThemeCubit(sl()));
   sl.registerLazySingleton<LocaleCubit>(() => LocaleCubit(sl()));
 
+  /// Network Service
   sl.registerLazySingleton<NetworkService>(() => NetworkService());
+
+  /// Book & Home
   sl.registerLazySingleton<BookRemoteDatasource>(
     () => BookRemoteDataSourceImpl(networkService: sl()),
   );
@@ -32,6 +42,22 @@ Future<void> setupDI() async {
   sl.registerLazySingleton<FetchBooksUsecase>(
     () => FetchBooksUsecase(bookRepository: sl()),
   );
-
   sl.registerFactory<HomeBloc>(() => HomeBloc(fetchBooksUsecase: sl()));
+
+  /// Auth
+  sl.registerLazySingleton<AuthRemoteDatasource>(
+    () => AuthRemoteDatasourceImpl(networkService: sl()),
+  );
+  sl.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(authRemoteDatasource: sl()),
+  );
+  sl.registerLazySingleton<SignupUsecase>(
+    () => SignupUsecase(authRepository: sl()),
+  );
+  sl.registerLazySingleton<LoginUsecase>(
+    () => LoginUsecase(authRepository: sl()),
+  );
+  sl.registerFactory<AuthBloc>(
+    () => AuthBloc(loginUsecase: sl(), signupUsecase: sl()),
+  );
 }

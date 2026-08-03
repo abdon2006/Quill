@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:quill/core/di/injection_container.dart';
 import 'package:quill/core/router/main_shell.dart';
+import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
+import 'package:quill/features/home/presentation/bloc/home_event.dart';
 import 'package:quill/features/home/presentation/screens/book_details_screen.dart';
 import 'package:quill/features/home/presentation/screens/home_screen.dart';
 
@@ -18,7 +22,10 @@ final appRouter = GoRouter(
         GoRoute(
           path: AppRoutes.home,
           name: AppRoutes.home,
-          builder: (context, state) => HomeScreen(),
+          builder: (context, state) => BlocProvider(
+            create: (_) => sl<HomeBloc>()..add(FetchHomeBooksEvent()),
+            child: HomeScreen(),
+          ),
         ),
         GoRoute(
           path: AppRoutes.library,
