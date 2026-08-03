@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:quill/core/Obesrver/my_bloc_observer.dart';
 import 'package:quill/core/di/injection_container.dart';
 import 'package:quill/core/locale/cubit/locale_cubit.dart';
 import 'package:quill/core/router/app_router.dart';
@@ -13,6 +14,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   await setupDI();
+  Bloc.observer = MyBlocObserver();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
   );

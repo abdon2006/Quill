@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/widgets/premium_background.dart';
+import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
+import 'package:quill/features/home/presentation/bloc/home_state.dart';
 import 'package:quill/features/home/presentation/widgets/book_grid_card.dart';
 import 'package:quill/features/home/presentation/widgets/continue_reading.dart';
 import 'package:quill/features/home/presentation/widgets/home_header.dart';
@@ -73,24 +76,34 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(height: AppSpacing.lg),
-              SizedBox(
-                height: 230.h,
-                child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.xl,
-                  ),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: mockBooks.length,
-                  itemBuilder: (context, i) {
-                    final item = mockBooks[i];
-                    return BookGridCard(
-                      onTap: () => context.push('/bookDeatails'),
-                      bookCover: item['cover']!,
-                      bookTitle: item['title']!,
-                      bookAuthor: item['author']!,
+              BlocBuilder<HomeBloc, HomeState>(
+                builder: (context, state) {
+                  if (state is FetchBooksSuccess) {
+                    return SizedBox(
+                      height: 230.h,
+                      child: ListView.builder(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.xl,
+                        ),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: mockBooks.length,
+                        itemBuilder: (context, i) {
+                          final item = mockBooks[i];
+                          return BookGridCard(
+                            onTap: () => context.push('/bookDeatails'),
+                            bookCover: item['cover']!,
+                            bookTitle: item['title']!,
+                            bookAuthor: item['author']!,
+                          );
+                        },
+                      ),
                     );
-                  },
-                ),
+                  }
+                  if (state is HomeLoading) {
+                    return CircularProgressIndicator();
+                  }
+                  return Text("Error");
+                },
               ),
             ],
           ),
