@@ -1,5 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
+import 'package:quill/core/constants/api_constants.dart';
+import 'package:quill/core/network/auth_interceptor.dart';
 import 'package:quill/core/network/network_service.dart';
+import 'package:quill/core/storage/app_storage.dart';
 import 'package:quill/features/auth/data/datasource/auth_remote_datasource.dart';
 import 'package:quill/features/auth/data/datasource/auth_remote_datasource_impl.dart';
 import 'package:quill/features/auth/data/repositories/auth_repository_impl.dart';
@@ -22,15 +26,36 @@ final sl = GetIt.instance;
 Future<void> setupDI() async {
   // ── External ─────────────────────────────────
   final prefs = await SharedPreferences.getInstance();
-
   sl.registerSingleton<SharedPreferences>(prefs);
 
   // ── Core Cubits ──────────────────────────────
   sl.registerLazySingleton<ThemeCubit>(() => ThemeCubit(sl()));
   sl.registerLazySingleton<LocaleCubit>(() => LocaleCubit(sl()));
 
+  /// App Storage
+  sl.registerLazySingleton<AppStorage>(() => AppStorage());
+
+  /// Dio
+  sl.registerLazySingleton<Dio>(
+    () => Dio(
+      BaseOptions(
+        baseUrl: ApiConstants.baseUrl,
+        connectTimeout: ApiConstants.connectTimeout,
+        headers: ApiConstants.headers,
+        receiveTimeout: ApiConstants.receiveTimeout,
+      ),
+    ),
+  );
+
+  /// AuthInterceptor
+  sl.registerLazySingleton<AuthInterceptor>(
+    () => AuthInterceptor(appStorage: sl()),
+  );
+
   /// Network Service
-  sl.registerLazySingleton<NetworkService>(() => NetworkService());
+  sl.registerLazySingleton<NetworkService>(
+    () => NetworkService(authInterceptor: sl(), dio: sl()),
+  );
 
   /// Book & Home
   sl.registerLazySingleton<BookRemoteDatasource>(
@@ -58,6 +83,6 @@ Future<void> setupDI() async {
     () => LoginUsecase(authRepository: sl()),
   );
   sl.registerFactory<AuthBloc>(
-    () => AuthBloc(loginUsecase: sl(), signupUsecase: sl()),
+    () => AuthBloc(loginUsecase: sl(), signupUsecase: sl(), appStorage: sl()),
   );
 }
