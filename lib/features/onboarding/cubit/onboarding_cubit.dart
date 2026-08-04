@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 enum OnboardingStage {
+  entering,
   initial,
   scene1,
   scene2,
@@ -12,7 +13,19 @@ enum OnboardingStage {
 }
 
 class OnboardingCubit extends Cubit<OnboardingStage> {
-  OnboardingCubit() : super(OnboardingStage.initial);
+  OnboardingCubit() : super(OnboardingStage.entering) {
+    _startEntranceScene();
+  }
+
+  Future<void> _startEntranceScene() async {
+    // بندي للريشة ثانيتين عشان تنزل من فوق براحتها وتستقر
+    await Future.delayed(const Duration(seconds: 2));
+
+    // بعد ما تستقر، نظهر الزرار الأولاني
+    if (!isClosed) {
+      emit(OnboardingStage.initial);
+    }
+  }
 
   Future<void> startJourney() async {
     emit(OnboardingStage.scene1);

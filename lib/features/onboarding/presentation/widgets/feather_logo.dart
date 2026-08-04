@@ -116,20 +116,26 @@ class _FeatherLogoState extends State<FeatherLogo>
     // 3. إعدادات الظهور الأولي
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 2), // نفس الوقت اللي الكوبيت بيستناه
     );
+
     _opacity = Tween<double>(
-      begin: 0,
-      end: 1,
+      begin: 0.0,
+      end: 1.0,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
-    _scale = Tween<double>(
-      begin: .8,
-      end: 1.1,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+
+    _scale = Tween<double>(begin: .8, end: 1.1).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOutBack,
+      ), // بتعمل ارتداد خفيف
+    );
+
+    // 👇 السحر هنا: الريشة بتنزل من فوق بره الشاشة (-3.0) لحد النص (0.0)
     _slide = Tween<Offset>(
-      begin: const Offset(0, 0.25),
+      begin: const Offset(0, -3.0),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
 
     _controller.forward();
   }

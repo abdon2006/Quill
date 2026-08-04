@@ -15,6 +15,7 @@ class AppButton extends StatelessWidget {
   final ButtonType type;
   final double width;
   final bool isLoading;
+  final bool? isEnabled;
   const AppButton._({
     super.key,
     required this.text,
@@ -24,6 +25,7 @@ class AppButton extends StatelessWidget {
     this.icon,
     this.width = double.infinity, // الديفولت إنه بياخد عرض الشاشة
     this.isLoading = false,
+    this.isEnabled = true,
   });
 
   const AppButton.primary({
@@ -34,6 +36,7 @@ class AppButton extends StatelessWidget {
     Color? color,
     double width = double.infinity,
     bool isLoading = false,
+    bool isEnabled = true,
   }) : this._(
          key: key,
          text: text,
@@ -41,6 +44,7 @@ class AppButton extends StatelessWidget {
          type: ButtonType.primary,
          icon: icon,
          isLoading: isLoading,
+         isEnabled: isEnabled,
        );
 
   const AppButton.secondary({
@@ -51,6 +55,7 @@ class AppButton extends StatelessWidget {
     List<List<dynamic>>? icon,
     double width = double.infinity,
     bool isLoading = false,
+    bool isEnabled = true,
   }) : this._(
          key: key,
          text: text,
@@ -59,28 +64,43 @@ class AppButton extends StatelessWidget {
          icon: icon,
          width: width,
          isLoading: isLoading,
+         isEnabled: isEnabled,
        );
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isPrimary = type == ButtonType.primary;
-    final backgroundColor = isPrimary
+    final buttonEnabled = isEnabled ?? true;
+
+    final activeBackgroundColor = isPrimary
         ? theme.colorScheme.primary
         : theme.colorScheme.surface;
-
-    final textColor = isPrimary
+    final activeTextColor = isPrimary
         ? theme.colorScheme.onPrimary
         : theme.colorScheme.primary;
-    return Container(
+
+    final disabledBackgroundColor = theme.colorScheme.onSurface.withValues(
+      alpha: 0.12,
+    );
+    final disabledTextColor = theme.colorScheme.onSurface.withValues(
+      alpha: 0.38,
+    );
+
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 2000),
+      curve: Curves.easeInOut,
       margin: EdgeInsets.symmetric(horizontal: AppSpacing.xxxl),
       width: width,
       height: 50.h,
       child: ElevatedButton(
-        onPressed: isLoading ? null : onPressed,
+        onPressed: (isLoading || !buttonEnabled) ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor,
-          foregroundColor: textColor,
+          backgroundColor: activeBackgroundColor,
+          foregroundColor: activeTextColor,
+
+          disabledBackgroundColor: disabledBackgroundColor,
+          disabledForegroundColor: disabledTextColor,
 
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(borderRadius: AppRadius.xxl),
@@ -91,7 +111,7 @@ class AppButton extends StatelessWidget {
                 height: 24.h,
                 width: 24.w,
                 child: CircularProgressIndicator(
-                  color: textColor,
+                  color: buttonEnabled ? activeTextColor : disabledTextColor,
                   strokeWidth: 2.5,
                 ),
               )
@@ -102,9 +122,11 @@ class AppButton extends StatelessWidget {
                   const SizedBox(width: AppSpacing.sm),
                   Text(
                     text,
-                    style: AppTextStyles.heading2(
-                      context,
-                    ).copyWith(color: textColor),
+                    style: AppTextStyles.heading2(context).copyWith(
+                      color: buttonEnabled
+                          ? activeTextColor
+                          : disabledTextColor,
+                    ),
                   ),
                 ],
               ),

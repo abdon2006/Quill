@@ -52,7 +52,7 @@ class _OnboardingViewState extends State<_OnboardingView> {
           // لما الريشة تبدأ تطير، نستنى ثانية ونص وبعدين نقلب الصفحة
           Future.delayed(const Duration(milliseconds: 1500), () {
             if (context.mounted) {
-              context.go(AppRoutes.signup); // النقلة للـ Signup
+              context.go(AppRoutes.choose); // النقلة للـ Signup
             }
           });
         }
@@ -82,9 +82,19 @@ class _OnboardingViewState extends State<_OnboardingView> {
                     const Spacer(),
 
                     // سحب الريشة لفوق بره الشاشة لما الحالة تكون leavingFeather
-                    FeatherLogo(
-                      hasStarted: stage != OnboardingStage.initial,
-                      isExiting: stage == OnboardingStage.leavingFeather,
+                    AnimatedSlide(
+                      duration: const Duration(milliseconds: 1500),
+                      curve: Curves.easeInOutCubic,
+                      offset: stage == OnboardingStage.leavingFeather
+                          ? const Offset(0, -3.5)
+                          : Offset.zero,
+                      child: FeatherLogo(
+                        // الريشة تبدأ طيرانها الحقيقي بس لو عدينا مرحلة الـ entering والـ initial
+                        hasStarted:
+                            stage != OnboardingStage.initial &&
+                            stage != OnboardingStage.entering,
+                        isExiting: stage == OnboardingStage.leavingFeather,
+                      ),
                     ),
 
                     const SizedBox(height: 48),
