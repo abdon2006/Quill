@@ -7,15 +7,15 @@ abstract final class AppAssets {
 
   // Logos
   static const logo = '${images}logo.png';
-  static const logoDark = '${images}logo_dark.png';
+  // static const logoDark = '${images}logo_dark.png';
 
   // Placeholders
-  static const bookPlaceholder = '${images}book_placeholder.png';
+  // static const bookPlaceholder = '${images}book_placeholder.png';
 
-  static const authorPlaceholder = '${images}author_placeholder.png';
+  // static const authorPlaceholder = '${images}author_placeholder.png';
 
   // Lottie
-  static const loading = '${animations}loading.json';
+  // static const loading = '${animations}loading.json';
 
-  static const empty = '${animations}empty.json';
+  // static const empty = '${animations}empty.json';
 }

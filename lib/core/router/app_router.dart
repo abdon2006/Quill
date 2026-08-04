@@ -7,12 +7,13 @@ import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
 import 'package:quill/features/home/presentation/bloc/home_event.dart';
 import 'package:quill/features/home/presentation/screens/book_details_screen.dart';
 import 'package:quill/features/home/presentation/screens/home_screen.dart';
+import 'package:quill/features/onboarding/presentation/pages/onboarding_page.dart';
 
 part 'app_routes.dart';
 
 final GlobalKey<NavigatorState> _root = GlobalKey<NavigatorState>();
 final appRouter = GoRouter(
-  initialLocation: '/',
+  initialLocation: AppRoutes.onboarding,
   debugLogDiagnostics: true,
 
   routes: [
@@ -53,6 +54,11 @@ final appRouter = GoRouter(
       path: AppRoutes.bookDeatails,
       name: AppRoutes.bookDeatails,
       builder: (context, state) => BookDetailsScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.onboarding,
+      name: AppRoutes.onboarding,
+      builder: (context, state) => OnboardingPage(),
     ),
   ],
 
