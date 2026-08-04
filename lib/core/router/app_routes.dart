@@ -7,4 +7,5 @@ abstract class AppRoutes {
   static const profile = '/profile';
   static const reader = '/reader';
   static const bookDeatails = '/bookDeatails';
+  static const onboarding = '/onboarding';
 }
