@@ -8,4 +8,6 @@ abstract class AppRoutes {
   static const reader = '/reader';
   static const bookDeatails = '/bookDeatails';
   static const onboarding = '/onboarding';
+  static const signup = '/singup';
+  static const login = '/login';
 }

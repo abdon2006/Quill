@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:quill/core/animations/app_page_transition.dart';
 import 'package:quill/core/theme/app_radius.dart';
 import 'app_colors.dart';
 
@@ -111,8 +112,8 @@ abstract class AppTheme {
     ),
     pageTransitionsTheme: const PageTransitionsTheme(
       builders: {
-        TargetPlatform.android: CupertinoPageTransitionsBuilder(),
-        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        TargetPlatform.android: CinematicPageTransitionsBuilder(),
+        TargetPlatform.iOS: CinematicPageTransitionsBuilder(),
       },
     ),
   );
@@ -223,8 +224,8 @@ abstract class AppTheme {
     ),
     pageTransitionsTheme: const PageTransitionsTheme(
       builders: {
-        TargetPlatform.android: CupertinoPageTransitionsBuilder(),
-        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        TargetPlatform.android: CinematicPageTransitionsBuilder(),
+        TargetPlatform.iOS: CinematicPageTransitionsBuilder(),
       },
     ),
   );

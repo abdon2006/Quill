@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart'; // ضفنا الروتر
+import 'package:quill/core/router/app_router.dart'; // مسار الروتس بتاعك
 import 'package:quill/core/theme/app_theme.dart';
 import 'package:quill/core/widgets/premium_background.dart';
 import 'package:quill/features/onboarding/cubit/onboarding_cubit.dart';
@@ -22,9 +24,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      // السحر هنا: استخدم الثيم الفاتح الأساسي بتاع تطبيقك إنت
-      // (غير كلمة AppTheme.lightTheme لاسم المتغير اللي إنت عامله عندك في المشروع)
-      data: AppTheme.light,
+      data: AppTheme.light, // أو lightTheme حسب اسم المتغير عندك
       child: BlocProvider(
         create: (_) => OnboardingCubit(),
         child: const _OnboardingView(),
@@ -45,108 +45,128 @@ class _OnboardingViewState extends State<_OnboardingView> {
   Widget build(BuildContext context) {
     final stage = context.watch<OnboardingCubit>().state;
 
-    return PremiumAuroraBackground(
-      child: Scaffold(
-        body: Stack(
-          fit: StackFit.expand,
-          children: [
-            // 1. طبقة الإضاءة الخلفية (Ambient Glow)
-            AmbientGlow(active: stage == OnboardingStage.scene2),
+    // غلفنا الشاشة بـ BlocListener عشان نراقب حالة الريشة وهي بتطير
+    return BlocListener<OnboardingCubit, OnboardingStage>(
+      listener: (context, state) {
+        if (state == OnboardingStage.leavingFeather) {
+          // لما الريشة تبدأ تطير، نستنى ثانية ونص وبعدين نقلب الصفحة
+          Future.delayed(const Duration(milliseconds: 1500), () {
+            if (context.mounted) {
+              context.go(AppRoutes.signup); // النقلة للـ Signup
+            }
+          });
+        }
+      },
+      child: PremiumAuroraBackground(
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Stack(
+            fit: StackFit.expand,
+            children: [
+              AmbientGlow(active: stage == OnboardingStage.scene2),
 
-            // 2. طبقة الـ AI Hints (حطيناها في الخلفية عشان متزقش أي عنصر تاني)
-            // عملناها Center عشان تظهر ورا النص الأساسي بالظبط كأنها عمق ميدان
-            Center(
-              child: IgnorePointer(
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 800),
-                  curve: Curves.easeInOut,
-                  opacity: stage == OnboardingStage.scene3 ? 1.0 : 0.0,
-                  child: AIHints(active: stage == OnboardingStage.scene3),
+              Center(
+                child: IgnorePointer(
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 800),
+                    curve: Curves.easeInOut,
+                    opacity: stage == OnboardingStage.scene3 ? 1.0 : 0.0,
+                    child: AIHints(active: stage == OnboardingStage.scene3),
+                  ),
                 ),
               ),
-            ),
 
-            // 3. طبقة المحتوى الأساسي (الريشة والنصوص)
-            SafeArea(
-              child: Column(
-                children: [
-                  const Spacer(),
-
-                  // الريشة
-                  FeatherLogo(hasStarted: stage != OnboardingStage.initial),
-
-                  const SizedBox(height: 48),
-
-                  // النصوص الأساسية
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 700),
-                    transitionBuilder: (child, animation) => FadeTransition(
-                      opacity: animation,
-                      child: SlideTransition(
-                        position: Tween<Offset>(
-                          begin: const Offset(0, 0.1),
-                          end: Offset.zero,
-                        ).animate(animation),
-                        child: child,
-                      ),
-                    ),
-                    child: _buildText(stage),
-                  ),
-
-                  // شيلنا الـ AIHints من هنا، فالمساحة هتفضل ثابتة دايماً!
-                  const Spacer(flex: 2),
-                ],
-              ),
-            ),
-
-            // 4. طبقة الزراير
-            Positioned(
-              bottom: 48,
-              left: 0,
-              right: 0,
-              child: SafeArea(
-                child: Stack(
-                  alignment: Alignment.center,
+              SafeArea(
+                child: Column(
                   children: [
-                    AnimatedOpacity(
-                      duration: const Duration(milliseconds: 500),
-                      opacity: stage == OnboardingStage.initial ? 1.0 : 0.0,
-                      child: IgnorePointer(
-                        ignoring: stage != OnboardingStage.initial,
-                        child: OnboardingButton(
-                          label: 'Turn the First Page',
-                          onPressed: () =>
-                              context.read<OnboardingCubit>().startJourney(),
-                        ),
-                      ),
+                    const Spacer(),
+
+                    // سحب الريشة لفوق بره الشاشة لما الحالة تكون leavingFeather
+                    FeatherLogo(
+                      hasStarted: stage != OnboardingStage.initial,
+                      isExiting: stage == OnboardingStage.leavingFeather,
                     ),
 
-                    AnimatedOpacity(
-                      duration: const Duration(milliseconds: 800),
-                      opacity: stage == OnboardingStage.finale ? 1.0 : 0.0,
-                      child: IgnorePointer(
-                        ignoring: stage != OnboardingStage.finale,
-                        child: BreathingWidget(
-                          child: OnboardingButton(
-                            label: 'Begin The Journy',
-                            onPressed: () {
-                              // Navigation to Signup
-                            },
-                          ),
+                    const SizedBox(height: 48),
+
+                    // إخفاء النص
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 700),
+                      transitionBuilder: (child, animation) => FadeTransition(
+                        opacity: animation,
+                        child: SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(0, 0.1),
+                            end: Offset.zero,
+                          ).animate(animation),
+                          child: child,
                         ),
                       ),
+                      child: _buildText(stage),
                     ),
+
+                    const Spacer(flex: 2),
                   ],
                 ),
               ),
-            ),
-          ],
+
+              Positioned(
+                bottom: 48,
+                left: 0,
+                right: 0,
+                child: SafeArea(
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      AnimatedOpacity(
+                        duration: const Duration(milliseconds: 500),
+                        opacity: stage == OnboardingStage.initial ? 1.0 : 0.0,
+                        child: IgnorePointer(
+                          ignoring: stage != OnboardingStage.initial,
+                          child: OnboardingButton(
+                            label: 'Turn the First Page',
+                            onPressed: () =>
+                                context.read<OnboardingCubit>().startJourney(),
+                          ),
+                        ),
+                      ),
+
+                      // الزرار النهائي
+                      AnimatedOpacity(
+                        duration: const Duration(milliseconds: 500),
+                        // الزرار ظاهر في الـ finale بس، وبيختفي أول ما نـ endJourney
+                        opacity: stage == OnboardingStage.finale ? 1.0 : 0.0,
+                        child: IgnorePointer(
+                          ignoring: stage != OnboardingStage.finale,
+                          child: BreathingWidget(
+                            child: OnboardingButton(
+                              label: 'Begin The Journey',
+                              onPressed: () {
+                                // هنا بنشغل سلسلة الخروج السينمائي
+                                context.read<OnboardingCubit>().endJourney();
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildText(OnboardingStage stage) {
+    // لو إحنا في مرحلة إخفاء النص أو طيران الريشة، بنخفي النص تماماً
+    if (stage == OnboardingStage.leavingText ||
+        stage == OnboardingStage.leavingFeather) {
+      return const SizedBox.shrink(key: ValueKey('empty'));
+    }
+
     return switch (stage) {
       OnboardingStage.scene1 => StaggeredText(
         key: const ValueKey('s1'),
@@ -160,7 +180,8 @@ class _OnboardingViewState extends State<_OnboardingView> {
         key: const ValueKey('s3'),
         text: 'Every page has someone to ask.',
       ),
-      OnboardingStage.finale => GoldenShimmer(
+      // بنخلي النص ظاهر في الـ finale وأثناء اختفاء الزرار
+      OnboardingStage.finale || OnboardingStage.leavingButton => GoldenShimmer(
         key: const ValueKey('s4'),
         child: const StaggeredText(text: 'Welcome to Quill.'),
       ),
