@@ -12,7 +12,7 @@ class AuthModel extends AuthEntity {
   factory AuthModel.fromJson(Map<String, dynamic> json) {
     final user = json['data']['user'];
     return AuthModel(
-      id: user['_id'],
+      id: user['id'],
       accessToken: json['accessToken'],
       refreshToken: json['refreshToken'],
       name: user['name'],

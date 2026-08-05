@@ -17,27 +17,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<SignUpEvent>((event, emit) async {
       emit(AuthLoading());
       final response = await signupUsecase(event.params);
-      response.fold((failure) => emit(AuthError(message: failure.message)), (
-        success,
-      ) async {
-        await appStorage.saveid(success.id);
-        await appStorage.saveAccessToken(success.accessToken);
-        await appStorage.saveRefreshToken(success.refreshToken);
-        emit(SignupSuccess(authEntity: success));
-      });
+      await response.fold(
+        (failure) async => emit(AuthError(message: failure.message)),
+        (success) async {
+          await appStorage.saveid(success.id);
+          await appStorage.saveAccessToken(success.accessToken);
+          await appStorage.saveRefreshToken(success.refreshToken);
+          emit(SignupSuccess(authEntity: success));
+        },
+      );
     });
 
     on<LoginEvent>((event, emit) async {
       emit(AuthLoading());
       final response = await loginUsecase(event.params);
-      response.fold((failure) => emit(AuthError(message: failure.message)), (
-        success,
-      ) async {
-        await appStorage.saveid(success.id);
-        await appStorage.saveAccessToken(success.accessToken);
-        await appStorage.saveRefreshToken(success.refreshToken);
-        emit(LoginSuccess(authEntity: success));
-      });
+      await response.fold(
+        (failure) async => emit(AuthError(message: failure.message)),
+        (success) async {
+          await appStorage.saveid(success.id);
+          await appStorage.saveAccessToken(success.accessToken);
+          await appStorage.saveRefreshToken(success.refreshToken);
+          emit(LoginSuccess(authEntity: success));
+        },
+      );
     });
   }
 }

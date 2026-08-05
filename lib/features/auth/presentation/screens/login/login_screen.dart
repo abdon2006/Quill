@@ -1,12 +1,16 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:quill/core/router/app_router.dart';
 import 'package:quill/core/theme/app_icons.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/widgets/app_button.dart';
 import 'package:quill/core/widgets/premium_background.dart';
+import 'package:quill/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:quill/features/auth/presentation/bloc/auth_state.dart';
 import 'package:quill/features/auth/presentation/screens/login/login_email_screen.dart';
 import 'package:quill/features/auth/presentation/screens/login/login_pass_Screen.dart';
 
@@ -120,20 +124,29 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(bottom: AppSpacing.xxxl),
-                      child: AppButton.primary(
-                        isEnabled: isEnabled,
-                        text: currentIndex == 1
-                            ? "Resume Your Story"
-                            : "Turn the Page",
-                        onPressed: () {
-                          if (currentIndex < screens.length - 1) {
-                            setState(() {
-                              currentIndex++;
-                            });
-                          } else {
-                            print("Email: ${email.text}");
-                            print("Pass: ${pass.text}");
-                          }
+                      child: BlocConsumer<AuthBloc, AuthState>(
+                        builder: (context, state) {
+                          bool isLoading = state is AuthLoading;
+                          return AppButton.primary(
+                            isLoading: isLoading,
+                            isEnabled: isEnabled,
+                            text: currentIndex == 1
+                                ? "Resume Your Story"
+                                : "Turn the Page",
+                            onPressed: () {
+                              if (currentIndex < screens.length - 1) {
+                                setState(() {
+                                  currentIndex++;
+                                });
+                              } else {
+                                print("Email: ${email.text}");
+                                print("Pass: ${pass.text}");
+                              }
+                            },
+                          );
+                        },
+                        listener: (BuildContext context, state) {
+                          if (state is LoginSuccess) context.go(AppRoutes.home);
                         },
                       ),
                     ),
