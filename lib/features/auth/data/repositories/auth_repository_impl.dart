@@ -1,8 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:quill/core/errors/failures.dart';
+import 'package:quill/core/usecases/base_usecase.dart';
 import 'package:quill/features/auth/data/datasource/auth_remote_datasource.dart';
 import 'package:quill/features/auth/domain/auth_params.dart';
 import 'package:quill/features/auth/domain/entities/auth_entity.dart';
+import 'package:quill/features/auth/domain/entities/user_entity.dart';
 import 'package:quill/features/auth/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -25,6 +27,18 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, AuthEntity>> signup(SignupParams params) async {
     try {
       final response = await authRemoteDatasource.signup(params);
+      return Right(response);
+    } on Failure catch (f) {
+      return Left(f);
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> fetchUserData(NoParams params) async {
+    try {
+      final response = await authRemoteDatasource.fetchUserData(params);
       return Right(response);
     } on Failure catch (f) {
       return Left(f);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart'; // ضفنا الروتر
+import 'package:quill/core/constants/app_constants.dart';
 import 'package:quill/core/router/app_router.dart'; // مسار الروتس بتاعك
 import 'package:quill/core/theme/app_theme.dart';
 import 'package:quill/core/widgets/premium_background.dart';
@@ -12,6 +13,7 @@ import 'package:quill/features/onboarding/presentation/widgets/feather_logo.dart
 import 'package:quill/features/onboarding/presentation/widgets/golden_shimmer.dart';
 import 'package:quill/features/onboarding/presentation/widgets/onboarding_button.dart';
 import 'package:quill/features/onboarding/presentation/widgets/staggerd_text.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -151,8 +153,13 @@ class _OnboardingViewState extends State<_OnboardingView> {
                           child: BreathingWidget(
                             child: OnboardingButton(
                               label: 'Begin The Journey',
-                              onPressed: () {
-                                // هنا بنشغل سلسلة الخروج السينمائي
+                              onPressed: () async {
+                                final prefs =
+                                    await SharedPreferences.getInstance();
+                                prefs.setBool(
+                                  AppConstants.seenOnboarding,
+                                  true,
+                                );
                                 context.read<OnboardingCubit>().endJourney();
                               },
                             ),

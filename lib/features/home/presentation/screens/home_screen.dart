@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/widgets/premium_background.dart';
+import 'package:quill/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:quill/features/auth/presentation/bloc/auth_state.dart';
 import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
 import 'package:quill/features/home/presentation/bloc/home_state.dart';
 import 'package:quill/features/home/presentation/widgets/book_grid_card.dart';
@@ -58,9 +60,18 @@ class HomeScreen extends StatelessWidget {
           child: ListView(
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-                child: HomeHeader(),
+              BlocBuilder<AuthBloc, AuthState>(
+                builder: (context, state) {
+                  if (state is FetchUserDataSuccess) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.xl,
+                      ),
+                      child: HomeHeader(user: state.userEntity),
+                    );
+                  }
+                  return Text('error');
+                },
               ),
               SizedBox(height: AppSpacing.lg),
               Padding(

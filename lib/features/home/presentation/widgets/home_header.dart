@@ -2,10 +2,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:quill/core/theme/app_colors.dart';
 import 'package:quill/core/theme/app_text_style.dart';
+import 'package:quill/features/auth/domain/entities/user_entity.dart';
 
 class HomeHeader extends StatelessWidget {
-  final String userName;
-  const HomeHeader({super.key, this.userName = 'Abdallah'});
+  final UserEntity user;
+  const HomeHeader({super.key, required this.user});
 
   String _getGreeting() {
     final hour = DateTime.now().hour;
@@ -28,7 +29,7 @@ class HomeHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '$greeting, $userName',
+          '$greeting, ${user.name}',
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: AppTextStyles.displayMedium(context),

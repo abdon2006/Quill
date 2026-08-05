@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:quill/core/constants/app_constants.dart';
 import 'package:quill/core/di/injection_container.dart';
 import 'package:quill/core/router/main_shell.dart';
+import 'package:quill/core/storage/app_storage.dart';
+import 'package:quill/core/usecases/base_usecase.dart';
 import 'package:quill/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:quill/features/auth/presentation/bloc/auth_event.dart';
 import 'package:quill/features/auth/presentation/screens/auth_choose_screen.dart';
 import 'package:quill/features/auth/presentation/screens/login/login_screen.dart';
 import 'package:quill/features/auth/presentation/screens/signup/signup_screen.dart';
@@ -12,11 +16,11 @@ import 'package:quill/features/home/presentation/bloc/home_event.dart';
 import 'package:quill/features/home/presentation/screens/book_details_screen.dart';
 import 'package:quill/features/home/presentation/screens/home_screen.dart';
 import 'package:quill/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'app_routes.dart';
 
 final appRouter = GoRouter(
-  initialLocation: AppRoutes.choose,
   debugLogDiagnostics: true,
 
   routes: [
@@ -26,8 +30,16 @@ final appRouter = GoRouter(
         GoRoute(
           path: AppRoutes.home,
           name: AppRoutes.home,
-          builder: (context, state) => BlocProvider(
-            create: (_) => sl<HomeBloc>()..add(FetchHomeBooksEvent()),
+          builder: (context, state) => MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) => sl<HomeBloc>()..add(FetchHomeBooksEvent()),
+              ),
+              BlocProvider(
+                create: (context) =>
+                    sl<AuthBloc>()..add(FetchUserDataEvent(params: NoParams())),
+              ),
+            ],
             child: HomeScreen(),
           ),
         ),
@@ -102,5 +114,19 @@ final appRouter = GoRouter(
     ),
   ],
 
-  redirect: (context, state) => null,
+  redirect: (context, state) async {
+    final storage = sl<AppStorage>();
+    final prefs = await SharedPreferences.getInstance();
+    final String? token = await storage.readAccessToken();
+    final bool? seenOnboarding = prefs.getBool(AppConstants.seenOnboarding);
+    if (seenOnboarding == true) {
+      if (token != null) {
+        return AppRoutes.home;
+      } else {
+        return AppRoutes.choose;
+      }
+    } else {
+      return AppRoutes.onboarding;
+    }
+  },
 );

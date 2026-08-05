@@ -3,9 +3,9 @@ import 'package:quill/core/errors/failures.dart';
 import 'package:quill/features/auth/domain/auth_params.dart';
 import 'package:quill/features/auth/domain/entities/auth_entity.dart';
 import 'package:quill/features/auth/domain/repositories/auth_repository.dart';
-import 'package:quill/features/home/domain/usecases/base_usecase.dart';
+import 'package:quill/core/usecases/base_usecase.dart';
 
-class LoginUsecase implements BaseUseCase<AuthEntity, LoginParams> {
+class LoginUsecase extends BaseUsecase<AuthEntity, LoginParams> {
   final AuthRepository authRepository;
   LoginUsecase({required this.authRepository});
 
