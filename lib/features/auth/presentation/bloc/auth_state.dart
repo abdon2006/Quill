@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:quill/features/auth/domain/entities/auth_entity.dart';
+import 'package:quill/features/auth/domain/entities/user_entity.dart';
 
 abstract class AuthState extends Equatable {}
 
@@ -35,4 +36,12 @@ class LoginSuccess extends AuthState {
   LoginSuccess({required this.authEntity});
   @override
   List<Object?> get props => [authEntity];
+}
+
+class FetchUserDataSuccess extends AuthState {
+  final UserEntity userEntity;
+
+  FetchUserDataSuccess({required this.userEntity});
+  @override
+  List<Object?> get props => [userEntity];
 }

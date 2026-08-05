@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quill/core/storage/app_storage.dart';
+import 'package:quill/features/auth/domain/usecases/fetch_user_data_usecase.dart';
 import 'package:quill/features/auth/domain/usecases/login_usecase.dart';
 import 'package:quill/features/auth/domain/usecases/signup_usecase.dart';
 import 'package:quill/features/auth/presentation/bloc/auth_event.dart';
@@ -8,11 +9,13 @@ import 'package:quill/features/auth/presentation/bloc/auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final SignupUsecase signupUsecase;
   final LoginUsecase loginUsecase;
+  final FetchUserDataUsecase fetchUserDataUsecase;
   final AppStorage appStorage;
   AuthBloc({
     required this.loginUsecase,
     required this.signupUsecase,
     required this.appStorage,
+    required this.fetchUserDataUsecase,
   }) : super(AuthInitial()) {
     on<SignUpEvent>((event, emit) async {
       emit(AuthLoading());
@@ -38,6 +41,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           await appStorage.saveAccessToken(success.accessToken);
           await appStorage.saveRefreshToken(success.refreshToken);
           emit(LoginSuccess(authEntity: success));
+        },
+      );
+    });
+
+    on<FetchUserDataEvent>((event, emit) async {
+      emit(AuthLoading());
+      final response = await fetchUserDataUsecase(event.params);
+      await response.fold(
+        (failure) async => emit(AuthError(message: failure.message)),
+        (success) async {
+          emit(FetchUserDataSuccess(userEntity: success));
         },
       );
     });

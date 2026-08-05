@@ -8,6 +8,7 @@ import 'package:quill/features/auth/data/datasource/auth_remote_datasource.dart'
 import 'package:quill/features/auth/data/datasource/auth_remote_datasource_impl.dart';
 import 'package:quill/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:quill/features/auth/domain/repositories/auth_repository.dart';
+import 'package:quill/features/auth/domain/usecases/fetch_user_data_usecase.dart';
 import 'package:quill/features/auth/domain/usecases/login_usecase.dart';
 import 'package:quill/features/auth/domain/usecases/signup_usecase.dart';
 import 'package:quill/features/auth/presentation/bloc/auth_bloc.dart';
@@ -82,7 +83,15 @@ Future<void> setupDI() async {
   sl.registerLazySingleton<LoginUsecase>(
     () => LoginUsecase(authRepository: sl()),
   );
+  sl.registerLazySingleton<FetchUserDataUsecase>(
+    () => FetchUserDataUsecase(authRepository: sl()),
+  );
   sl.registerFactory<AuthBloc>(
-    () => AuthBloc(loginUsecase: sl(), signupUsecase: sl(), appStorage: sl()),
+    () => AuthBloc(
+      loginUsecase: sl(),
+      signupUsecase: sl(),
+      appStorage: sl(),
+      fetchUserDataUsecase: sl(),
+    ),
   );
 }

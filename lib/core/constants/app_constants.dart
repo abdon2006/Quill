@@ -5,4 +5,5 @@ abstract class AppConstants {
   static const String id = 'id';
   static const String accessToken = "accessToken";
   static const String refreshToken = 'refreshToken';
+  static const String seenOnboarding = 'seen_onboarding';
 }
