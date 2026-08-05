@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quill/core/di/injection_container.dart';
 import 'package:quill/core/router/main_shell.dart';
+import 'package:quill/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:quill/features/auth/presentation/screens/auth_choose_screen.dart';
 import 'package:quill/features/auth/presentation/screens/login/login_screen.dart';
 import 'package:quill/features/auth/presentation/screens/signup/signup_screen.dart';
@@ -15,7 +16,7 @@ import 'package:quill/features/onboarding/presentation/pages/onboarding_page.dar
 part 'app_routes.dart';
 
 final appRouter = GoRouter(
-  initialLocation: AppRoutes.onboarding,
+  initialLocation: AppRoutes.choose,
   debugLogDiagnostics: true,
 
   routes: [
@@ -77,7 +78,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.signup,
       name: AppRoutes.signup,
-      builder: (context, state) => SignupScreen(),
+      builder: (context, state) => BlocProvider(
+        create: (context) => sl<AuthBloc>(),
+        child: SignupScreen(),
+      ),
     ),
 
     /// login
@@ -91,7 +95,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.login,
       name: AppRoutes.login,
-      builder: (context, state) => LoginScreen(),
+      builder: (context, state) => BlocProvider(
+        create: (context) => sl<AuthBloc>(),
+        child: LoginScreen(),
+      ),
     ),
   ],
 

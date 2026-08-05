@@ -1,12 +1,18 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:quill/core/router/app_router.dart';
 import 'package:quill/core/theme/app_icons.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/widgets/app_button.dart';
 import 'package:quill/core/widgets/premium_background.dart';
+import 'package:quill/features/auth/domain/auth_params.dart';
+import 'package:quill/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:quill/features/auth/presentation/bloc/auth_event.dart';
+import 'package:quill/features/auth/presentation/bloc/auth_state.dart';
 import 'package:quill/features/auth/presentation/screens/signup/email_screen.dart';
 import 'package:quill/features/auth/presentation/screens/signup/name_screen.dart';
 import 'package:quill/features/auth/presentation/screens/signup/pass_screen.dart';
@@ -140,25 +146,53 @@ class _SignupScreenState extends State<SignupScreen> {
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.xxxl),
-                      child: AppButton.primary(
-                        isEnabled: isEnabled,
-                        text: currentIndex == screens.length - 1
-                            ? "Begin Your Story"
-                            : "Turn the Page",
-                        onPressed: () {
-                          if (currentIndex < screens.length - 1) {
-                            setState(() {
-                              currentIndex++;
-                            });
-                          } else {
-                            print("Name: ${name.text}");
-                            print("Email: ${email.text}");
-                            print("Pass: ${pass.text}");
-                          }
-                        },
-                      ),
+                    BlocConsumer<AuthBloc, AuthState>(
+                      builder: (context, state) {
+                        bool isLoading = state is AuthLoading;
+                        if (state is AuthError) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(state.message)),
+                          );
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                            bottom: AppSpacing.xxxl,
+                          ),
+                          child: AppButton.primary(
+                            isLoading: isLoading,
+                            isEnabled: isEnabled,
+                            text: currentIndex == screens.length - 1
+                                ? "Begin Your Story"
+                                : "Turn the Page",
+                            onPressed: () {
+                              if (currentIndex < screens.length - 1) {
+                                setState(() {
+                                  currentIndex++;
+                                });
+                              } else {
+                                context.read<AuthBloc>().add(
+                                  SignUpEvent(
+                                    params: SignupParams(
+                                      name: name.text,
+                                      email: email.text,
+                                      password: pass.text,
+                                      passwordConfirm: passConfirm.text,
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        );
+                      },
+                      listener: (context, state) {
+                        if (state is SignupSuccess) context.go(AppRoutes.home);
+                        if (state is AuthError) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(state.message)),
+                          );
+                        }
+                      },
                     ),
                   ],
                 ),

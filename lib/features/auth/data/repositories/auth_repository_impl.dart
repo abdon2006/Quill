@@ -14,6 +14,8 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final response = await authRemoteDatasource.login(params);
       return Right(response);
+    } on Failure catch (f) {
+      return Left(f);
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));
     }
@@ -24,6 +26,8 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final response = await authRemoteDatasource.signup(params);
       return Right(response);
+    } on Failure catch (f) {
+      return Left(f);
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));
     }

@@ -61,10 +61,12 @@ class NetworkService {
         return const TimeoutFailure(message: 'Server not responding');
       case DioExceptionType.badResponse:
         final statusCode = error.response?.statusCode;
+        final message =
+            error.response?.data?['message'] ?? "SomeThing Went Wrong";
         if (statusCode == 401) {
           return const UnauthorizedFailure(message: 'Unauthorized');
         }
-        return ServerFailure(message: 'Server error', statusCode: statusCode);
+        return ServerFailure(message: message, statusCode: statusCode);
       default:
         return NetworkFailure(message: 'Network error');
     }
