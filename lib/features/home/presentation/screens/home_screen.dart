@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/widgets/premium_background.dart';
+import 'package:quill/features/auth/domain/entities/user_entity.dart';
 import 'package:quill/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:quill/features/auth/presentation/bloc/auth_state.dart';
 import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
@@ -12,10 +13,17 @@ import 'package:quill/features/home/presentation/widgets/book_grid_card.dart';
 import 'package:quill/features/home/presentation/widgets/continue_reading.dart';
 import 'package:quill/features/home/presentation/widgets/home_header.dart';
 import 'package:quill/features/home/presentation/widgets/section_header.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
-
+  final dummyUser = UserEntity(
+    id: '',
+    name: '',
+    email: '',
+    currentStreak: 0,
+    longestStreak: 0,
+  );
   // ضيف اللستة دي جوه الـ StatelessWidget قبل الـ build أو خليها في ملف منفصل للـ Mock Data
   final List<Map<String, String>> mockBooks = [
     {
@@ -62,6 +70,17 @@ class HomeScreen extends StatelessWidget {
             children: [
               BlocBuilder<AuthBloc, AuthState>(
                 builder: (context, state) {
+                  if (state is AuthLoading) {
+                    return Skeletonizer(
+                      enabled: true,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.xl,
+                        ),
+                        child: HomeHeader(user: dummyUser),
+                      ),
+                    );
+                  }
                   if (state is FetchUserDataSuccess) {
                     return Padding(
                       padding: const EdgeInsets.symmetric(
@@ -70,7 +89,13 @@ class HomeScreen extends StatelessWidget {
                       child: HomeHeader(user: state.userEntity),
                     );
                   }
-                  return Text('error');
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.xl,
+                    ),
+                    child: HomeHeader(user: dummyUser),
+                  );
                 },
               ),
               SizedBox(height: AppSpacing.lg),
