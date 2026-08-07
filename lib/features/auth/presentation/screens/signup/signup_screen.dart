@@ -150,8 +150,8 @@ class _SignupScreenState extends State<SignupScreen> {
                       builder: (context, state) {
                         bool isLoading = state is AuthLoading;
                         if (state is AuthError) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(state.message)),
+                          print(
+                            '====================== ${state.message} =======================',
                           );
                         }
                         return Padding(

@@ -68,6 +68,7 @@ class HomeScreen extends StatelessWidget {
           child: ListView(
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
             children: [
+              /// Header
               BlocBuilder<AuthBloc, AuthState>(
                 builder: (context, state) {
                   if (state is AuthLoading) {
@@ -98,12 +99,16 @@ class HomeScreen extends StatelessWidget {
                   );
                 },
               ),
+
               SizedBox(height: AppSpacing.lg),
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
                 child: ContinueReading(ontap: () {}),
               ),
+
               SizedBox(height: AppSpacing.lg),
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
                 child: SectionHeader(
@@ -111,10 +116,37 @@ class HomeScreen extends StatelessWidget {
                   viewAllOnTap: () {},
                 ),
               ),
+
               SizedBox(height: AppSpacing.lg),
+
               BlocBuilder<HomeBloc, HomeState>(
                 builder: (context, state) {
+                  final books = Iterable.generate(3);
+                  if (state is HomeLoading) {
+                    return Skeletonizer(
+                      enabled: true,
+                      child: SizedBox(
+                        height: 230.h,
+                        child: ListView.builder(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.xl,
+                          ),
+                          scrollDirection: Axis.horizontal,
+                          itemCount: books.length,
+                          itemBuilder: (context, i) {
+                            return BookGridCard(
+                              onTap: () => context.push('/bookDeatails'),
+                              bookCover: '',
+                              bookTitle: '',
+                              bookAuthor: '',
+                            );
+                          },
+                        ),
+                      ),
+                    );
+                  }
                   if (state is FetchBooksSuccess) {
+                    final books = state.books;
                     return SizedBox(
                       height: 230.h,
                       child: ListView.builder(
@@ -122,23 +154,22 @@ class HomeScreen extends StatelessWidget {
                           horizontal: AppSpacing.xl,
                         ),
                         scrollDirection: Axis.horizontal,
-                        itemCount: mockBooks.length,
+                        itemCount: books.length,
                         itemBuilder: (context, i) {
-                          final item = mockBooks[i];
+                          final item = books[i];
                           return BookGridCard(
                             onTap: () => context.push('/bookDeatails'),
-                            bookCover: item['cover']!,
-                            bookTitle: item['title']!,
-                            bookAuthor: item['author']!,
+                            bookCover: item.coverImage,
+                            bookTitle: item.title,
+                            bookAuthor: item.author,
                           );
                         },
                       ),
                     );
                   }
-                  if (state is HomeLoading) {
-                    return CircularProgressIndicator();
-                  }
-                  return Text("Error");
+
+                  /// هن انا عارف طبعا ده مش بيست براكتيس بس ممكن نفكر سوا في الموضوع ه بس قيملي بس الكود
+                  return Text('');
                 },
               ),
             ],

@@ -12,12 +12,8 @@ class BookEntity extends Equatable {
   final int ratingCount;
   final bool isPublic;
   final List<String> categories;
-
-  /// دي انا جت في دماغي اني اعملها بس للاسف كان بعد ما الباك اند خلص فمش مشكلة هتبقي تتعدل في الباك اند فهنسيبها كده لحد ما تتتضاف
-  // final String aboutThisBook;
-  // final String topics;
-  // final String authorIntro;
-
+  // final String aboutBook;
+  // final String forWho;
   const BookEntity({
     required this.id,
     required this.title,
@@ -30,9 +26,8 @@ class BookEntity extends Equatable {
     required this.ratingCount,
     required this.isPublic,
     required this.categories,
-    // required this.aboutThisBook,
-    // required this.topics,
-    // required this.authorIntro,
+    // required this.aboutBook,
+    // required this.forWho,
   });
   @override
   List<Object?> get props => [
@@ -46,5 +41,7 @@ class BookEntity extends Equatable {
     coverImage,
     language,
     totalChunks,
+    // aboutBook,
+    // forWho,
   ];
 }

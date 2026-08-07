@@ -12,7 +12,7 @@ import 'package:quill/core/widgets/premium_background.dart';
 import 'package:quill/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:quill/features/auth/presentation/bloc/auth_state.dart';
 import 'package:quill/features/auth/presentation/screens/login/login_email_screen.dart';
-import 'package:quill/features/auth/presentation/screens/login/login_pass_Screen.dart';
+import 'package:quill/features/auth/presentation/screens/login/login_pass_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
