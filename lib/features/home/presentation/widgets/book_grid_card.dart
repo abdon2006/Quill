@@ -5,6 +5,7 @@ import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_shadows.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class BookGridCard extends StatelessWidget {
   final String bookCover;
@@ -32,15 +33,17 @@ class BookGridCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: AppRadius.xl,
-                    boxShadow: AppShadows.bookCover,
-                  ),
-                  child: ClipRRect(
-                    borderRadius: AppRadius.xl,
-                    child: Image.network(bookCover, fit: BoxFit.cover),
+                child: Skeleton.leaf(
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: AppRadius.xl,
+                      boxShadow: AppShadows.bookCover,
+                    ),
+                    child: ClipRRect(
+                      borderRadius: AppRadius.xl,
+                      child: Image.network(bookCover, fit: BoxFit.cover),
+                    ),
                   ),
                 ),
               ),

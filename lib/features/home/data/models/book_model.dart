@@ -13,6 +13,8 @@ class BookModel extends BookEntity {
     required super.ratingCount,
     required super.isPublic,
     required super.categories,
+    // required super.aboutBook,
+    // required super.forWho,
   });
 
   factory BookModel.fromJson(Map<String, dynamic> json) {
@@ -28,6 +30,8 @@ class BookModel extends BookEntity {
       ratingCount: json['ratingsCount'] as int,
       isPublic: json['isPublic'] as bool,
       categories: List<String>.from(json['categories'] ?? []),
+      // aboutBook: json['preif'],
+      // forWho: json['forWho'],
     );
   }
 
@@ -44,6 +48,8 @@ class BookModel extends BookEntity {
       'ratingsCount': ratingCount,
       'isPublic': isPublic,
       'categories': categories,
+      // 'preif': aboutBook,
+      // 'forWho': forWho,
     };
   }
 }

@@ -119,11 +119,34 @@ final appRouter = GoRouter(
     final prefs = await SharedPreferences.getInstance();
     final String? token = await storage.readAccessToken();
     final bool? seenOnboarding = prefs.getBool(AppConstants.seenOnboarding);
+
+    final currentLocation = state.uri.toString();
+    final isInAuthFlow =
+        currentLocation == AppRoutes.choose ||
+        currentLocation == AppRoutes.signup ||
+        currentLocation == AppRoutes.login;
+
+    final List<String> authRoutes = [
+      AppRoutes.choose,
+      AppRoutes.signup,
+      AppRoutes.login,
+      AppRoutes.onboarding,
+    ];
+
+    // final isSignedIn = currentLocation == AppRoutes.
     if (seenOnboarding == true) {
       if (token != null) {
-        return AppRoutes.home;
+        if (authRoutes.contains(currentLocation)) {
+          return AppRoutes.home;
+        } else {
+          return null;
+        }
       } else {
-        return AppRoutes.choose;
+        if (authRoutes.contains(currentLocation)) {
+          return null;
+        } else {
+          return AppRoutes.choose;
+        }
       }
     } else {
       return AppRoutes.onboarding;

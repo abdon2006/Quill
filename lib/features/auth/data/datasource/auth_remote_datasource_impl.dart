@@ -28,7 +28,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       "email": params.email,
       "password": params.password,
     });
-    return response.data;
+    return AuthModel.fromJson(response.data);
   }
 
   @override
