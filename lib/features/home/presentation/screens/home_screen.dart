@@ -8,6 +8,7 @@ import 'package:quill/features/auth/domain/entities/user_entity.dart';
 import 'package:quill/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:quill/features/auth/presentation/bloc/auth_state.dart';
 import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
+import 'package:quill/features/home/presentation/bloc/home_event.dart';
 import 'package:quill/features/home/presentation/bloc/home_state.dart';
 import 'package:quill/features/home/presentation/widgets/book_grid_card.dart';
 import 'package:quill/features/home/presentation/widgets/continue_reading.dart';
@@ -59,73 +60,108 @@ class HomeScreen extends StatelessWidget {
     },
   ];
 
+  Future<void> _onRefresh(BuildContext context) async {
+    context.read<HomeBloc>().add(FetchHomeBooksEvent());
+    await context.read<HomeBloc>().stream.firstWhere(
+      (state) => state is FetchBooksSuccess || state is HomeError,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return PremiumAuroraBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
-            children: [
-              /// Header
-              BlocBuilder<AuthBloc, AuthState>(
-                builder: (context, state) {
-                  if (state is AuthLoading) {
-                    return Skeletonizer(
-                      enabled: true,
-                      child: Padding(
+          child: RefreshIndicator(
+            onRefresh: () => _onRefresh(context),
+            child: ListView(
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
+              children: [
+                /// Header
+                BlocBuilder<AuthBloc, AuthState>(
+                  builder: (context, state) {
+                    if (state is AuthLoading) {
+                      return Skeletonizer(
+                        enabled: true,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.xl,
+                          ),
+                          child: HomeHeader(user: dummyUser),
+                        ),
+                      );
+                    }
+                    if (state is FetchUserDataSuccess) {
+                      return Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: AppSpacing.xl,
                         ),
-                        child: HomeHeader(user: dummyUser),
-                      ),
-                    );
-                  }
-                  if (state is FetchUserDataSuccess) {
+                        child: HomeHeader(user: state.userEntity),
+                      );
+                    }
+
                     return Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: AppSpacing.xl,
                       ),
-                      child: HomeHeader(user: state.userEntity),
+                      child: HomeHeader(user: dummyUser),
                     );
-                  }
-
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.xl,
-                    ),
-                    child: HomeHeader(user: dummyUser),
-                  );
-                },
-              ),
-
-              SizedBox(height: AppSpacing.lg),
-
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-                child: ContinueReading(ontap: () {}),
-              ),
-
-              SizedBox(height: AppSpacing.lg),
-
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-                child: SectionHeader(
-                  title: 'Recently Added',
-                  viewAllOnTap: () {},
+                  },
                 ),
-              ),
 
-              SizedBox(height: AppSpacing.lg),
+                SizedBox(height: AppSpacing.lg),
 
-              BlocBuilder<HomeBloc, HomeState>(
-                builder: (context, state) {
-                  final books = Iterable.generate(3);
-                  if (state is HomeLoading) {
-                    return Skeletonizer(
-                      enabled: true,
-                      child: SizedBox(
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xl,
+                  ),
+                  child: ContinueReading(ontap: () {}),
+                ),
+
+                SizedBox(height: AppSpacing.lg),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xl,
+                  ),
+                  child: SectionHeader(
+                    title: 'Recently Added',
+                    viewAllOnTap: () {},
+                  ),
+                ),
+
+                SizedBox(height: AppSpacing.lg),
+
+                BlocBuilder<HomeBloc, HomeState>(
+                  builder: (context, state) {
+                    final books = Iterable.generate(3);
+                    if (state is HomeLoading) {
+                      return Skeletonizer(
+                        enabled: true,
+                        child: SizedBox(
+                          height: 230.h,
+                          child: ListView.builder(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.xl,
+                            ),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: books.length,
+                            itemBuilder: (context, i) {
+                              return BookGridCard(
+                                onTap: () => context.push('/bookDeatails'),
+                                bookCover: '',
+                                bookTitle: '',
+                                bookAuthor: '',
+                              );
+                            },
+                          ),
+                        ),
+                      );
+                    }
+                    if (state is FetchBooksSuccess) {
+                      final books = state.books;
+                      return SizedBox(
                         height: 230.h,
                         child: ListView.builder(
                           padding: const EdgeInsets.symmetric(
@@ -134,45 +170,24 @@ class HomeScreen extends StatelessWidget {
                           scrollDirection: Axis.horizontal,
                           itemCount: books.length,
                           itemBuilder: (context, i) {
+                            final item = books[i];
                             return BookGridCard(
                               onTap: () => context.push('/bookDeatails'),
-                              bookCover: '',
-                              bookTitle: '',
-                              bookAuthor: '',
+                              bookCover: item.coverImage,
+                              bookTitle: item.title,
+                              bookAuthor: item.author,
                             );
                           },
                         ),
-                      ),
-                    );
-                  }
-                  if (state is FetchBooksSuccess) {
-                    final books = state.books;
-                    return SizedBox(
-                      height: 230.h,
-                      child: ListView.builder(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.xl,
-                        ),
-                        scrollDirection: Axis.horizontal,
-                        itemCount: books.length,
-                        itemBuilder: (context, i) {
-                          final item = books[i];
-                          return BookGridCard(
-                            onTap: () => context.push('/bookDeatails'),
-                            bookCover: item.coverImage,
-                            bookTitle: item.title,
-                            bookAuthor: item.author,
-                          );
-                        },
-                      ),
-                    );
-                  }
+                      );
+                    }
 
-                  /// هن انا عارف طبعا ده مش بيست براكتيس بس ممكن نفكر سوا في الموضوع ه بس قيملي بس الكود
-                  return Text('');
-                },
-              ),
-            ],
+                    /// هن انا عارف طبعا ده مش بيست براكتيس بس ممكن نفكر سوا في الموضوع ه بس قيملي بس الكود
+                    return Text('');
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

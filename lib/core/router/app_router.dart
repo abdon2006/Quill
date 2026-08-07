@@ -121,11 +121,6 @@ final appRouter = GoRouter(
     final bool? seenOnboarding = prefs.getBool(AppConstants.seenOnboarding);
 
     final currentLocation = state.uri.toString();
-    final isInAuthFlow =
-        currentLocation == AppRoutes.choose ||
-        currentLocation == AppRoutes.signup ||
-        currentLocation == AppRoutes.login;
-
     final List<String> authRoutes = [
       AppRoutes.choose,
       AppRoutes.signup,
@@ -133,7 +128,6 @@ final appRouter = GoRouter(
       AppRoutes.onboarding,
     ];
 
-    // final isSignedIn = currentLocation == AppRoutes.
     if (seenOnboarding == true) {
       if (token != null) {
         if (authRoutes.contains(currentLocation)) {
