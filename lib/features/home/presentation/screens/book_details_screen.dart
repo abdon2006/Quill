@@ -8,6 +8,7 @@ import 'package:quill/core/theme/app_colors.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/widgets/app_button.dart';
 import 'package:quill/core/widgets/premium_background.dart';
+import 'package:quill/features/home/domain/entities/book_entity.dart';
 import 'package:quill/features/home/presentation/widgets/book_cover_header.dart';
 import 'package:quill/features/home/presentation/widgets/book_grid_card.dart';
 import 'package:quill/features/home/presentation/widgets/book_info_section.dart';
@@ -15,7 +16,8 @@ import 'package:quill/features/home/presentation/widgets/book_stats_row.dart';
 import 'package:quill/features/home/presentation/widgets/section_header.dart';
 
 class BookDetailsScreen extends StatefulWidget {
-  const BookDetailsScreen({super.key});
+  final BookEntity book;
+  const BookDetailsScreen({super.key, required this.book});
 
   @override
   State<BookDetailsScreen> createState() => _BookDetailsScreenState();
@@ -29,21 +31,6 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     super.dispose();
     _scrollController.dispose();
   }
-
-  // 1. Topic
-  final String bookTopic = 'Mythology, Epic Poetry, Adventure, Ancient Greece';
-
-  // 2. About this book (الوصف الأساسي)
-  final String bookSynopsis =
-      'Fagles\' translation captures the beautiful poetic rhythm and physical energy of Homer\'s legendary epic. The story follows Odysseus\'s long journey home after the Trojan War, facing fierce monsters and angry gods along the way.';
-
-  // 3. For who (لمين الكتاب ده)
-  final String bookForWho =
-      'If you are fascinated by ancient myths, heroic quests, and the foundational stories of Western literature, this epic journey will keep you captivated from start to finish.';
-
-  // 4. Author intro (مقدمة عن الكاتب)
-  final String authorIntro =
-      'Homer is the presumed author of the Iliad and the Odyssey, two epic poems that are the foundational works of ancient Greek literature. Though little is known about his actual life, his influence on Western storytelling is unparalleled.';
 
   @override
   Widget build(BuildContext context) {
@@ -71,16 +58,19 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                 return Opacity(
                   opacity: opacity,
                   child: BookCoverHeader(
-                    bookCover:
-                        'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=400&auto=format&fit=crop',
-                    bookTitle: 'The Silent Patient',
+                    bookCover: widget.book.coverImage,
+                    bookTitle: widget.book.title,
                   ),
                 );
               },
             ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
-              child: BookStatsRow(pages: 320, lang: "English", rating: 4.6),
+              child: BookStatsRow(
+                pages: widget.book.totalChunks,
+                lang: widget.book.language,
+                rating: widget.book.ratingAverage,
+              ),
             ),
             const SizedBox(height: AppSpacing.xl),
 
@@ -89,7 +79,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
               padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg),
               child: BookInfoSection(
                 label: 'About this book',
-                content: bookSynopsis, // الداتا اللي جهزناها قبل كده
+                content: widget.book.aboutBook, // الداتا اللي جهزناها قبل كده
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
@@ -97,25 +87,22 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
             // 2. التصنيفات
             Padding(
               padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-              child: BookInfoSection(label: 'Topic', content: bookTopic),
+              child: BookInfoSection(
+                label: 'Topic',
+                content: widget.book.categories.join(' '),
+              ),
             ),
             const SizedBox(height: AppSpacing.lg),
 
             // 3. الفئة المستهدفة
             Padding(
               padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-              child: BookInfoSection(label: 'For who', content: bookForWho),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-
-            // 4. مقدمة الكاتب
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg),
               child: BookInfoSection(
-                label: 'Author intro',
-                content: authorIntro,
+                label: 'For who',
+                content: widget.book.forWho,
               ),
             ),
+            const SizedBox(height: AppSpacing.lg),
 
             const SizedBox(height: AppSpacing.xxl),
             Padding(

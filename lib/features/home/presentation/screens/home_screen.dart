@@ -150,7 +150,7 @@ class HomeScreen extends StatelessWidget {
                             itemBuilder: (context, i) {
                               return BookGridCard(
                                 onTap: () => context.push('/bookDeatails'),
-                                bookCover: '',
+                                bookCover: mockBooks[0]['cover']!,
                                 bookTitle: '',
                                 bookAuthor: '',
                               );
@@ -172,7 +172,10 @@ class HomeScreen extends StatelessWidget {
                           itemBuilder: (context, i) {
                             final item = books[i];
                             return BookGridCard(
-                              onTap: () => context.push('/bookDeatails'),
+                              onTap: () => context.push(
+                                '/bookDeatails',
+                                extra: state.books[i],
+                              ),
                               bookCover: item.coverImage,
                               bookTitle: item.title,
                               bookAuthor: item.author,

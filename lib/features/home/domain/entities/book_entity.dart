@@ -12,8 +12,8 @@ class BookEntity extends Equatable {
   final int ratingCount;
   final bool isPublic;
   final List<String> categories;
-  // final String aboutBook;
-  // final String forWho;
+  final String aboutBook;
+  final String forWho;
   const BookEntity({
     required this.id,
     required this.title,
@@ -26,8 +26,8 @@ class BookEntity extends Equatable {
     required this.ratingCount,
     required this.isPublic,
     required this.categories,
-    // required this.aboutBook,
-    // required this.forWho,
+    required this.aboutBook,
+    required this.forWho,
   });
   @override
   List<Object?> get props => [
@@ -41,7 +41,7 @@ class BookEntity extends Equatable {
     coverImage,
     language,
     totalChunks,
-    // aboutBook,
-    // forWho,
+    aboutBook,
+    forWho,
   ];
 }
