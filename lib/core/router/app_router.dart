@@ -11,6 +11,7 @@ import 'package:quill/features/auth/presentation/bloc/auth_event.dart';
 import 'package:quill/features/auth/presentation/screens/auth_choose_screen.dart';
 import 'package:quill/features/auth/presentation/screens/login/login_screen.dart';
 import 'package:quill/features/auth/presentation/screens/signup/signup_screen.dart';
+import 'package:quill/features/home/domain/entities/book_entity.dart';
 import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
 import 'package:quill/features/home/presentation/bloc/home_event.dart';
 import 'package:quill/features/home/presentation/screens/book_details_screen.dart';
@@ -76,7 +77,8 @@ final appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.bookDeatails,
       name: AppRoutes.bookDeatails,
-      builder: (context, state) => BookDetailsScreen(),
+      builder: (context, state) =>
+          BookDetailsScreen(book: state.extra as BookEntity),
     ),
 
     /// OnBoarding
@@ -96,14 +98,14 @@ final appRouter = GoRouter(
       ),
     ),
 
-    /// login
+    /// choose
     GoRoute(
       path: AppRoutes.choose,
       name: AppRoutes.choose,
       builder: (context, state) => AuthChooseScreen(),
     ),
 
-    /// Signup
+    /// login
     GoRoute(
       path: AppRoutes.login,
       name: AppRoutes.login,
