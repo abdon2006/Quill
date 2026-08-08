@@ -15,10 +15,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final isCached = await bookRepository.isCacheValid();
       if (!isCached) emit(HomeLoading());
       final response = await fetchBooksUsecase(NoParams());
-      response.fold(
-        (failure) => emit(HomeError(message: failure.message)),
-        (books) => emit(FetchBooksSuccess(books: books)),
-      );
+      response.fold((failure) {
+        if (!isCached) emit(HomeError(message: failure.message));
+      }, (books) => emit(FetchBooksSuccess(books: books)));
     });
   }
 }

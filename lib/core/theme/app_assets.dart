@@ -7,7 +7,9 @@ abstract final class AppAssets {
 
   // Logos
   static const logo = '${images}logo.png';
-  // static const logoDark = '${images}logo_dark.png';
+  static const error = '${images}error.svg';
+  static const error404 = '${images}404.svg';
+  static const noData = '${images}No data.svg';
 
   // Placeholders
   // static const bookPlaceholder = '${images}book_placeholder.png';

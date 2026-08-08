@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:quill/core/theme/app_assets.dart';
 import 'package:quill/core/theme/app_spacing.dart';
+import 'package:quill/core/widgets/app_button.dart';
 import 'package:quill/core/widgets/premium_background.dart';
+import 'package:quill/core/widgets/show_app_snack_bar.dart';
 import 'package:quill/features/auth/domain/entities/user_entity.dart';
 import 'package:quill/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:quill/features/auth/presentation/bloc/auth_state.dart';
@@ -79,7 +83,7 @@ class HomeScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
               children: [
                 /// Header
-                BlocBuilder<AuthBloc, AuthState>(
+                BlocConsumer<AuthBloc, AuthState>(
                   builder: (context, state) {
                     if (state is AuthLoading) {
                       return Skeletonizer(
@@ -108,6 +112,7 @@ class HomeScreen extends StatelessWidget {
                       child: HomeHeader(user: dummyUser),
                     );
                   },
+                  listener: (BuildContext context, AuthState state) {},
                 ),
 
                 SizedBox(height: AppSpacing.lg),
@@ -133,7 +138,7 @@ class HomeScreen extends StatelessWidget {
 
                 SizedBox(height: AppSpacing.lg),
 
-                BlocBuilder<HomeBloc, HomeState>(
+                BlocConsumer<HomeBloc, HomeState>(
                   builder: (context, state) {
                     final books = Iterable.generate(3);
                     if (state is HomeLoading) {
@@ -184,9 +189,19 @@ class HomeScreen extends StatelessWidget {
                         ),
                       );
                     }
-
-                    /// هن انا عارف طبعا ده مش بيست براكتيس بس ممكن نفكر سوا في الموضوع ه بس قيملي بس الكود
+                    if (state is HomeError) {
+                      return SvgPicture.asset(AppAssets.noData);
+                    }
                     return Text('');
+                  },
+                  listener: (BuildContext context, HomeState state) {
+                    if (state is HomeError) {
+                      showSnackBar(
+                        context,
+                        message: 'Couldn\'t Load Books',
+                        messageDisc: 'Check Your Connection',
+                      );
+                    }
                   },
                 ),
               ],
