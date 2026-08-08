@@ -33,26 +33,38 @@ class BookGridCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: Skeleton.leaf(
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: AppRadius.xl,
-                      boxShadow: AppShadows.bookCover,
-                    ),
-                    child: ClipRRect(
-                      borderRadius: AppRadius.xl,
-                      child: Image.network(bookCover, fit: BoxFit.cover),
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: AppRadius.xl,
+                    boxShadow: AppShadows.bookCover,
+                  ),
+                  child: ClipRRect(
+                    borderRadius: AppRadius.xl,
+                    child: Image.network(
+                      bookCover,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          Skeleton.leaf(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: AppRadius.xl,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
                     ),
                   ),
                 ),
               ),
               const SizedBox(height: AppSpacing.sm),
-              Text(
-                bookTitle,
-                style: AppTextStyles.heading2(context),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+              Skeleton.leaf(
+                child: Text(
+                  bookTitle,
+                  style: AppTextStyles.heading2(context),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
               Text(
                 bookAuthor,
