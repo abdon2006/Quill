@@ -6,3 +6,7 @@ class FetchHomeBooksEvent extends HomeEvent {
   @override
   List<Object?> get props => [];
 }
+class RefreshBookEvent extends HomeEvent {
+  @override
+  List<Object?> get props => [];
+}

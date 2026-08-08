@@ -19,5 +19,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         if (!isCached) emit(HomeError(message: failure.message));
       }, (books) => emit(FetchBooksSuccess(books: books)));
     });
+
+    on<RefreshBookEvent>((event, emit) async {
+      emit(HomeLoading());
+      final response = await bookRepository.refreshBooks();
+      response.fold(
+        (failure) => emit(HomeError(message: failure.message)),
+        (books) => emit(FetchBooksSuccess(books: books)),
+      );
+    });
   }
 }
