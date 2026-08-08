@@ -5,7 +5,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quill/core/theme/app_assets.dart';
 import 'package:quill/core/theme/app_spacing.dart';
-import 'package:quill/core/widgets/app_button.dart';
 import 'package:quill/core/widgets/premium_background.dart';
 import 'package:quill/core/widgets/show_app_snack_bar.dart';
 import 'package:quill/features/auth/domain/entities/user_entity.dart';
@@ -65,7 +64,7 @@ class HomeScreen extends StatelessWidget {
   ];
 
   Future<void> _onRefresh(BuildContext context) async {
-    context.read<HomeBloc>().add(FetchHomeBooksEvent());
+    context.read<HomeBloc>().add(RefreshBookEvent());
     await context.read<HomeBloc>().stream.firstWhere(
       (state) => state is FetchBooksSuccess || state is HomeError,
     );

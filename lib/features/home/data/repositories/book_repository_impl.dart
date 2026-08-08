@@ -38,6 +38,19 @@ class BookRepositoryImpl implements BookRepository {
   Future<bool> isCacheValid() async {
     return await bookLocalDataSource.isCacheValid();
   }
+
+  @override
+  Future<Either<Failure, List<BookEntity>>> refreshBooks() async {
+    try {
+      print('Refreshing the server ..........');
+      final response = await remoteDatasource.fetchBooks();
+      final cachedBooks = BookMapper.mapBooksToBookCache(response);
+      await bookLocalDataSource.cacheBook(cachedBooks);
+      return Right(response);
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
 }
 
 class BookMapper {
