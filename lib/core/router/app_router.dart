@@ -31,16 +31,8 @@ final appRouter = GoRouter(
         GoRoute(
           path: AppRoutes.home,
           name: AppRoutes.home,
-          builder: (context, state) => MultiBlocProvider(
-            providers: [
-              BlocProvider(
-                create: (context) => sl<HomeBloc>()..add(FetchHomeBooksEvent()),
-              ),
-              BlocProvider(
-                create: (context) =>
-                    sl<AuthBloc>()..add(FetchUserDataEvent(params: NoParams())),
-              ),
-            ],
+          builder: (context, state) => BlocProvider(
+            create: (context) => sl<HomeBloc>()..add(FetchHomeBooksEvent()),
             child: HomeScreen(),
           ),
         ),
@@ -70,7 +62,11 @@ final appRouter = GoRouter(
         ),
       ],
 
-      builder: (context, state, child) => MainShell(state: state, child: child),
+      builder: (context, state, child) => BlocProvider(
+        create: (context) =>
+            sl<AuthBloc>()..add(FetchUserDataEvent(params: NoParams())),
+        child: MainShell(state: state, child: child),
+      ),
     ),
 
     /// Book Details
