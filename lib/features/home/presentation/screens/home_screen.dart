@@ -29,40 +29,6 @@ class HomeScreen extends StatelessWidget {
     longestStreak: 0,
   );
   // ضيف اللستة دي جوه الـ StatelessWidget قبل الـ build أو خليها في ملف منفصل للـ Mock Data
-  final List<Map<String, String>> mockBooks = [
-    {
-      'title': 'Dune',
-      'author': 'Frank Herbert',
-      'cover':
-          'https://images.unsplash.com/photo-1541961017774-22349e4a1262?q=80&w=400&auto=format&fit=crop',
-    },
-    {
-      'title': 'The Silent Patient',
-      'author': 'Alex Michaelides',
-      // اللينك الجديد الشغال هنا 👇
-      'cover':
-          'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=400&auto=format&fit=crop',
-    },
-    {
-      'title': 'Atomic Habits',
-      'author': 'James Clear',
-      'cover':
-          'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=400&auto=format&fit=crop',
-    },
-    {
-      'title': 'Solaris',
-      'author': 'Stanislaw Lem',
-      'cover':
-          'https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=400&auto=format&fit=crop',
-    },
-    {
-      'title': '1984',
-      'author': 'George Orwell',
-      'cover':
-          'https://images.unsplash.com/photo-1532012197267-da84d127e765?q=80&w=400&auto=format&fit=crop',
-    },
-  ];
-
   Future<void> _onRefresh(BuildContext context) async {
     context.read<HomeBloc>().add(RefreshBookEvent());
     await context.read<HomeBloc>().stream.firstWhere(
@@ -139,26 +105,29 @@ class HomeScreen extends StatelessWidget {
 
                 BlocConsumer<HomeBloc, HomeState>(
                   builder: (context, state) {
-                    final books = Iterable.generate(3);
                     if (state is HomeLoading) {
                       return Skeletonizer(
                         enabled: true,
                         child: SizedBox(
                           height: 230.h,
-                          child: ListView.builder(
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
                             padding: const EdgeInsets.symmetric(
                               horizontal: AppSpacing.xl,
                             ),
-                            scrollDirection: Axis.horizontal,
-                            itemCount: books.length,
-                            itemBuilder: (context, i) {
-                              return BookGridCard(
-                                onTap: () => context.push('/bookDeatails'),
-                                bookCover: mockBooks[0]['cover']!,
-                                bookTitle: '',
-                                bookAuthor: '',
-                              );
-                            },
+                            children: [
+                              Row(
+                                children: List.generate(
+                                  3,
+                                  (i) => BookGridCard(
+                                    onTap: () {},
+                                    bookCover: '',
+                                    bookTitle: 'Loading title here',
+                                    bookAuthor: 'Loading author',
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       );
