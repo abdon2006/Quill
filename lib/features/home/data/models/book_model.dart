@@ -15,6 +15,8 @@ class BookModel extends BookEntity {
     required super.categories,
     required super.aboutBook,
     required super.forWho,
+    required super.createdAt,
+    required super.updatedAt,
   });
 
   factory BookModel.fromJson(Map<String, dynamic> json) {
@@ -32,6 +34,8 @@ class BookModel extends BookEntity {
       categories: List<String>.from(json['categories'] ?? []),
       aboutBook: json['brief'],
       forWho: json['forWho'],
+      createdAt: DateTime.parse(json['createdAt']) ,
+      updatedAt: DateTime.parse(json['updatedAt']) ,
     );
   }
 
@@ -50,6 +54,9 @@ class BookModel extends BookEntity {
       'categories': categories,
       'brief': aboutBook,
       'forWho': forWho,
+      'createdAt'  :createdAt ,
+      
+      'updatedAt'  : updatedAt
     };
   }
 }

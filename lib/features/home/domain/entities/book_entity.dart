@@ -14,6 +14,8 @@ class BookEntity extends Equatable {
   final List<String> categories;
   final String aboutBook;
   final String forWho;
+      final DateTime createdAt;
+    final DateTime updatedAt;
   const BookEntity({
     required this.id,
     required this.title,
@@ -27,7 +29,8 @@ class BookEntity extends Equatable {
     required this.isPublic,
     required this.categories,
     required this.aboutBook,
-    required this.forWho,
+    required this.forWho, required this.createdAt, required this.updatedAt,
+
   });
   @override
   List<Object?> get props => [
@@ -43,5 +46,7 @@ class BookEntity extends Equatable {
     totalChunks,
     aboutBook,
     forWho,
+     createdAt,
+   updatedAt,
   ];
 }

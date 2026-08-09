@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:quill/core/theme/app_colors.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 
@@ -34,7 +33,7 @@ class SectionHeader extends StatelessWidget {
                 subTitle!,
                 style: AppTextStyles.bodyMedium(
                   context,
-                ).copyWith(color: AppColors.lightTextMuted),
+                ).copyWith(color: theme.colorScheme.onSurface.withOpacity(0.4)),
               ),
           ],
         ),
@@ -50,7 +49,7 @@ class SectionHeader extends StatelessWidget {
               child: Center(
                 child: Text(
                   'View All',
-                  style: AppTextStyles.label(
+                  style: AppTextStyles.caption(
                     context,
                   ).copyWith(color: theme.colorScheme.primary),
                 ),

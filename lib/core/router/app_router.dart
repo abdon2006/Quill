@@ -16,6 +16,7 @@ import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
 import 'package:quill/features/home/presentation/bloc/home_event.dart';
 import 'package:quill/features/home/presentation/screens/book_details_screen.dart';
 import 'package:quill/features/home/presentation/screens/home_screen.dart';
+import 'package:quill/features/library/presentation/screens/library_screen.dart';
 import 'package:quill/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -41,8 +42,7 @@ final appRouter = GoRouter(
         GoRoute(
           path: AppRoutes.library,
           name: AppRoutes.library,
-          builder: (context, state) =>
-              const Scaffold(body: Center(child: Text('Library'))),
+          builder: (context, state) => LibraryScreen(),
         ),
 
         /// Discover
@@ -62,9 +62,18 @@ final appRouter = GoRouter(
         ),
       ],
 
-      builder: (context, state, child) => BlocProvider(
-        create: (context) =>
-            sl<AuthBloc>()..add(FetchUserDataEvent(params: NoParams())),
+      builder: (context, state, child) => MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) =>
+                sl<AuthBloc>()..add(FetchUserDataEvent(params: NoParams())),
+            child: HomeScreen(),
+          ),
+          BlocProvider(
+            create: (context) => sl<HomeBloc>()..add(FetchHomeBooksEvent()),
+            child: LibraryScreen(),
+          ),
+        ],
         child: MainShell(state: state, child: child),
       ),
     ),
