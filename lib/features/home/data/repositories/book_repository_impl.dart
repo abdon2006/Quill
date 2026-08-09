@@ -69,6 +69,8 @@ class BookMapper {
       categories: book.categories,
       aboutBook: book.aboutBook,
       forWho: book.forWho,
+      createdAt: book.createdAt,
+      updatedAt: book.updatedAt,
     );
   }
 
@@ -88,6 +90,8 @@ class BookMapper {
     cache.aboutBook = book.aboutBook;
     cache.forWho = book.forWho;
     cache.cachedAt = DateTime.now();
+    cache.createdAt = book.createdAt;
+    cache.updatedAt = book.updatedAt;
     return cache;
   }
 

@@ -1,5 +1,6 @@
 import 'package:isar/isar.dart';
 part 'book_cache.g.dart';
+
 @collection
 class BookCache {
   Id isarId = Isar.autoIncrement;
@@ -17,4 +18,6 @@ class BookCache {
   late String aboutBook;
   late String forWho;
   late DateTime cachedAt;
+  late DateTime createdAt;
+  late DateTime updatedAt;
 }

@@ -42,50 +42,60 @@ const BookCacheSchema = CollectionSchema(
       name: r'coverImage',
       type: IsarType.string,
     ),
-    r'description': PropertySchema(
+    r'createdAt': PropertySchema(
       id: 5,
+      name: r'createdAt',
+      type: IsarType.dateTime,
+    ),
+    r'description': PropertySchema(
+      id: 6,
       name: r'description',
       type: IsarType.string,
     ),
     r'forWho': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'forWho',
       type: IsarType.string,
     ),
     r'id': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'id',
       type: IsarType.string,
     ),
     r'isPublic': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'isPublic',
       type: IsarType.bool,
     ),
     r'language': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'language',
       type: IsarType.string,
     ),
     r'ratingAverage': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'ratingAverage',
       type: IsarType.double,
     ),
     r'ratingCount': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'ratingCount',
       type: IsarType.long,
     ),
     r'title': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'title',
       type: IsarType.string,
     ),
     r'totalChunks': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'totalChunks',
       type: IsarType.long,
+    ),
+    r'updatedAt': PropertySchema(
+      id: 15,
+      name: r'updatedAt',
+      type: IsarType.dateTime,
     )
   },
   estimateSize: _bookCacheEstimateSize,
@@ -137,15 +147,17 @@ void _bookCacheSerialize(
   writer.writeDateTime(offsets[2], object.cachedAt);
   writer.writeStringList(offsets[3], object.categories);
   writer.writeString(offsets[4], object.coverImage);
-  writer.writeString(offsets[5], object.description);
-  writer.writeString(offsets[6], object.forWho);
-  writer.writeString(offsets[7], object.id);
-  writer.writeBool(offsets[8], object.isPublic);
-  writer.writeString(offsets[9], object.language);
-  writer.writeDouble(offsets[10], object.ratingAverage);
-  writer.writeLong(offsets[11], object.ratingCount);
-  writer.writeString(offsets[12], object.title);
-  writer.writeLong(offsets[13], object.totalChunks);
+  writer.writeDateTime(offsets[5], object.createdAt);
+  writer.writeString(offsets[6], object.description);
+  writer.writeString(offsets[7], object.forWho);
+  writer.writeString(offsets[8], object.id);
+  writer.writeBool(offsets[9], object.isPublic);
+  writer.writeString(offsets[10], object.language);
+  writer.writeDouble(offsets[11], object.ratingAverage);
+  writer.writeLong(offsets[12], object.ratingCount);
+  writer.writeString(offsets[13], object.title);
+  writer.writeLong(offsets[14], object.totalChunks);
+  writer.writeDateTime(offsets[15], object.updatedAt);
 }
 
 BookCache _bookCacheDeserialize(
@@ -160,16 +172,18 @@ BookCache _bookCacheDeserialize(
   object.cachedAt = reader.readDateTime(offsets[2]);
   object.categories = reader.readStringList(offsets[3]) ?? [];
   object.coverImage = reader.readString(offsets[4]);
-  object.description = reader.readString(offsets[5]);
-  object.forWho = reader.readString(offsets[6]);
-  object.id = reader.readString(offsets[7]);
-  object.isPublic = reader.readBool(offsets[8]);
+  object.createdAt = reader.readDateTime(offsets[5]);
+  object.description = reader.readString(offsets[6]);
+  object.forWho = reader.readString(offsets[7]);
+  object.id = reader.readString(offsets[8]);
+  object.isPublic = reader.readBool(offsets[9]);
   object.isarId = id;
-  object.language = reader.readString(offsets[9]);
-  object.ratingAverage = reader.readDouble(offsets[10]);
-  object.ratingCount = reader.readLong(offsets[11]);
-  object.title = reader.readString(offsets[12]);
-  object.totalChunks = reader.readLong(offsets[13]);
+  object.language = reader.readString(offsets[10]);
+  object.ratingAverage = reader.readDouble(offsets[11]);
+  object.ratingCount = reader.readLong(offsets[12]);
+  object.title = reader.readString(offsets[13]);
+  object.totalChunks = reader.readLong(offsets[14]);
+  object.updatedAt = reader.readDateTime(offsets[15]);
   return object;
 }
 
@@ -191,23 +205,27 @@ P _bookCacheDeserializeProp<P>(
     case 4:
       return (reader.readString(offset)) as P;
     case 5:
-      return (reader.readString(offset)) as P;
+      return (reader.readDateTime(offset)) as P;
     case 6:
       return (reader.readString(offset)) as P;
     case 7:
       return (reader.readString(offset)) as P;
     case 8:
-      return (reader.readBool(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 9:
-      return (reader.readString(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 10:
-      return (reader.readDouble(offset)) as P;
-    case 11:
-      return (reader.readLong(offset)) as P;
-    case 12:
       return (reader.readString(offset)) as P;
-    case 13:
+    case 11:
+      return (reader.readDouble(offset)) as P;
+    case 12:
       return (reader.readLong(offset)) as P;
+    case 13:
+      return (reader.readString(offset)) as P;
+    case 14:
+      return (reader.readLong(offset)) as P;
+    case 15:
+      return (reader.readDateTime(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -978,6 +996,60 @@ extension BookCacheQueryFilter
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'coverImage',
         value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<BookCache, BookCache, QAfterFilterCondition> createdAtEqualTo(
+      DateTime value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'createdAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<BookCache, BookCache, QAfterFilterCondition>
+      createdAtGreaterThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'createdAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<BookCache, BookCache, QAfterFilterCondition> createdAtLessThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'createdAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<BookCache, BookCache, QAfterFilterCondition> createdAtBetween(
+    DateTime lower,
+    DateTime upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'createdAt',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
       ));
     });
   }
@@ -1873,6 +1945,60 @@ extension BookCacheQueryFilter
       ));
     });
   }
+
+  QueryBuilder<BookCache, BookCache, QAfterFilterCondition> updatedAtEqualTo(
+      DateTime value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<BookCache, BookCache, QAfterFilterCondition>
+      updatedAtGreaterThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<BookCache, BookCache, QAfterFilterCondition> updatedAtLessThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<BookCache, BookCache, QAfterFilterCondition> updatedAtBetween(
+    DateTime lower,
+    DateTime upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'updatedAt',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
 }
 
 extension BookCacheQueryObject
@@ -1927,6 +2053,18 @@ extension BookCacheQuerySortBy on QueryBuilder<BookCache, BookCache, QSortBy> {
   QueryBuilder<BookCache, BookCache, QAfterSortBy> sortByCoverImageDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'coverImage', Sort.desc);
+    });
+  }
+
+  QueryBuilder<BookCache, BookCache, QAfterSortBy> sortByCreatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'createdAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<BookCache, BookCache, QAfterSortBy> sortByCreatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'createdAt', Sort.desc);
     });
   }
 
@@ -2037,6 +2175,18 @@ extension BookCacheQuerySortBy on QueryBuilder<BookCache, BookCache, QSortBy> {
       return query.addSortBy(r'totalChunks', Sort.desc);
     });
   }
+
+  QueryBuilder<BookCache, BookCache, QAfterSortBy> sortByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<BookCache, BookCache, QAfterSortBy> sortByUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.desc);
+    });
+  }
 }
 
 extension BookCacheQuerySortThenBy
@@ -2086,6 +2236,18 @@ extension BookCacheQuerySortThenBy
   QueryBuilder<BookCache, BookCache, QAfterSortBy> thenByCoverImageDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'coverImage', Sort.desc);
+    });
+  }
+
+  QueryBuilder<BookCache, BookCache, QAfterSortBy> thenByCreatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'createdAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<BookCache, BookCache, QAfterSortBy> thenByCreatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'createdAt', Sort.desc);
     });
   }
 
@@ -2208,6 +2370,18 @@ extension BookCacheQuerySortThenBy
       return query.addSortBy(r'totalChunks', Sort.desc);
     });
   }
+
+  QueryBuilder<BookCache, BookCache, QAfterSortBy> thenByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<BookCache, BookCache, QAfterSortBy> thenByUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.desc);
+    });
+  }
 }
 
 extension BookCacheQueryWhereDistinct
@@ -2242,6 +2416,12 @@ extension BookCacheQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'coverImage', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<BookCache, BookCache, QDistinct> distinctByCreatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'createdAt');
     });
   }
 
@@ -2303,6 +2483,12 @@ extension BookCacheQueryWhereDistinct
       return query.addDistinctBy(r'totalChunks');
     });
   }
+
+  QueryBuilder<BookCache, BookCache, QDistinct> distinctByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'updatedAt');
+    });
+  }
 }
 
 extension BookCacheQueryProperty
@@ -2340,6 +2526,12 @@ extension BookCacheQueryProperty
   QueryBuilder<BookCache, String, QQueryOperations> coverImageProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'coverImage');
+    });
+  }
+
+  QueryBuilder<BookCache, DateTime, QQueryOperations> createdAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'createdAt');
     });
   }
 
@@ -2394,6 +2586,12 @@ extension BookCacheQueryProperty
   QueryBuilder<BookCache, int, QQueryOperations> totalChunksProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'totalChunks');
+    });
+  }
+
+  QueryBuilder<BookCache, DateTime, QQueryOperations> updatedAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'updatedAt');
     });
   }
 }

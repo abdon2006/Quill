@@ -12,6 +12,7 @@ abstract final class AppIcons {
   static const heart = HugeIcons.strokeRoundedFavourite;
   static const note = HugeIcons.strokeRoundedNote01;
   static const highlight = HugeIcons.strokeRoundedHighlighter;
+  static const search = HugeIcons.strokeRoundedSearch02;
 
   static const settings = HugeIcons.strokeRoundedSettings01;
   static const moon = HugeIcons.strokeRoundedMoon02;

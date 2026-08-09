@@ -14,6 +14,7 @@ import 'package:quill/features/home/presentation/widgets/book_grid_card.dart';
 import 'package:quill/features/home/presentation/widgets/book_info_section.dart';
 import 'package:quill/features/home/presentation/widgets/book_stats_row.dart';
 import 'package:quill/features/home/presentation/widgets/section_header.dart';
+import 'package:quill/features/library/presentation/widgets/staggerd_animation.dart';
 
 class BookDetailsScreen extends StatefulWidget {
   final BookEntity book;
@@ -57,9 +58,12 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
 
                 return Opacity(
                   opacity: opacity,
-                  child: BookCoverHeader(
-                    bookCover: widget.book.coverImage,
-                    bookTitle: widget.book.title,
+                  child: StaggerdAnimation(
+                    index: 0,
+                    child: BookCoverHeader(
+                      bookCover: widget.book.coverImage,
+                      bookTitle: widget.book.title,
+                    ),
                   ),
                 );
               },

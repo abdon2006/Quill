@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quill/core/theme/app_assets.dart';
 import 'package:quill/core/theme/app_spacing.dart';
+import 'package:quill/core/widgets/book_list_tile.dart';
 import 'package:quill/core/widgets/premium_background.dart';
 import 'package:quill/core/widgets/show_app_snack_bar.dart';
 import 'package:quill/features/auth/domain/entities/user_entity.dart';
@@ -17,6 +18,7 @@ import 'package:quill/features/home/presentation/widgets/book_grid_card.dart';
 import 'package:quill/features/home/presentation/widgets/continue_reading.dart';
 import 'package:quill/features/home/presentation/widgets/home_header.dart';
 import 'package:quill/features/home/presentation/widgets/section_header.dart';
+import 'package:quill/features/library/presentation/widgets/staggerd_animation.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -82,6 +84,7 @@ class HomeScreen extends StatelessWidget {
 
                 SizedBox(height: AppSpacing.lg),
 
+                /// Header
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.xl,
@@ -91,6 +94,7 @@ class HomeScreen extends StatelessWidget {
 
                 SizedBox(height: AppSpacing.lg),
 
+                /// Section Header - Recently Added
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.xl,
@@ -103,6 +107,7 @@ class HomeScreen extends StatelessWidget {
 
                 SizedBox(height: AppSpacing.lg),
 
+                /// Recently Added
                 BlocConsumer<HomeBloc, HomeState>(
                   builder: (context, state) {
                     if (state is HomeLoading) {
@@ -144,14 +149,17 @@ class HomeScreen extends StatelessWidget {
                           itemCount: books.length,
                           itemBuilder: (context, i) {
                             final item = books[i];
-                            return BookGridCard(
-                              onTap: () => context.push(
-                                '/bookDeatails',
-                                extra: state.books[i],
+                            return StaggerdAnimation(
+                              index: i,
+                              child: BookGridCard(
+                                onTap: () => context.push(
+                                  '/bookDeatails',
+                                  extra: state.books[i],
+                                ),
+                                bookCover: item.coverImage,
+                                bookTitle: item.title,
+                                bookAuthor: item.author,
                               ),
-                              bookCover: item.coverImage,
-                              bookTitle: item.title,
-                              bookAuthor: item.author,
                             );
                           },
                         ),
@@ -170,6 +178,53 @@ class HomeScreen extends StatelessWidget {
                         messageDisc: 'Check Your Connection',
                       );
                     }
+                  },
+                ),
+
+                /// Section Header - From Library
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xl,
+                    vertical: AppSpacing.xl,
+                  ),
+                  child: SectionHeader(
+                    title: 'From Library',
+                    viewAllOnTap: () {},
+                  ),
+                ),
+
+                /// From Library
+                BlocBuilder<HomeBloc, HomeState>(
+                  builder: (context, state) {
+                    if (state is FetchBooksSuccess) {
+                      final books = state.books;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.xl,
+                        ),
+                        child: Column(
+                          children: List.generate(books.length, (i) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: AppSpacing.sm,
+                              ),
+                              child: StaggerdAnimation(
+                                index: i,
+                                child: GestureDetector(
+                                  onTap: () => context.push(
+                                    '/bookDeatails',
+                                    extra: state.books[i],
+                                  ),
+                                  child: BookListTile(book: books[i]),
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
+                      );
+                    }
+
+                    return Text('');
                   },
                 ),
               ],
