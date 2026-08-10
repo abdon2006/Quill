@@ -90,7 +90,6 @@ class AppButton extends StatelessWidget {
     return AnimatedContainer(
       duration: Duration(milliseconds: 2000),
       curve: Curves.easeInOut,
-      margin: EdgeInsets.symmetric(horizontal: AppSpacing.xxxl),
       width: width,
       height: 50.h,
       child: ElevatedButton(

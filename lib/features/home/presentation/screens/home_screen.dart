@@ -14,10 +14,10 @@ import 'package:quill/features/auth/presentation/bloc/auth_state.dart';
 import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
 import 'package:quill/features/home/presentation/bloc/home_event.dart';
 import 'package:quill/features/home/presentation/bloc/home_state.dart';
-import 'package:quill/features/home/presentation/widgets/book_grid_card.dart';
-import 'package:quill/features/home/presentation/widgets/continue_reading.dart';
-import 'package:quill/features/home/presentation/widgets/home_header.dart';
-import 'package:quill/features/home/presentation/widgets/section_header.dart';
+import 'package:quill/features/home/presentation/widgets/Home/book_grid_card.dart';
+import 'package:quill/features/home/presentation/widgets/Home/continue_reading.dart';
+import 'package:quill/features/home/presentation/widgets/Home/home_header.dart';
+import 'package:quill/features/home/presentation/widgets/Home/section_header.dart';
 import 'package:quill/features/library/presentation/widgets/staggerd_animation.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
