@@ -22,6 +22,7 @@ import 'package:quill/features/home/data/models/book_cache.dart';
 import 'package:quill/features/home/data/repositories/book_repository_impl.dart';
 import 'package:quill/features/home/domain/repositories/book_repository.dart';
 import 'package:quill/features/home/domain/usecases/fetch_books_usecase.dart';
+import 'package:quill/features/home/domain/usecases/get_book_by_id_usecase.dart';
 import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
 import 'package:quill/features/library/data/DateSources/library_remote_data_source.dart';
 import 'package:quill/features/library/data/DateSources/library_remote_data_source_impl.dart';
@@ -96,8 +97,15 @@ Future<void> setupDI() async {
   sl.registerLazySingleton<FetchBooksUsecase>(
     () => FetchBooksUsecase(bookRepository: sl()),
   );
+  sl.registerLazySingleton<GetBookByIdUsecase>(
+    () => GetBookByIdUsecase(bookRepository: sl()),
+  );
   sl.registerFactory<HomeBloc>(
-    () => HomeBloc(fetchBooksUsecase: sl(), bookRepository: sl()),
+    () => HomeBloc(
+      fetchBooksUsecase: sl(),
+      bookRepository: sl(),
+      getBookByIdUsecase: sl(),
+    ),
   );
 
   /// Auth

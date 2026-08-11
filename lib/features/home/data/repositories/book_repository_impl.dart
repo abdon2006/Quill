@@ -51,6 +51,16 @@ class BookRepositoryImpl implements BookRepository {
       return Left(ServerFailure(message: e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, BookEntity>> getBookById(String bookId) async {
+    try {
+      final response = await remoteDatasource.getBookById(bookId);
+      return Right(response);
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
 }
 
 class BookMapper {

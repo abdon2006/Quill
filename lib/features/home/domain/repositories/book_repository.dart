@@ -6,5 +6,6 @@ abstract class BookRepository {
   Future<Either<Failure, List<BookEntity>>> fetchBooks();
   Future<bool> isCacheValid();
   Future<Either<Failure, List<BookEntity>>> refreshBooks();
+  Future<Either<Failure, BookEntity>> getBookById(String bookId);
 
 }
