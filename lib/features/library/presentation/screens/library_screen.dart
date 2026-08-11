@@ -74,7 +74,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                 book: books[i],
                                 onTap: () => context.push(
                                   '/bookDeatails',
-                                  extra: state.books[i],
+                                  extra: state.books[i].bookId,
                                 ),
                               ),
                             );

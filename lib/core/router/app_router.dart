@@ -12,6 +12,9 @@ import 'package:quill/features/auth/presentation/screens/auth_choose_screen.dart
 import 'package:quill/features/auth/presentation/screens/login/login_screen.dart';
 import 'package:quill/features/auth/presentation/screens/signup/signup_screen.dart';
 import 'package:quill/features/home/domain/entities/book_entity.dart';
+import 'package:quill/features/home/domain/repositories/book_repository.dart';
+import 'package:quill/features/home/domain/usecases/fetch_books_usecase.dart';
+import 'package:quill/features/home/domain/usecases/get_book_by_id_usecase.dart';
 import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
 import 'package:quill/features/home/presentation/bloc/home_event.dart';
 import 'package:quill/features/home/presentation/screens/book_details_screen.dart';
@@ -90,8 +93,19 @@ final appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.bookDeatails,
       name: AppRoutes.bookDeatails,
-      builder: (context, state) =>
-          BookDetailsScreen(book: state.extra as BookEntity),
+      builder: (context, state) {
+        final extra = state.extra;
+        final book = extra is BookEntity ? extra : null;
+        final bookId = extra is String ? extra : null;
+        return BlocProvider(
+          create: (context) => HomeBloc(
+            fetchBooksUsecase: sl<FetchBooksUsecase>(),
+            bookRepository: sl<BookRepository>(),
+            getBookByIdUsecase: sl<GetBookByIdUsecase>(),
+          ),
+          child: BookDetailsScreen(book: book, bookId: bookId),
+        );
+      },
     ),
 
     /// OnBoarding

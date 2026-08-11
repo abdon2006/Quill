@@ -26,3 +26,11 @@ class FetchBooksSuccess extends HomeState {
   @override
   List<Object?> get props => [books];
 }
+
+class GetBookByIdSuccess extends HomeState {
+  final BookEntity book;
+
+  GetBookByIdSuccess({required this.book});
+  @override
+  List<Object?> get props => [book];
+}

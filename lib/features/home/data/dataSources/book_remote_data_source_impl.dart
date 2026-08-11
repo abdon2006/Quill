@@ -13,4 +13,10 @@ class BookRemoteDataSourceImpl implements BookRemoteDatasource {
     final List data = response.data['data']['books'];
     return data.map((json) => BookModel.fromJson(json)).toList();
   }
+
+  @override
+  Future<BookEntity> getBookById(String bookId) async {
+    final response = await networkService.dioGet('/books/$bookId', {});
+    return BookModel.fromJson(response.data['data']['book']);
+  }
 }
