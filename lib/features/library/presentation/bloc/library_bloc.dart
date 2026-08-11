@@ -19,7 +19,7 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
       emit(LibraryLoading());
       final response = await addToWishlistUsecase(event.bookId);
       response.fold(
-        (failure) => emit(LibraryError(message: failure.message)),
+        (failure) => emit(LibraryError(failure: failure)),
         (success) => emit(AddSuccessState()),
       );
     });
@@ -27,7 +27,7 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
       emit(LibraryLoading());
       final response = await removeFromWishlistUsecase(event.bookId);
       response.fold(
-        (failure) => emit(LibraryError(message: failure.message)),
+        (failure) => emit(LibraryError(failure: failure)),
         (success) => emit(RemoveSuccessState()),
       );
     });
@@ -35,7 +35,7 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
       emit(LibraryLoading());
       final response = await fetchWishlistUsecase(NoParams());
       response.fold(
-        (failure) => emit(LibraryError(message: failure.message)),
+        (failure) => emit(LibraryError(failure: failure)),
         (success) => emit(FetchSuccessState(books: success)),
       );
     });

@@ -24,18 +24,14 @@ class LibraryBookCard extends StatelessWidget {
                 borderRadius: AppRadius.xl,
                 boxShadow: AppShadows.bookCover,
               ),
-              child: ClipRRect(
-                borderRadius: AppRadius.xl,
-                child: Image.network(
-                  book.coverImage,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Skeleton.leaf(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: AppRadius.xl,
-                        color: Colors.black,
-                      ),
-                    ),
+              child: Skeleton.leaf(
+                child: ClipRRect(
+                  borderRadius: AppRadius.xl,
+                  child: Image.network(
+                    book.coverImage,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stack) =>
+                        Container(color: Colors.grey[200]),
                   ),
                 ),
               ),
@@ -65,24 +61,26 @@ class LibraryBookCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: LinearProgressIndicator(
-                        value: 0.7,
-                        borderRadius: AppRadius.xl,
-                        valueColor: AlwaysStoppedAnimation(theme.primary),
-                        backgroundColor: theme.surface,
+                Skeleton.ignore(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: LinearProgressIndicator(
+                          value: 0.7,
+                          borderRadius: AppRadius.xl,
+                          valueColor: AlwaysStoppedAnimation(theme.primary),
+                          backgroundColor: theme.surface,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Text(
-                      '70 %',
-                      style: AppTextStyles.caption(
-                        context,
-                      ).copyWith(color: theme.onSurface.withValues(alpha: 0.3)),
-                    ),
-                  ],
+                      const SizedBox(width: AppSpacing.sm),
+                      Text(
+                        '70 %',
+                        style: AppTextStyles.caption(context).copyWith(
+                          color: theme.onSurface.withValues(alpha: 0.3),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
