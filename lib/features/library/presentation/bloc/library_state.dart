@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:quill/core/errors/failures.dart';
 import 'package:quill/features/library/domain/Entities/wishlist_entity.dart';
 
 abstract class LibraryState extends Equatable {}
@@ -14,11 +15,11 @@ class LibraryLoading extends LibraryState {
 }
 
 class LibraryError extends LibraryState {
-  final String message;
+  final Failure failure;
 
-  LibraryError({required this.message});
+  LibraryError({required this.failure});
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [failure];
 }
 
 class AddSuccessState extends LibraryState {

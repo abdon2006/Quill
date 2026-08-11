@@ -18,6 +18,16 @@ class WishlistEntity extends Equatable {
     required this.coverImage,
     required this.ratingAvg,
   });
+
+  const WishlistEntity.dummy({
+    this.wishlistId = "asklfakfhk1",
+    this.bookId = "1k2je1khr",
+    this.userId = "1;2lj4l12h12r",
+    this.author = "James Clear",
+    this.title = "Atomic Habits",
+    this.coverImage = "askfjkla",
+    this.ratingAvg = 4.5,
+  });
   @override
   List<Object?> get props => [
     wishlistId,

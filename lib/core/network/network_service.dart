@@ -63,6 +63,7 @@ class NetworkService {
   }
 
   Failure _handleDioErrors(DioException error) {
+    print("Error Type : ${error.type}");
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
         return const TimeoutFailure(message: 'Connection timeout');
@@ -76,6 +77,8 @@ class NetworkService {
           return const UnauthorizedFailure(message: 'Unauthorized');
         }
         return ServerFailure(message: message, statusCode: statusCode);
+      case DioExceptionType.connectionError:
+        return ServerFailure(message: 'Could not reach the server');
       default:
         return NetworkFailure(message: 'Network error');
     }
