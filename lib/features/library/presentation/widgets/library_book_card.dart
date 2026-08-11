@@ -3,11 +3,11 @@ import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_shadows.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
-import 'package:quill/features/home/domain/entities/book_entity.dart';
+import 'package:quill/features/library/domain/Entities/wishlist_entity.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class LibraryBookCard extends StatelessWidget {
-  final BookEntity book;
+  final WishlistEntity book;
   final VoidCallback onTap;
   const LibraryBookCard({super.key, required this.book, required this.onTap});
 

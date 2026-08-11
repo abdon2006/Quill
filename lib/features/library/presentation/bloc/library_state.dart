@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:quill/features/home/domain/entities/book_entity.dart';
+import 'package:quill/features/library/domain/Entities/wishlist_entity.dart';
 
 abstract class LibraryState extends Equatable {}
 
@@ -32,7 +32,7 @@ class RemoveSuccessState extends LibraryState {
 }
 
 class FetchSuccessState extends LibraryState {
-  final List<BookEntity> books;
+  final List<WishlistEntity> books;
 
   FetchSuccessState({required this.books});
   @override

@@ -1,8 +1,8 @@
 import 'package:quill/core/network/network_service.dart';
 import 'package:quill/core/usecases/base_usecase.dart';
-import 'package:quill/features/home/data/models/book_model.dart';
-import 'package:quill/features/home/domain/entities/book_entity.dart';
 import 'package:quill/features/library/data/DateSources/library_remote_data_source.dart';
+import 'package:quill/features/library/data/Models/wishlist_model.dart';
+import 'package:quill/features/library/domain/Entities/wishlist_entity.dart';
 
 class LibraryRemoteDataSourceImpl implements LibraryRemoteDataSource {
   final NetworkService networkService;
@@ -10,13 +10,14 @@ class LibraryRemoteDataSourceImpl implements LibraryRemoteDataSource {
   LibraryRemoteDataSourceImpl({required this.networkService});
   @override
   Future<void> addToWishlist(String bookId) async =>
-      await networkService.dioPost('/wishlist/', {});
+      await networkService.dioPost('/wishlist/$bookId', {});
 
   @override
-  Future<List<BookEntity>> fetchWishlist(NoParams params) async {
+  Future<List<WishlistEntity>> fetchWishlist(NoParams params) async {
     final response = await networkService.dioGet('/wishlist/', {});
-    final List data = response.data['wishlist'];
-    return data.map((book) => BookModel.fromJson(book['bookId'])).toList();
+    final List data = response.data['data']['wishlist'];
+    print(response.data);
+    return data.map((book) => WishlistModel.fromJson(book)).toList();
   }
 
   @override

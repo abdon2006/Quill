@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:quill/core/errors/failures.dart';
 import 'package:quill/core/usecases/base_usecase.dart';
-import 'package:quill/features/home/domain/entities/book_entity.dart';
 import 'package:quill/features/library/data/DateSources/library_remote_data_source.dart';
+import 'package:quill/features/library/domain/Entities/wishlist_entity.dart';
 import 'package:quill/features/library/domain/Repositories/library_repository.dart';
 
 class LibraryRepositoryImpl implements LibraryRepository {
@@ -22,7 +22,7 @@ class LibraryRepositoryImpl implements LibraryRepository {
   }
 
   @override
-  Future<Either<Failure, List<BookEntity>>> fetchWishlist(
+  Future<Either<Failure, List<WishlistEntity>>> fetchWishlist(
     NoParams params,
   ) async {
     try {
