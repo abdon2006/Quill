@@ -16,6 +16,11 @@ import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
 import 'package:quill/features/home/presentation/bloc/home_event.dart';
 import 'package:quill/features/home/presentation/screens/book_details_screen.dart';
 import 'package:quill/features/home/presentation/screens/home_screen.dart';
+import 'package:quill/features/library/domain/UseCases/add_to_wishlist.dart';
+import 'package:quill/features/library/domain/UseCases/fetch_wishlist.dart';
+import 'package:quill/features/library/domain/UseCases/remove_from_wishlist.dart';
+import 'package:quill/features/library/presentation/bloc/library_bloc.dart';
+import 'package:quill/features/library/presentation/bloc/library_event.dart';
 import 'package:quill/features/library/presentation/screens/library_screen.dart';
 import 'package:quill/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -42,7 +47,14 @@ final appRouter = GoRouter(
         GoRoute(
           path: AppRoutes.library,
           name: AppRoutes.library,
-          builder: (context, state) => LibraryScreen(),
+          builder: (context, state) => BlocProvider(
+            create: (context) => LibraryBloc(
+              addToWishlistUsecase: sl<AddToWishlistUsecase>(),
+              removeFromWishlistUsecase: sl<RemoveFromWishlistUsecase>(),
+              fetchWishlistUsecase: sl<FetchWishlistUsecase>(),
+            )..add(FetchWishlistEvent()),
+            child: LibraryScreen(),
+          ),
         ),
 
         /// Discover
@@ -62,18 +74,9 @@ final appRouter = GoRouter(
         ),
       ],
 
-      builder: (context, state, child) => MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) =>
-                sl<AuthBloc>()..add(FetchUserDataEvent(params: NoParams())),
-            child: HomeScreen(),
-          ),
-          BlocProvider(
-            create: (context) => sl<HomeBloc>()..add(FetchHomeBooksEvent()),
-            child: LibraryScreen(),
-          ),
-        ],
+      builder: (context, state, child) => BlocProvider(
+        create: (context) =>
+            sl<AuthBloc>()..add(FetchUserDataEvent(params: NoParams())),
         child: MainShell(state: state, child: child),
       ),
     ),

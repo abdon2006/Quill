@@ -53,6 +53,15 @@ class NetworkService {
     }
   }
 
+  Future<Response> dioDelete(String endPoint, Map<String, dynamic> data) async {
+    try {
+      final response = await dio.delete(endPoint, data: data);
+      return response;
+    } on DioException catch (e) {
+      throw _handleDioErrors(e);
+    }
+  }
+
   Failure _handleDioErrors(DioException error) {
     switch (error.type) {
       case DioExceptionType.connectionTimeout:

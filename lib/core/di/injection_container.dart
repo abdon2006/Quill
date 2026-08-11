@@ -23,6 +23,14 @@ import 'package:quill/features/home/data/repositories/book_repository_impl.dart'
 import 'package:quill/features/home/domain/repositories/book_repository.dart';
 import 'package:quill/features/home/domain/usecases/fetch_books_usecase.dart';
 import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
+import 'package:quill/features/library/data/DateSources/library_remote_data_source.dart';
+import 'package:quill/features/library/data/DateSources/library_remote_data_source_impl.dart';
+import 'package:quill/features/library/data/Repositories/library_repository_impl.dart';
+import 'package:quill/features/library/domain/Repositories/library_repository.dart';
+import 'package:quill/features/library/domain/UseCases/add_to_wishlist.dart';
+import 'package:quill/features/library/domain/UseCases/fetch_wishlist.dart';
+import 'package:quill/features/library/domain/UseCases/remove_from_wishlist.dart';
+import 'package:quill/features/library/presentation/bloc/library_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../locale/cubit/locale_cubit.dart';
 import '../theme/cubit/theme_cubit.dart';
@@ -114,6 +122,31 @@ Future<void> setupDI() async {
       signupUsecase: sl(),
       appStorage: sl(),
       fetchUserDataUsecase: sl(),
+    ),
+  );
+
+  /// Library
+  sl.registerLazySingleton<LibraryRemoteDataSource>(
+    () => LibraryRemoteDataSourceImpl(networkService: sl()),
+  );
+  sl.registerLazySingleton<LibraryRepository>(
+    () => LibraryRepositoryImpl(libraryRemoteDataSource: sl()),
+  );
+  sl.registerLazySingleton<AddToWishlistUsecase>(
+    () => AddToWishlistUsecase(libraryRepository: sl()),
+  );
+  sl.registerLazySingleton<RemoveFromWishlistUsecase>(
+    () => RemoveFromWishlistUsecase(libraryRepository: sl()),
+  );
+  sl.registerLazySingleton<FetchWishlistUsecase>(
+    () => FetchWishlistUsecase(libraryRepository: sl()),
+  );
+
+  sl.registerFactory<LibraryBloc>(
+    () => LibraryBloc(
+      addToWishlistUsecase: sl(),
+      removeFromWishlistUsecase: sl(),
+      fetchWishlistUsecase: sl(),
     ),
   );
 }
