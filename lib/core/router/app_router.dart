@@ -47,14 +47,7 @@ final appRouter = GoRouter(
         GoRoute(
           path: AppRoutes.library,
           name: AppRoutes.library,
-          builder: (context, state) => BlocProvider(
-            create: (context) => LibraryBloc(
-              addToWishlistUsecase: sl<AddToWishlistUsecase>(),
-              removeFromWishlistUsecase: sl<RemoveFromWishlistUsecase>(),
-              fetchWishlistUsecase: sl<FetchWishlistUsecase>(),
-            )..add(FetchWishlistEvent()),
-            child: LibraryScreen(),
-          ),
+          builder: (context, state) => LibraryScreen(),
         ),
 
         /// Discover
@@ -74,9 +67,21 @@ final appRouter = GoRouter(
         ),
       ],
 
-      builder: (context, state, child) => BlocProvider(
-        create: (context) =>
-            sl<AuthBloc>()..add(FetchUserDataEvent(params: NoParams())),
+      builder: (context, state, child) => MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => LibraryBloc(
+              addToWishlistUsecase: sl<AddToWishlistUsecase>(),
+              removeFromWishlistUsecase: sl<RemoveFromWishlistUsecase>(),
+              fetchWishlistUsecase: sl<FetchWishlistUsecase>(),
+            )..add(FetchWishlistEvent()),
+          ),
+
+          BlocProvider(
+            create: (context) =>
+                sl<AuthBloc>()..add(FetchUserDataEvent(params: NoParams())),
+          ),
+        ],
         child: MainShell(state: state, child: child),
       ),
     ),

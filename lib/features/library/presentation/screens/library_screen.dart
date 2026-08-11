@@ -5,8 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/widgets/empty_state.dart';
 import 'package:quill/core/widgets/premium_background.dart';
-import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
-import 'package:quill/features/home/presentation/bloc/home_state.dart';
+import 'package:quill/features/library/presentation/bloc/library_bloc.dart';
+import 'package:quill/features/library/presentation/bloc/library_state.dart';
 import 'package:quill/features/library/presentation/widgets/staggerd_animation.dart';
 import 'package:quill/features/library/presentation/widgets/chips_control.dart';
 import 'package:quill/features/library/presentation/widgets/library_book_card.dart';
@@ -41,14 +41,13 @@ class _LibraryScreenState extends State<LibraryScreen> {
                     onChanged: (int value) {
                       setState(() {
                         selectedIndex = value;
-                        print(selectedIndex);
                       });
                     },
                   ),
                 ),
-                BlocBuilder<HomeBloc, HomeState>(
+                BlocBuilder<LibraryBloc, LibraryState>(
                   builder: (context, state) {
-                    if (state is FetchBooksSuccess) {
+                    if (state is FetchSuccessState) {
                       final books = state.books;
                       if (books.isEmpty) {
                         return StaggerdAnimation(index: 0, child: EmptyState());
