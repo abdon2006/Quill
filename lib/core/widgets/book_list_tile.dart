@@ -5,6 +5,7 @@ import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 import 'package:quill/features/home/domain/entities/book_entity.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class BookListTile extends StatelessWidget {
   final BookEntity book;
@@ -33,12 +34,26 @@ class BookListTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Container(
-            height: 70.h,
-            decoration: BoxDecoration(borderRadius: AppRadius.xs),
-            child: ClipRRect(
-              borderRadius: AppRadius.xs,
-              child: Image.network(book.coverImage),
+          Skeleton.leaf(
+            child: Container(
+              height: 70.h,
+              decoration: BoxDecoration(borderRadius: AppRadius.xs),
+              child: ClipRRect(
+                borderRadius: AppRadius.xs,
+                child: Image.network(
+                  book.coverImage,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: 50.w,
+
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: AppRadius.xs,
+                      ),
+                    );
+                  },
+                ),
+              ),
             ),
           ),
           SizedBox(width: AppSpacing.md),
