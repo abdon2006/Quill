@@ -14,8 +14,8 @@ class BookEntity extends Equatable {
   final List<String> categories;
   final String aboutBook;
   final String forWho;
-      final DateTime createdAt;
-    final DateTime updatedAt;
+  final DateTime createdAt;
+  final DateTime updatedAt;
   const BookEntity({
     required this.id,
     required this.title,
@@ -29,9 +29,27 @@ class BookEntity extends Equatable {
     required this.isPublic,
     required this.categories,
     required this.aboutBook,
-    required this.forWho, required this.createdAt, required this.updatedAt,
-
+    required this.forWho,
+    required this.createdAt,
+    required this.updatedAt,
   });
+  factory BookEntity.dummy() => BookEntity(
+    id: '',
+    title: 'Atomic Habits',
+    author: 'James Clear',
+    coverImage: '',
+    description: '',
+    language: 'en',
+    totalChunks: 100,
+    ratingAverage: 4.5,
+    ratingCount: 20,
+    isPublic: true,
+    categories: [],
+    aboutBook: '',
+    forWho: '',
+    createdAt: DateTime.now(),
+    updatedAt: DateTime.now(),
+  );
   @override
   List<Object?> get props => [
     id,
@@ -46,7 +64,7 @@ class BookEntity extends Equatable {
     totalChunks,
     aboutBook,
     forWho,
-     createdAt,
-   updatedAt,
+    createdAt,
+    updatedAt,
   ];
 }

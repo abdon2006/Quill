@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:quill/core/errors/failures.dart';
 import 'package:quill/features/home/domain/entities/book_entity.dart';
 
 abstract class HomeState extends Equatable {}
@@ -9,10 +10,11 @@ class HomeInitial extends HomeState {
 }
 
 class HomeError extends HomeState {
-  final String message;
-  HomeError({required this.message});
+  final Failure failure;
+  final List<BookEntity>? cachedBooks;
+  HomeError({required this.failure, required this.cachedBooks});
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [failure, cachedBooks];
 }
 
 class HomeLoading extends HomeState {

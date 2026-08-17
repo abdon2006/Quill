@@ -78,7 +78,7 @@ class NetworkService {
         }
         return ServerFailure(message: message, statusCode: statusCode);
       case DioExceptionType.connectionError:
-        return ServerFailure(message: 'Could not reach the server');
+        return NetworkFailure(message: 'Could not reach the server');
       default:
         return NetworkFailure(message: 'Network error');
     }
