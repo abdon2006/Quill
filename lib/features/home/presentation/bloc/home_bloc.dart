@@ -22,7 +22,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       if (!isCached) emit(HomeLoading());
       final response = await fetchBooksUsecase(NoParams());
       if (response.isLeft()) {
-        print('in the home bloc');
         final failure = response.fold((f) => f, (_) => null)!;
         await _handleFailure(emit, failure, isCached);
       } else {

@@ -83,7 +83,7 @@ class HomeScreen extends StatelessWidget {
 
                 SizedBox(height: AppSpacing.lg),
 
-                /// Header
+                /// Continue reading
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.xl,
@@ -164,31 +164,13 @@ class HomeScreen extends StatelessWidget {
                 /// From Library
                 BlocBuilder<HomeBloc, HomeState>(
                   builder: (context, state) {
+                    if (state is HomeLoading) {
+                      return _buildFromLibraryLoadingState();
+                    }
                     if (state is FetchBooksSuccess) {
-                      final books = state.books;
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.xl,
-                        ),
-                        child: Column(
-                          children: List.generate(books.length, (i) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: AppSpacing.sm,
-                              ),
-                              child: StaggerdAnimation(
-                                index: i,
-                                child: GestureDetector(
-                                  onTap: () => context.push(
-                                    '/bookDeatails',
-                                    extra: state.books[i],
-                                  ),
-                                  child: BookListTile(book: books[i]),
-                                ),
-                              ),
-                            );
-                          }),
-                        ),
+                      return _buildFromLibrarySuccessState(
+                        state.books,
+                        context,
                       );
                     }
 
@@ -232,6 +214,47 @@ Widget _buildRecentlyUsedDataSuccessState(List<BookEntity> books) {
           ),
         );
       },
+    ),
+  );
+}
+
+Widget _buildFromLibraryLoadingState() {
+  final books = List.generate(3, (i) => BookEntity.dummy());
+  return Skeletonizer(
+    enabled: true,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+      child: Column(
+        children: List.generate(books.length, (i) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+            child: BookListTile(book: books[i]),
+          );
+        }),
+      ),
+    ),
+  );
+}
+
+Widget _buildFromLibrarySuccessState(
+  List<BookEntity> books,
+  BuildContext context,
+) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+    child: Column(
+      children: List.generate(books.length, (i) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+          child: StaggerdAnimation(
+            index: i,
+            child: GestureDetector(
+              onTap: () => context.push('/bookDeatails', extra: books[i]),
+              child: BookListTile(book: books[i]),
+            ),
+          ),
+        );
+      }),
     ),
   );
 }
