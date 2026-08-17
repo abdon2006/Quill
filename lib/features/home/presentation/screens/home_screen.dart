@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:quill/core/theme/app_assets.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/widgets/book_list_tile.dart';
 import 'package:quill/core/widgets/premium_background.dart';
@@ -11,6 +9,7 @@ import 'package:quill/core/widgets/show_app_snack_bar.dart';
 import 'package:quill/features/auth/domain/entities/user_entity.dart';
 import 'package:quill/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:quill/features/auth/presentation/bloc/auth_state.dart';
+import 'package:quill/features/home/domain/entities/book_entity.dart';
 import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
 import 'package:quill/features/home/presentation/bloc/home_event.dart';
 import 'package:quill/features/home/presentation/bloc/home_state.dart';
@@ -113,69 +112,38 @@ class HomeScreen extends StatelessWidget {
                     if (state is HomeLoading) {
                       return Skeletonizer(
                         enabled: true,
-                        child: SizedBox(
-                          height: 230.h,
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppSpacing.xl,
-                            ),
-                            children: [
-                              Row(
-                                children: List.generate(
-                                  3,
-                                  (i) => BookGridCard(
-                                    onTap: () {},
-                                    bookCover: '',
-                                    bookTitle: 'Loading title here',
-                                    bookAuthor: 'Loading author',
-                                  ),
-                                ),
-                              ),
-                            ],
+                        child: _buildRecentlyUsedDataLoadingState(
+                          List.generate(
+                            3,
+                            (i) => BookGridCard(book: BookEntity.dummy()),
                           ),
                         ),
                       );
                     }
                     if (state is FetchBooksSuccess) {
                       final books = state.books;
-                      return SizedBox(
-                        height: 230.h,
-                        child: ListView.builder(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.xl,
-                          ),
-                          scrollDirection: Axis.horizontal,
-                          itemCount: books.length,
-                          itemBuilder: (context, i) {
-                            final item = books[i];
-                            return StaggerdAnimation(
-                              index: i,
-                              child: BookGridCard(
-                                onTap: () => context.push(
-                                  '/bookDeatails',
-                                  extra: state.books[i],
-                                ),
-                                bookCover: item.coverImage,
-                                bookTitle: item.title,
-                                bookAuthor: item.author,
-                              ),
-                            );
-                          },
+                      return _buildRecentlyUsedDataSuccessState(books);
+                    }
+                    if (state is HomeError) {
+                      final books = state.cachedBooks;
+                      if (books != null && books.isNotEmpty) {
+                        return _buildRecentlyUsedDataSuccessState(books);
+                      }
+                      return _buildRecentlyUsedDataLoadingState(
+                        List.generate(
+                          3,
+                          (i) => BookGridCard(book: BookEntity.dummy()),
                         ),
                       );
                     }
-                    if (state is HomeError) {
-                      return SvgPicture.asset(AppAssets.noData);
-                    }
-                    return Text('');
+                    return SizedBox();
                   },
                   listener: (BuildContext context, HomeState state) {
                     if (state is HomeError) {
                       showSnackBar(
                         context,
-                        message: 'Couldn\'t Load Books',
-                        messageDisc: 'Check Your Connection',
+                        message: 'Your shelf couldn\'t be reached.',
+                        messageDisc: 'Check your connection and try again.',
                       );
                     }
                   },
@@ -234,4 +202,36 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _buildRecentlyUsedDataLoadingState(List<Widget> data) {
+  return SizedBox(
+    height: 230.h,
+    child: ListView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+      children: [Row(children: data)],
+    ),
+  );
+}
+
+Widget _buildRecentlyUsedDataSuccessState(List<BookEntity> books) {
+  return SizedBox(
+    height: 230.h,
+    child: ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+      scrollDirection: Axis.horizontal,
+      itemCount: books.length,
+      itemBuilder: (context, i) {
+        final item = books[i];
+        return StaggerdAnimation(
+          index: i,
+          child: BookGridCard(
+            onTap: () => context.push('/bookDeatails', extra: books[i]),
+            book: item,
+          ),
+        );
+      },
+    ),
+  );
 }

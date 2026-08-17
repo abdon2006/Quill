@@ -5,21 +5,14 @@ import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_shadows.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
+import 'package:quill/features/home/domain/entities/book_entity.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class BookGridCard extends StatelessWidget {
-  final String bookCover;
-  final String bookTitle;
-  final String bookAuthor;
+  final BookEntity book;
   final VoidCallback? onTap;
 
-  const BookGridCard({
-    super.key,
-    required this.bookCover,
-    required this.bookTitle,
-    required this.bookAuthor,
-    this.onTap,
-  });
+  const BookGridCard({super.key, this.onTap, required this.book});
 
   @override
   Widget build(BuildContext context) {
@@ -42,14 +35,14 @@ class BookGridCard extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: AppRadius.xl,
                     child: Image.network(
-                      bookCover,
+                      book.coverImage,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) =>
                           Skeleton.leaf(
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: AppRadius.xl,
-                                color: Colors.black,
+                                color: Colors.grey[200],
                               ),
                             ),
                           ),
@@ -60,14 +53,14 @@ class BookGridCard extends StatelessWidget {
               const SizedBox(height: AppSpacing.sm),
               Skeleton.leaf(
                 child: Text(
-                  bookTitle,
+                  book.title,
                   style: AppTextStyles.heading2(context),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               Text(
-                bookAuthor,
+                book.author,
 
                 style: AppTextStyles.bodyMedium(
                   context,

@@ -15,7 +15,7 @@ class BookLocalDataSourceImpl implements BookLocalDataSource {
   }
 
   @override
-  Future<bool> isCacheValid() async {
+  Future<bool> isCached() async {
     final firstBook = await isarInstance.bookCaches.where().findFirst();
     if (firstBook == null) return false;
     final diff = DateTime.now().difference(firstBook.cachedAt);

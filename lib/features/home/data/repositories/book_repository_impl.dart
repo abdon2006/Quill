@@ -17,7 +17,7 @@ class BookRepositoryImpl implements BookRepository {
   @override
   Future<Either<Failure, List<BookEntity>>> fetchBooks() async {
     try {
-      final isCached = await bookLocalDataSource.isCacheValid();
+      final isCached = await bookLocalDataSource.isCached();
       if (isCached) {
         print('Loaded From Cached ..........');
         final localBooks = await bookLocalDataSource.readBooks();
@@ -32,11 +32,6 @@ class BookRepositoryImpl implements BookRepository {
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));
     }
-  }
-
-  @override
-  Future<bool> isCacheValid() async {
-    return await bookLocalDataSource.isCacheValid();
   }
 
   @override
@@ -60,6 +55,19 @@ class BookRepositoryImpl implements BookRepository {
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));
     }
+  }
+
+  @override
+  Future<bool> isCached() async {
+    return await bookLocalDataSource.isCached();
+  }
+
+  @override
+  Future<List<BookEntity>> getCachedBooks() async {
+    final response = await bookLocalDataSource.readBooks();
+    return response
+        .map((book) => BookMapper.mapBookToBookEntity(book))
+        .toList();
   }
 }
 
