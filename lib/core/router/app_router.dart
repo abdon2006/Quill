@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:quill/core/constants/app_constants.dart';
 import 'package:quill/core/di/injection_container.dart';
 import 'package:quill/core/router/main_shell.dart';
-import 'package:quill/core/storage/app_storage.dart';
+import 'package:quill/features/discover/storage/app_storage.dart';
 import 'package:quill/core/usecases/base_usecase.dart';
 import 'package:quill/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:quill/features/auth/presentation/bloc/auth_event.dart';

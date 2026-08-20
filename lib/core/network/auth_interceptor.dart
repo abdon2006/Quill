@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:quill/core/storage/app_storage.dart';
+import 'package:quill/features/discover/storage/app_storage.dart';
 
 class AuthInterceptor extends Interceptor {
   final AppStorage appStorage;

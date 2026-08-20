@@ -5,7 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:quill/core/constants/api_constants.dart';
 import 'package:quill/core/network/auth_interceptor.dart';
 import 'package:quill/core/network/network_service.dart';
-import 'package:quill/core/storage/app_storage.dart';
+import 'package:quill/features/discover/storage/app_storage.dart';
 import 'package:quill/features/auth/data/datasource/auth_remote_datasource.dart';
 import 'package:quill/features/auth/data/datasource/auth_remote_datasource_impl.dart';
 import 'package:quill/features/auth/data/repositories/auth_repository_impl.dart';
