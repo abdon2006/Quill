@@ -10,6 +10,7 @@ import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/widgets/premium_background.dart';
 import 'package:quill/features/library/domain/Entities/wishlist_entity.dart';
 import 'package:quill/features/library/presentation/bloc/library_bloc.dart';
+import 'package:quill/features/library/presentation/bloc/library_event.dart';
 import 'package:quill/features/library/presentation/bloc/library_state.dart';
 import 'package:quill/features/library/presentation/widgets/staggerd_animation.dart';
 import 'package:quill/features/library/presentation/widgets/chips_control.dart';
@@ -26,6 +27,13 @@ class LibraryScreen extends StatefulWidget {
 
 class _LibraryScreenState extends State<LibraryScreen> {
   int selectedIndex = 0;
+  @override
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    context.read<LibraryBloc>().add(FetchWishlistEvent());
+  }
+
   @override
   Widget build(BuildContext context) {
     return PremiumAuroraBackground(

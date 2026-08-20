@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/features/home/domain/entities/book_entity.dart';
 import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
@@ -13,6 +14,9 @@ import 'package:quill/features/home/presentation/widgets/DetailsScreen/build_for
 import 'package:quill/features/home/presentation/widgets/DetailsScreen/build_recommendations.dart';
 import 'package:quill/features/home/presentation/widgets/DetailsScreen/build_top_bar.dart';
 import 'package:quill/features/home/presentation/widgets/DetailsScreen/build_topics_sections.dart';
+import 'package:quill/features/library/presentation/bloc/library_bloc.dart';
+import 'package:quill/features/library/presentation/bloc/library_state.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class BookDetailsScreen extends StatefulWidget {
   final BookEntity? book;
@@ -25,12 +29,24 @@ class BookDetailsScreen extends StatefulWidget {
 
 class _BookDetailsScreenState extends State<BookDetailsScreen> {
   final ScrollController _scrollController = ScrollController();
-
+  bool isInWishlist = false;
   @override
   void initState() {
     super.initState();
     if (widget.book == null) {
       context.read<HomeBloc>().add(GetBookByIdEvent(bookId: widget.bookId!));
+    }
+    final wishliststate = context.read<LibraryBloc>().state;
+    if (wishliststate is FetchSuccessState) {
+      setState(() {
+        isInWishlist = wishliststate.books.any((book) {
+          if (widget.book == null) {
+            return book.bookId == widget.bookId;
+          } else {
+            return book.bookId == widget.book!.id;
+          }
+        });
+      });
     }
   }
 
@@ -42,60 +58,83 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBody: true,
-      body: widget.book == null
-          ? BlocBuilder<HomeBloc, HomeState>(
-              builder: (context, state) {
-                if (state is GetBookByIdSuccess) {
-                  final book = state.book;
-                  return _buildScreen(book);
-                }
-                if (state is HomeError) {}
-                if (state is HomeLoading) {}
-                return SizedBox();
-              },
-            )
-          : _buildScreen(widget.book!),
+    return BlocListener<LibraryBloc, LibraryState>(
+      listener: (context, state) {
+        if (state is AddSuccessState) {
+          setState(() => isInWishlist = true);
+        }
+        if (state is RemoveSuccessState) {
+          setState(() => isInWishlist = false);
+        }
+      },
+      child: Scaffold(
+        extendBody: true,
+        body: widget.book == null
+            ? BlocBuilder<HomeBloc, HomeState>(
+                builder: (context, state) {
+                  if (state is GetBookByIdSuccess) {
+                    final book = state.book;
+                    return _buildScreen(book, false);
+                  }
+                  if (state is HomeError) {}
+                  if (state is HomeLoading) {
+                    return _buildScreen(BookEntity.dummy(), true);
+                  }
+                  return SizedBox();
+                },
+              )
+            : _buildScreen(widget.book!, false),
+      ),
     );
   }
 
-  Widget _buildScreen(BookEntity book) {
+  Widget _buildScreen(BookEntity book, bool isLoading) {
     return Stack(
       children: [
-        ListView(
-          controller: _scrollController,
-          padding: EdgeInsets.zero,
-          children: [
-            builBookCover(context, book.coverImage),
+        Skeletonizer(
+          enabled: isLoading,
+          child: ListView(
+            controller: _scrollController,
+            padding: EdgeInsets.zero,
+            children: [
+              builBookCover(context, book.coverImage),
 
-            const SizedBox(height: AppSpacing.xxl),
+              const SizedBox(height: AppSpacing.xxl),
 
-            buildBookIdentity(context, book),
+              buildBookIdentity(context, book),
 
-            const SizedBox(height: AppSpacing.xxxl),
+              const SizedBox(height: AppSpacing.xxxl),
 
-            buildAboutSection(context, book.aboutBook),
+              buildAboutSection(context, book.aboutBook),
 
-            const SizedBox(height: AppSpacing.xxl),
+              const SizedBox(height: AppSpacing.xxl),
 
-            buildTopicsSection(context, book.categories),
+              buildTopicsSection(context, book.categories),
 
-            const SizedBox(height: AppSpacing.xxl),
+              const SizedBox(height: AppSpacing.xxl),
 
-            buildForWhoSection(context, book.forWho),
+              buildForWhoSection(context, book.forWho),
 
-            const SizedBox(height: AppSpacing.xxxl),
+              const SizedBox(height: AppSpacing.xxxl),
 
-            buildRecommendations(context),
+              buildRecommendations(context),
 
-            const SizedBox(height: 150),
-          ],
+              const SizedBox(height: 150),
+            ],
+          ),
         ),
 
         buildTopBar(context),
 
-        buildBottomActions(context),
+        Positioned(
+          left: 5.w,
+          right: 5.w,
+          bottom: 10.h,
+          child: BuildBottomActions(
+            isInWishlist: isInWishlist,
+            bookId: widget.book == null ? widget.bookId! : widget.book!.id,
+          ),
+        ),
       ],
     );
   }

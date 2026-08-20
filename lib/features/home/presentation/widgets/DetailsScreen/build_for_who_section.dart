@@ -4,12 +4,14 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
-Widget buildForWhoSection(BuildContext context , String fowWho) {
-    final theme = Theme.of(context).colorScheme;
+Widget buildForWhoSection(BuildContext context, String fowWho) {
+  final theme = Theme.of(context).colorScheme;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+    child: Skeleton.ignore(
       child: Container(
         padding: AppSpacing.cardPadding,
         decoration: BoxDecoration(
@@ -47,7 +49,7 @@ Widget buildForWhoSection(BuildContext context , String fowWho) {
                   const SizedBox(height: AppSpacing.xs),
 
                   Text(
-                   fowWho,
+                    fowWho,
                     style: AppTextStyles.heading2(context).copyWith(
                       height: 1.5,
                       color: theme.onSurface.withValues(alpha: 0.62),
@@ -59,5 +61,6 @@ Widget buildForWhoSection(BuildContext context , String fowWho) {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
