@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:quill/core/theme/app_spacing.dart';
+import 'package:quill/core/widgets/app_toast.dart';
+import 'package:quill/core/widgets/toast_animation.dart';
 import 'package:quill/features/home/domain/entities/book_entity.dart';
 import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
 import 'package:quill/features/home/presentation/bloc/home_event.dart';
@@ -29,6 +31,7 @@ class BookDetailsScreen extends StatefulWidget {
 
 class _BookDetailsScreenState extends State<BookDetailsScreen> {
   final ScrollController _scrollController = ScrollController();
+  final toastAnimationKey = GlobalKey<ToastAnimationState>();
   bool isInWishlist = false;
   @override
   void initState() {
@@ -59,12 +62,58 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<LibraryBloc, LibraryState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is AddSuccessState) {
+          final overlayEntry = OverlayEntry(
+            builder: (context) {
+              return Align(
+                alignment: Alignment.topCenter,
+                child: Material(
+                  color: Colors.transparent,
+                  child: ToastAnimation(
+                    key: toastAnimationKey,
+                    child: AppToast(
+                      label: 'Added to your library',
+                      subLabel: 'Ready whenever you are.',
+                      type: ToastType.success,
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+          Overlay.of(context).insert(overlayEntry);
           setState(() => isInWishlist = true);
+
+          await Future.delayed(Duration(seconds: 2));
+          await toastAnimationKey.currentState?.dismiss();
+          overlayEntry.remove();
         }
         if (state is RemoveSuccessState) {
+          final overlayEntry = OverlayEntry(
+            builder: (context) {
+              return Align(
+                alignment: Alignment.topCenter,
+                child: Material(
+                  color: Colors.transparent,
+                  child: ToastAnimation(
+                    key: toastAnimationKey,
+                    child: AppToast(
+                      label: 'Removed From your library',
+                      subLabel: 'You can always add it back.',
+                      type: ToastType.success,
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+          Overlay.of(context).insert(overlayEntry);
           setState(() => isInWishlist = false);
+
+          await Future.delayed(Duration(seconds: 2));
+          await toastAnimationKey.currentState?.dismiss();
+          overlayEntry.remove();
         }
       },
       child: Scaffold(
