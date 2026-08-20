@@ -5,6 +5,7 @@ import 'package:quill/core/theme/app_colors.dart';
 import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class BookStatsRow extends StatelessWidget {
   final int pages;
@@ -44,10 +45,12 @@ class BookStatsRow extends StatelessWidget {
             children: [
               Text('$rating', style: AppTextStyles.heading2(context)),
               SizedBox(width: AppSpacing.xs),
-              HugeIcon(
-                icon: HugeIcons.strokeRoundedStar,
-                color: AppColors.darkGold,
-                size: 16.sp,
+              Skeleton.ignore(
+                child: HugeIcon(
+                  icon: HugeIcons.strokeRoundedStar,
+                  color: AppColors.darkGold,
+                  size: 16.sp,
+                ),
               ),
             ],
           ),

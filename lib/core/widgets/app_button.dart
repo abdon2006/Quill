@@ -125,6 +125,7 @@ class AppButton extends StatelessWidget {
                       color: buttonEnabled
                           ? activeTextColor
                           : disabledTextColor,
+                      fontSize: isPrimary ? 20.sp : 14.sp,
                     ),
                   ),
                 ],

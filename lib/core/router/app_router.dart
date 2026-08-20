@@ -35,45 +35,10 @@ final appRouter = GoRouter(
 
   routes: [
     ShellRoute(
-      routes: [
-        /// Home
-        GoRoute(
-          path: AppRoutes.home,
-          name: AppRoutes.home,
-          builder: (context, state) => BlocProvider(
-            create: (context) => sl<HomeBloc>()..add(FetchHomeBooksEvent()),
-            child: HomeScreen(),
-          ),
-        ),
-
-        /// Library
-        GoRoute(
-          path: AppRoutes.library,
-          name: AppRoutes.library,
-          builder: (context, state) => LibraryScreen(),
-        ),
-
-        /// Discover
-        GoRoute(
-          path: AppRoutes.discover,
-          name: AppRoutes.discover,
-          builder: (context, state) =>
-              const Scaffold(body: Center(child: Text('Discover'))),
-        ),
-
-        /// Profile
-        GoRoute(
-          path: AppRoutes.profile,
-          name: AppRoutes.profile,
-          builder: (context, state) =>
-              const Scaffold(body: Center(child: Text('Profile'))),
-        ),
-      ],
-
       builder: (context, state, child) => MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => LibraryBloc(
+            create: (_) => LibraryBloc(
               addToWishlistUsecase: sl<AddToWishlistUsecase>(),
               removeFromWishlistUsecase: sl<RemoveFromWishlistUsecase>(),
               fetchWishlistUsecase: sl<FetchWishlistUsecase>(),
@@ -81,31 +46,77 @@ final appRouter = GoRouter(
           ),
 
           BlocProvider(
-            create: (context) =>
+            create: (_) =>
                 sl<AuthBloc>()..add(FetchUserDataEvent(params: NoParams())),
           ),
         ],
-        child: MainShell(state: state, child: child),
+        child: child,
       ),
-    ),
 
-    /// Book Details
-    GoRoute(
-      path: AppRoutes.bookDeatails,
-      name: AppRoutes.bookDeatails,
-      builder: (context, state) {
-        final extra = state.extra;
-        final book = extra is BookEntity ? extra : null;
-        final bookId = extra is String ? extra : null;
-        return BlocProvider(
-          create: (context) => HomeBloc(
-            fetchBooksUsecase: sl<FetchBooksUsecase>(),
-            bookRepository: sl<BookRepository>(),
-            getBookByIdUsecase: sl<GetBookByIdUsecase>(),
-          ),
-          child: BookDetailsScreen(book: book, bookId: bookId),
-        );
-      },
+      routes: [
+        ShellRoute(
+          builder: (context, state, child) =>
+              MainShell(state: state, child: child),
+          routes: [
+            GoRoute(
+              path: AppRoutes.home,
+              name: AppRoutes.home,
+              builder: (context, state) => BlocProvider(
+                create: (context) => sl<HomeBloc>()..add(FetchHomeBooksEvent()),
+                child: HomeScreen(),
+              ),
+            ),
+
+            /// Library
+            GoRoute(
+              path: AppRoutes.library,
+              name: AppRoutes.library,
+              builder: (context, state) => LibraryScreen(),
+            ),
+
+            /// Discover
+            GoRoute(
+              path: AppRoutes.discover,
+              name: AppRoutes.discover,
+              builder: (context, state) =>
+                  const Scaffold(body: Center(child: Text('Discover'))),
+            ),
+
+            /// Profile
+            GoRoute(
+              path: AppRoutes.profile,
+              name: AppRoutes.profile,
+              builder: (context, state) =>
+                  const Scaffold(body: Center(child: Text('Profile'))),
+            ),
+          ],
+        ),
+
+        /// Book Details
+        GoRoute(
+          path: AppRoutes.bookDeatails,
+          name: AppRoutes.bookDeatails,
+          builder: (context, state) {
+            final extra = state.extra;
+            final book = extra is BookEntity ? extra : null;
+            final bookId = extra is String ? extra : null;
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (context) => HomeBloc(
+                    fetchBooksUsecase: sl<FetchBooksUsecase>(),
+                    bookRepository: sl<BookRepository>(),
+                    getBookByIdUsecase: sl<GetBookByIdUsecase>(),
+                  ),
+                ),
+              ],
+              child: BookDetailsScreen(book: book, bookId: bookId),
+            );
+          },
+        ),
+
+        /// Home
+      ],
     ),
 
     /// OnBoarding
@@ -176,3 +187,5 @@ final appRouter = GoRouter(
     }
   },
 );
+
+// ),

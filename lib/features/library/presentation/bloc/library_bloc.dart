@@ -18,18 +18,22 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
     on<AddToWishlistEvent>((event, emit) async {
       emit(LibraryLoading());
       final response = await addToWishlistUsecase(event.bookId);
-      response.fold(
-        (failure) => emit(LibraryError(failure: failure)),
-        (success) => emit(AddSuccessState()),
-      );
+      response.fold((failure) => emit(LibraryError(failure: failure)), (
+        success,
+      ) {
+        emit(AddSuccessState());
+        add(FetchWishlistEvent());
+      });
     });
     on<RemoveFromWishlistEvent>((event, emit) async {
       emit(LibraryLoading());
       final response = await removeFromWishlistUsecase(event.bookId);
-      response.fold(
-        (failure) => emit(LibraryError(failure: failure)),
-        (success) => emit(RemoveSuccessState()),
-      );
+      response.fold((failure) => emit(LibraryError(failure: failure)), (
+        success,
+      ) {
+        emit(RemoveSuccessState());
+        add(FetchWishlistEvent());
+      });
     });
     on<FetchWishlistEvent>((event, emit) async {
       emit(LibraryLoading());
