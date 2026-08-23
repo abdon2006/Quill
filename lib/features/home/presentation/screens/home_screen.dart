@@ -88,7 +88,7 @@ class HomeScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.xl,
                   ),
-                  child: ContinueReading(ontap: () {}),
+                  child: ContinueReading(onTap: () {}),
                 ),
 
                 SizedBox(height: AppSpacing.lg),
