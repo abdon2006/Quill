@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:quill/core/errors/failures.dart';
-import 'package:quill/features/library/domain/Entities/wishlist_entity.dart';
+import 'package:quill/features/library/domain/entities/wishlist_entity.dart';
 
 abstract class LibraryState extends Equatable {}
 

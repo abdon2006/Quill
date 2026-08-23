@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quill/core/usecases/base_usecase.dart';
-import 'package:quill/features/library/domain/UseCases/add_to_wishlist.dart';
-import 'package:quill/features/library/domain/UseCases/fetch_wishlist.dart';
-import 'package:quill/features/library/domain/UseCases/remove_from_wishlist.dart';
+import 'package:quill/features/library/domain/usecases/add_to_wishlist.dart';
+import 'package:quill/features/library/domain/usecases/fetch_wishlist.dart';
+import 'package:quill/features/library/domain/usecases/remove_from_wishlist.dart';
 import 'package:quill/features/library/presentation/bloc/library_event.dart';
 import 'package:quill/features/library/presentation/bloc/library_state.dart';
 

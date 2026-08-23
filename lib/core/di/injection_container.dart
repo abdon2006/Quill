@@ -24,13 +24,16 @@ import 'package:quill/features/home/domain/repositories/book_repository.dart';
 import 'package:quill/features/home/domain/usecases/fetch_books_usecase.dart';
 import 'package:quill/features/home/domain/usecases/get_book_by_id_usecase.dart';
 import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
-import 'package:quill/features/library/data/DateSources/library_remote_data_source.dart';
-import 'package:quill/features/library/data/DateSources/library_remote_data_source_impl.dart';
-import 'package:quill/features/library/data/Repositories/library_repository_impl.dart';
-import 'package:quill/features/library/domain/Repositories/library_repository.dart';
-import 'package:quill/features/library/domain/UseCases/add_to_wishlist.dart';
-import 'package:quill/features/library/domain/UseCases/fetch_wishlist.dart';
-import 'package:quill/features/library/domain/UseCases/remove_from_wishlist.dart';
+import 'package:quill/features/library/data/datesources/library_local_data_source.dart';
+import 'package:quill/features/library/data/datesources/library_local_data_source_impl.dart';
+import 'package:quill/features/library/data/datesources/library_remote_data_source.dart';
+import 'package:quill/features/library/data/datesources/library_remote_data_source_impl.dart';
+import 'package:quill/features/library/data/models/wishlist_cache.dart';
+import 'package:quill/features/library/data/repositories/library_repository_impl.dart';
+import 'package:quill/features/library/domain/repositories/library_repository.dart';
+import 'package:quill/features/library/domain/usecases/add_to_wishlist.dart';
+import 'package:quill/features/library/domain/usecases/fetch_wishlist.dart';
+import 'package:quill/features/library/domain/usecases/remove_from_wishlist.dart';
 import 'package:quill/features/library/presentation/bloc/library_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../locale/cubit/locale_cubit.dart';
@@ -41,7 +44,10 @@ final sl = GetIt.instance;
 Future<Isar> initIsar() async {
   final dir = await getApplicationDocumentsDirectory();
 
-  return await Isar.open([BookCacheSchema], directory: dir.path);
+  return await Isar.open([
+    BookCacheSchema,
+    WishlistCacheSchema,
+  ], directory: dir.path);
 }
 
 Future<void> setupDI() async {
@@ -137,8 +143,15 @@ Future<void> setupDI() async {
   sl.registerLazySingleton<LibraryRemoteDataSource>(
     () => LibraryRemoteDataSourceImpl(networkService: sl()),
   );
+  sl.registerLazySingleton<LibraryLocalDataSource>(
+    () => LibraryLocalDataSourceImpl(isarInstance: isar),
+  );
+
   sl.registerLazySingleton<LibraryRepository>(
-    () => LibraryRepositoryImpl(libraryRemoteDataSource: sl()),
+    () => LibraryRepositoryImpl(
+      libraryRemoteDataSource: sl(),
+      libraryLocalDataSource: sl(),
+    ),
   );
   sl.registerLazySingleton<AddToWishlistUsecase>(
     () => AddToWishlistUsecase(libraryRepository: sl()),

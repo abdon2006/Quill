@@ -3,7 +3,7 @@ import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_shadows.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
-import 'package:quill/features/library/domain/Entities/wishlist_entity.dart';
+import 'package:quill/features/library/domain/entities/wishlist_entity.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class LibraryBookCard extends StatelessWidget {
