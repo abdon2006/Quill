@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:quill/core/theme/app_duration.dart';
 import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
+import 'package:quill/features/library/presentation/widgets/staggerd_animation.dart';
 
 enum ButtonType { primary, secondary }
 
@@ -117,15 +119,45 @@ class AppButton extends StatelessWidget {
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  if (icon != null) HugeIcon(icon: icon!),
-                  const SizedBox(width: AppSpacing.sm),
-                  Text(
-                    text,
-                    style: AppTextStyles.heading2(context).copyWith(
-                      color: buttonEnabled
-                          ? activeTextColor
-                          : disabledTextColor,
-                      fontSize: isPrimary ? 20.sp : 14.sp,
+                  StaggerdAnimation(
+                    index: 0,
+                    child: AnimatedSwitcher(
+                      duration: AppDuration.slow,
+                      switchInCurve: Curves.easeOutCubic,
+                      switchOutCurve: Curves.easeInCubic,
+                      transitionBuilder: (child, animation) {
+                        return FadeTransition(
+                          opacity: animation,
+                          child: SlideTransition(
+                            position: Tween<Offset>(
+                              begin: const Offset(
+                                0.0,
+                                0.2,
+                              ), // النص الجديد بيطلع من تحت لفوق بهدوء
+                              end: Offset.zero,
+                            ).animate(animation),
+                            child: child,
+                          ),
+                        );
+                      },
+                      child: Row(
+                        key: ValueKey(text),
+
+                        children: [
+                          if (icon != null) HugeIcon(icon: icon!),
+                          const SizedBox(width: AppSpacing.sm),
+
+                          Text(
+                            text,
+                            style: AppTextStyles.heading2(context).copyWith(
+                              color: buttonEnabled
+                                  ? activeTextColor
+                                  : disabledTextColor,
+                              fontSize: isPrimary ? 20.sp : 14.sp,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

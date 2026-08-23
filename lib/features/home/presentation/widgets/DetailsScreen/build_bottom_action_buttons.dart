@@ -6,7 +6,7 @@ import 'package:quill/core/widgets/app_button.dart';
 import 'package:quill/features/library/presentation/bloc/library_bloc.dart';
 import 'package:quill/features/library/presentation/bloc/library_event.dart';
 
-class BuildBottomActions extends StatelessWidget {
+class BuildBottomActions extends StatefulWidget {
   final bool isInWishlist;
   final String bookId;
   const BuildBottomActions({
@@ -16,6 +16,11 @@ class BuildBottomActions extends StatelessWidget {
   });
 
   @override
+  State<BuildBottomActions> createState() => _BuildBottomActionsState();
+}
+
+class _BuildBottomActionsState extends State<BuildBottomActions> {
+  @override
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
@@ -23,13 +28,15 @@ class BuildBottomActions extends StatelessWidget {
         children: [
           Expanded(
             child: AppButton.secondary(
-              text: isInWishlist ? 'Remove From Library' : 'Add to Library',
+              text: widget.isInWishlist
+                  ? 'Remove From Library'
+                  : 'Add to Library',
               icon: HugeIcons.strokeRoundedLibrary,
               onPressed: () {
                 context.read<LibraryBloc>().add(
-                  isInWishlist
-                      ? RemoveFromWishlistEvent(bookId: bookId)
-                      : AddToWishlistEvent(bookId: bookId),
+                  widget.isInWishlist
+                      ? RemoveFromWishlistEvent(bookId: widget.bookId)
+                      : AddToWishlistEvent(bookId: widget.bookId),
                 );
               },
             ),
