@@ -31,7 +31,10 @@ class LocalBookRepositoryImpl implements LocalBookRepository {
   @override
   Future<Either<Failure, void>> updateProgress(int bookId, int newPage) async {
     try {
-      final response = await bookLocalDataSource.removeBook(bookId);
+      final response = await bookLocalDataSource.updateProgress(
+        bookId,
+        newPage,
+      );
       return Right(response);
     } catch (e) {
       return Left(LocalFailure(message: e.toString()));
@@ -41,7 +44,7 @@ class LocalBookRepositoryImpl implements LocalBookRepository {
   @override
   Future<Either<Failure, void>> uploadBook(LocalBook book) async {
     try {
-      final response = await bookLocalDataSource.removeBook(bookId);
+      final response = await bookLocalDataSource.uploadBook(book);
       return Right(response);
     } catch (e) {
       return Left(LocalFailure(message: e.toString()));
