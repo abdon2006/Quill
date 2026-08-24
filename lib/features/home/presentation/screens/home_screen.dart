@@ -18,6 +18,7 @@ import 'package:quill/features/home/presentation/widgets/Home/continue_reading.d
 import 'package:quill/features/home/presentation/widgets/Home/continue_reading_empty.dart';
 import 'package:quill/features/home/presentation/widgets/Home/home_header.dart';
 import 'package:quill/features/home/presentation/widgets/Home/section_header.dart';
+import 'package:quill/features/library/domain/entities/wishlist_entity.dart';
 import 'package:quill/features/library/presentation/bloc/library_bloc.dart';
 import 'package:quill/features/library/presentation/bloc/library_state.dart';
 import 'package:quill/features/library/presentation/widgets/staggerd_animation.dart';
@@ -170,27 +171,18 @@ class HomeScreen extends StatelessWidget {
                 ),
 
                 /// Section Header - From Library
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.xl,
-                    vertical: AppSpacing.xl,
-                  ),
-                  child: SectionHeader(
-                    title: 'From Library',
-                    viewAllOnTap: () {},
-                  ),
-                ),
 
                 /// From Library
-                BlocBuilder<HomeBloc, HomeState>(
+                BlocBuilder<LibraryBloc, LibraryState>(
                   builder: (context, state) {
-                    if (state is HomeLoading) {
+                    if (state is LibraryLoading) {
                       return _buildFromLibraryLoadingState();
                     }
-                    if (state is FetchBooksSuccess) {
+                    if (state is FetchSuccessState && state.books.isNotEmpty) {
+                      final books = state.books;
                       return _buildFromLibrarySuccessState(
-                        state.books,
-                        context,
+                        books: books,
+                        context: context,
                       );
                     }
 
@@ -239,7 +231,7 @@ Widget _buildRecentlyUsedDataSuccessState(List<BookEntity> books) {
 }
 
 Widget _buildFromLibraryLoadingState() {
-  final books = List.generate(3, (i) => BookEntity.dummy());
+  final books = List.generate(3, (i) => WishlistEntity.dummy());
   return Skeletonizer(
     enabled: true,
     child: Padding(
@@ -256,25 +248,39 @@ Widget _buildFromLibraryLoadingState() {
   );
 }
 
-Widget _buildFromLibrarySuccessState(
-  List<BookEntity> books,
-  BuildContext context,
-) {
+Widget _buildFromLibrarySuccessState({
+  required List<WishlistEntity> books,
+  required BuildContext context,
+}) {
   return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+    padding: const EdgeInsets.symmetric(
+      horizontal: AppSpacing.xl,
+      vertical: AppSpacing.xl,
+    ),
     child: Column(
-      children: List.generate(books.length, (i) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-          child: StaggerdAnimation(
-            index: i,
-            child: GestureDetector(
-              onTap: () => context.push('/bookDeatails', extra: books[i]),
-              child: BookListTile(book: books[i]),
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+          child: SectionHeader(title: 'From Library', viewAllOnTap: () {}),
+        ),
+        ...List.generate(books.length, (i) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+            child: Column(
+              children: [
+                StaggerdAnimation(
+                  index: i,
+                  child: GestureDetector(
+                    onTap: () =>
+                        context.push('/bookDeatails', extra: books[i].bookId),
+                    child: BookListTile(book: books[i]),
+                  ),
+                ),
+              ],
             ),
-          ),
-        );
-      }),
+          );
+        }),
+      ],
     ),
   );
 }
