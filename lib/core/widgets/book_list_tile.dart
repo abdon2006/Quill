@@ -5,10 +5,11 @@ import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 import 'package:quill/features/home/domain/entities/book_entity.dart';
+import 'package:quill/features/library/domain/entities/wishlist_entity.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class BookListTile extends StatelessWidget {
-  final BookEntity book;
+  final WishlistEntity book;
   const BookListTile({super.key, required this.book});
   String timeAgo(DateTime createdAt) {
     final diff = DateTime.now().difference(createdAt);
@@ -22,7 +23,6 @@ class BookListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final createdAgo = timeAgo(book.createdAt);
     return Container(
       padding: EdgeInsets.symmetric(
         vertical: AppSpacing.md,
@@ -68,7 +68,6 @@ class BookListTile extends StatelessWidget {
                   ).copyWith(fontWeight: FontWeight.bold),
                 ),
                 Text(book.author, style: AppTextStyles.caption(context)),
-                Text(createdAgo, style: AppTextStyles.caption(context)),
               ],
             ),
           ),
