@@ -35,6 +35,15 @@ import 'package:quill/features/library/domain/usecases/add_to_wishlist.dart';
 import 'package:quill/features/library/domain/usecases/fetch_wishlist.dart';
 import 'package:quill/features/library/domain/usecases/remove_from_wishlist.dart';
 import 'package:quill/features/library/presentation/bloc/library_bloc.dart';
+import 'package:quill/features/reader/data/datasources/local_book_data_source.dart';
+import 'package:quill/features/reader/data/datasources/local_book_data_source_impl.dart';
+import 'package:quill/features/reader/data/models/local_book.dart';
+import 'package:quill/features/reader/data/repositories/local_book_repository_impl.dart';
+import 'package:quill/features/reader/domain/repositories/local_book_repository.dart';
+import 'package:quill/features/reader/domain/usecases/fetch_local_book_usecase.dart';
+import 'package:quill/features/reader/domain/usecases/remove_book_usecase.dart';
+import 'package:quill/features/reader/domain/usecases/update_progress_usecase.dart';
+import 'package:quill/features/reader/domain/usecases/upload_book_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../locale/cubit/locale_cubit.dart';
 import '../theme/cubit/theme_cubit.dart';
@@ -47,6 +56,7 @@ Future<Isar> initIsar() async {
   return await Isar.open([
     BookCacheSchema,
     WishlistCacheSchema,
+    LocalBookSchema,
   ], directory: dir.path);
 }
 
@@ -169,5 +179,25 @@ Future<void> setupDI() async {
       removeFromWishlistUsecase: sl(),
       fetchWishlistUsecase: sl(),
     ),
+  );
+
+  /// READER
+  sl.registerLazySingleton<LocalBookDataSource>(
+    () => LocalBookDataSourceImpl(isarInstance: isar),
+  );
+  sl.registerLazySingleton<LocalBookRepository>(
+    () => LocalBookRepositoryImpl(bookLocalDataSource: sl()),
+  );
+  sl.registerLazySingleton<RemoveBookUsecase>(
+    () => RemoveBookUsecase(localBookRepository: sl()),
+  );
+  sl.registerLazySingleton<UploadBookUsecase>(
+    () => UploadBookUsecase(localBookRepository: sl()),
+  );
+  sl.registerLazySingleton<UpdateProgressUsecase>(
+    () => UpdateProgressUsecase(localBookRepository: sl()),
+  );
+  sl.registerLazySingleton<FetchLocalBookUsecase>(
+    () => FetchLocalBookUsecase(localBookRepository: sl()),
   );
 }

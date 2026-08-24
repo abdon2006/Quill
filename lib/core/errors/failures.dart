@@ -34,3 +34,9 @@ class CacheFailure extends Failure {
   @override
   String toString() => "CacheFailure : $message";
 }
+
+class LocalFailure extends Failure {
+  const LocalFailure({required super.message});
+  @override
+  String toString() => "Local Failure : $message";
+}
