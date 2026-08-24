@@ -15,8 +15,11 @@ import 'package:quill/features/home/presentation/bloc/home_event.dart';
 import 'package:quill/features/home/presentation/bloc/home_state.dart';
 import 'package:quill/features/home/presentation/widgets/Home/book_grid_card.dart';
 import 'package:quill/features/home/presentation/widgets/Home/continue_reading.dart';
+import 'package:quill/features/home/presentation/widgets/Home/continue_reading_empty.dart';
 import 'package:quill/features/home/presentation/widgets/Home/home_header.dart';
 import 'package:quill/features/home/presentation/widgets/Home/section_header.dart';
+import 'package:quill/features/library/presentation/bloc/library_bloc.dart';
+import 'package:quill/features/library/presentation/bloc/library_state.dart';
 import 'package:quill/features/library/presentation/widgets/staggerd_animation.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -84,11 +87,28 @@ class HomeScreen extends StatelessWidget {
                 SizedBox(height: AppSpacing.lg),
 
                 /// Continue reading
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.xl,
-                  ),
-                  child: ContinueReading(onTap: () {}),
+                BlocBuilder<LibraryBloc, LibraryState>(
+                  builder: (context, state) {
+                    if (state is FetchSuccessState) {
+                      final books = state.books;
+                      if (books.isEmpty) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.xl,
+                          ),
+                          child: ContinueReadingEmpty(onImport: () {}),
+                        );
+                      }
+                      final book = books.take(1).toList()[0];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.xl,
+                        ),
+                        child: ContinueReading(onTap: () {}, book: book),
+                      );
+                    }
+                    return SizedBox();
+                  },
                 ),
 
                 SizedBox(height: AppSpacing.lg),

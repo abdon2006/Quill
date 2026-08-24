@@ -6,11 +6,13 @@ import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_shadows.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
+import 'package:quill/features/library/domain/entities/wishlist_entity.dart';
 
 class ContinueReading extends StatelessWidget {
   final VoidCallback onTap;
+  final WishlistEntity book;
 
-  const ContinueReading({super.key, required this.onTap});
+  const ContinueReading({super.key, required this.onTap, required this.book});
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +46,9 @@ class ContinueReading extends StatelessWidget {
                     child: ClipRRect(
                       borderRadius: AppRadius.xl,
                       child: Image.network(
-                        'https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=800&auto=format&fit=crop',
+                        book.coverImage,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) {
+                        errorBuilder: (_, _, _) {
                           return Container(
                             color: colors.surfaceContainerHighest,
                             alignment: Alignment.center,
@@ -64,9 +66,6 @@ class ContinueReading extends StatelessWidget {
 
               SizedBox(width: AppSpacing.lg),
 
-              // ─────────────────────────────
-              // Book Information
-              // ─────────────────────────────
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,7 +80,7 @@ class ContinueReading extends StatelessWidget {
                     SizedBox(height: AppSpacing.xs),
 
                     Text(
-                      'Milk & Honey',
+                      book.title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: AppTextStyles.heading2(context),
@@ -90,7 +89,7 @@ class ContinueReading extends StatelessWidget {
                     SizedBox(height: AppSpacing.xs),
 
                     Text(
-                      'Rupi Kaur',
+                      book.author,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: AppTextStyles.bodyMedium(
@@ -100,7 +99,6 @@ class ContinueReading extends StatelessWidget {
 
                     SizedBox(height: AppSpacing.lg),
 
-                    // Progress
                     Row(
                       children: [
                         Expanded(
@@ -121,6 +119,7 @@ class ContinueReading extends StatelessWidget {
 
                         SizedBox(width: AppSpacing.sm),
 
+                        //////
                         Text(
                           '70%',
                           style: AppTextStyles.caption(context).copyWith(
@@ -144,10 +143,6 @@ class ContinueReading extends StatelessWidget {
               ),
 
               SizedBox(width: AppSpacing.sm),
-
-              // ─────────────────────────────
-              // Continue Arrow
-              // ─────────────────────────────
               Container(
                 padding: EdgeInsets.all(AppSpacing.sm),
                 decoration: BoxDecoration(
