@@ -16,7 +16,7 @@ import 'package:quill/features/auth/presentation/bloc/auth_event.dart';
 import 'package:quill/features/reader/domain/usecases/fetch_local_book_usecase.dart';
 import 'package:quill/features/reader/domain/usecases/fetch_local_books_usecase.dart';
 import 'package:quill/features/reader/domain/usecases/remove_book_usecase.dart';
-import 'package:quill/features/reader/domain/usecases/update_progress_usecase.dart';
+import 'package:quill/features/reader/domain/usecases/update_book_usecase.dart';
 import 'package:quill/features/reader/domain/usecases/upload_book_usecase.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_bloc.dart';
 
@@ -46,7 +46,7 @@ void main() async {
               uploadBookUsecase: sl<UploadBookUsecase>(),
               removeBookUsecase: sl<RemoveBookUsecase>(),
               fetchLocalBookUsecase: sl<FetchLocalBookUsecase>(),
-              updateProgressUsecase: sl<UpdateProgressUsecase>(),
+              updateBookUsecase: sl<UpdateBookUsecase>(),
               fetchLocalBooksUsecase: sl<FetchLocalBooksUsecase>(),
             )),
           ),

@@ -1,6 +1,7 @@
 import 'package:isar/isar.dart';
 import 'package:quill/features/reader/data/datasources/local_book_data_source.dart';
 import 'package:quill/features/reader/data/models/local_book.dart';
+import 'package:quill/features/reader/domain/usecases/params/update_book_params.dart';
 
 class LocalBookDataSourceImpl implements LocalBookDataSource {
   final Isar isarInstance;
@@ -15,18 +16,23 @@ class LocalBookDataSourceImpl implements LocalBookDataSource {
 
   @override
   Future<void> removeBook(int bookId) async {
-    await isarInstance.localBooks.delete(bookId);
+    await isarInstance.writeTxn(() async {
+      await isarInstance.localBooks.delete(bookId);
+    });
   }
 
   @override
-  Future<void> updateProgress(int bookId, int newPage) async {
+  Future<void> updateBook(UpdateBookParams params) async {
     await isarInstance.writeTxn(() async {
       final book = await isarInstance.localBooks
           .filter()
-          .isarIdEqualTo(bookId)
+          .isarIdEqualTo(params.bookId)
           .findFirst();
       if (book != null) {
-        book.currentPage = newPage;
+        book.currentPage = params.currentPage;
+        book.author = params.author;
+        book.title = params.title;
+
         await isarInstance.localBooks.put(book);
       }
     });

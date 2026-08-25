@@ -10,7 +10,7 @@ import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 import 'package:quill/core/widgets/app_button.dart';
 import 'package:quill/core/widgets/show_app_snack_bar.dart';
-import 'package:quill/features/reader/domain/usecases/upload_book_params.dart';
+import 'package:quill/features/reader/domain/usecases/params/upload_book_params.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_bloc.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_event.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_state.dart';

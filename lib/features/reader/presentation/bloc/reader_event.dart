@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:quill/features/reader/domain/usecases/upload_book_params.dart';
+import 'package:quill/features/reader/domain/usecases/params/update_book_params.dart';
+import 'package:quill/features/reader/domain/usecases/params/upload_book_params.dart';
 
 abstract class ReaderEvent extends Equatable {}
 
@@ -18,12 +19,11 @@ class RemoveBookEvent extends ReaderEvent {
   List<Object?> get props => [bookId];
 }
 
-class UpdateBookProgressEvent extends ReaderEvent {
-  final int bookId;
-  final int newPage;
-  UpdateBookProgressEvent({required this.bookId, required this.newPage});
+class UpdateBookEvent extends ReaderEvent {
+  final UpdateBookParams params;
+  UpdateBookEvent({required this.params});
   @override
-  List<Object?> get props => [bookId, newPage];
+  List<Object?> get props => [params];
 }
 
 class FetchLocalBookEvent extends ReaderEvent {
@@ -32,8 +32,8 @@ class FetchLocalBookEvent extends ReaderEvent {
   @override
   List<Object?> get props => [bookId];
 }
-class FetchLocalBooksEvent extends ReaderEvent{
+
+class FetchLocalBooksEvent extends ReaderEvent {
   @override
   List<Object?> get props => [];
-
 }

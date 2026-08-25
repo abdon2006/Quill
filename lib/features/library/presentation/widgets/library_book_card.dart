@@ -38,8 +38,8 @@ class LibraryBookCard extends StatelessWidget {
                       color: theme.surface,
                       child: Center(
                         child: HugeIcon(
-                          icon: HugeIcons.strokeRoundedBook02,
-                          size: 38.sp,
+                          icon: HugeIcons.strokeRoundedLibrary,
+                          size: 42.sp,
                           color: isDark
                               ? AppColors.darkTextMuted
                               : AppColors.lightTextMuted,

@@ -4,10 +4,11 @@ import 'package:quill/features/reader/data/models/local_book.dart';
 enum BookSource { local, server }
 
 class LibraryBookDisplayModel {
-  final String title;
-  final String author;
+  String title;
+  String author;
   String? coverImage;
   String? bookId;
+  int? localId;
   final BookSource bookSource;
   int? pages;
   int? currentPage;
@@ -20,6 +21,7 @@ class LibraryBookDisplayModel {
     required this.bookSource,
     this.pages,
     this.currentPage,
+    this.localId,
   });
   LibraryBookDisplayModel.dummy({
     this.title = 'Atomic Habits',
@@ -29,6 +31,7 @@ class LibraryBookDisplayModel {
     this.bookSource = BookSource.local,
     this.pages = 0,
     this.currentPage = 0,
+    this.localId = 1,
   });
 }
 
@@ -58,6 +61,7 @@ class LibraryMapper {
         bookSource: BookSource.local,
         currentPage: book.currentPage,
         pages: book.totalPages,
+        localId: book.isarId,
       );
     }).toList();
   }
