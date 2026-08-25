@@ -44,3 +44,11 @@ class UpdateBookProgressSuccess extends ReaderState {
   @override
   List<Object?> get props => [];
 }
+
+class FetchLocalBooksSuccess extends ReaderState {
+  final List<LocalBook> localBooks;
+
+  FetchLocalBooksSuccess({required this.localBooks});
+  @override
+  List<Object?> get props => [localBooks];
+}

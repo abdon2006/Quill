@@ -9,6 +9,16 @@ import 'package:quill/core/locale/cubit/locale_cubit.dart';
 import 'package:quill/core/router/app_router.dart';
 import 'package:quill/core/theme/app_theme.dart';
 import 'package:quill/core/theme/cubit/theme_cubit.dart';
+import 'package:quill/core/usecases/base_usecase.dart';
+import 'package:quill/features/auth/presentation/bloc/auth_bloc.dart'
+    show AuthBloc;
+import 'package:quill/features/auth/presentation/bloc/auth_event.dart';
+import 'package:quill/features/reader/domain/usecases/fetch_local_book_usecase.dart';
+import 'package:quill/features/reader/domain/usecases/fetch_local_books_usecase.dart';
+import 'package:quill/features/reader/domain/usecases/remove_book_usecase.dart';
+import 'package:quill/features/reader/domain/usecases/update_progress_usecase.dart';
+import 'package:quill/features/reader/domain/usecases/upload_book_usecase.dart';
+import 'package:quill/features/reader/presentation/bloc/reader_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +37,19 @@ void main() async {
       path: 'assets/translations',
       child: MultiBlocProvider(
         providers: [
+          BlocProvider(
+            create: (_) =>
+                sl<AuthBloc>()..add(FetchUserDataEvent(params: NoParams())),
+          ),
+          BlocProvider(
+            create: ((context) => ReaderBloc(
+              uploadBookUsecase: sl<UploadBookUsecase>(),
+              removeBookUsecase: sl<RemoveBookUsecase>(),
+              fetchLocalBookUsecase: sl<FetchLocalBookUsecase>(),
+              updateProgressUsecase: sl<UpdateProgressUsecase>(),
+              fetchLocalBooksUsecase: sl<FetchLocalBooksUsecase>(),
+            )),
+          ),
           BlocProvider(create: (_) => sl<ThemeCubit>()),
           BlocProvider(create: (_) => sl<LocaleCubit>()),
         ],

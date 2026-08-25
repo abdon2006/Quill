@@ -3,11 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quill/core/errors/failures.dart';
-import 'package:quill/core/states/EmptyStates/app_empty.dart';
 import 'package:quill/core/states/ErrorStates/app_error.dart';
 import 'package:quill/core/theme/app_assets.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/widgets/premium_background.dart';
+import 'package:quill/features/library/data/models/library_book_display_model.dart';
 import 'package:quill/features/library/domain/entities/wishlist_entity.dart';
 import 'package:quill/features/library/presentation/bloc/library_bloc.dart';
 import 'package:quill/features/library/presentation/bloc/library_event.dart';
@@ -16,6 +16,9 @@ import 'package:quill/features/library/presentation/widgets/staggerd_animation.d
 import 'package:quill/features/library/presentation/widgets/chips_control.dart';
 import 'package:quill/features/library/presentation/widgets/library_book_card.dart';
 import 'package:quill/features/library/presentation/widgets/library_header.dart';
+import 'package:quill/features/reader/presentation/bloc/reader_bloc.dart';
+import 'package:quill/features/reader/presentation/bloc/reader_event.dart';
+import 'package:quill/features/reader/presentation/bloc/reader_state.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class LibraryScreen extends StatefulWidget {
@@ -27,11 +30,12 @@ class LibraryScreen extends StatefulWidget {
 
 class _LibraryScreenState extends State<LibraryScreen> {
   int selectedIndex = 0;
+
   @override
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
     context.read<LibraryBloc>().add(FetchWishlistEvent());
+    context.read<ReaderBloc>().add(FetchLocalBooksEvent());
   }
 
   @override
@@ -62,27 +66,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
 
                 BlocBuilder<LibraryBloc, LibraryState>(
                   builder: (context, state) {
-                    if (state is FetchSuccessState) {
-                      final books = state.books;
-                      if (books.isEmpty) {
-                        return StaggerdAnimation(
-                          index: 0,
-                          child: AppEmpty(
-                            title: "Your shelf is waiting.",
-                            subtitle: "Bring a book into your quiet space.",
-                            image: AppAssets.emptyState,
-                          ),
-                        );
-                      }
-                      return _buildBooks(books);
-                    }
-                    if (state is LibraryLoading) {
-                      return Skeletonizer(
-                        child: _buildBooks(
-                          List.generate(4, (i) => WishlistEntity.dummy()),
-                        ),
-                      );
-                    }
                     if (state is LibraryError) {
                       if (state.failure is NetworkFailure) {
                         return StaggerdAnimation(
@@ -116,6 +99,47 @@ class _LibraryScreenState extends State<LibraryScreen> {
                         ),
                       );
                     }
+
+                    if (state is LibraryLoading) {
+                      return BlocBuilder<ReaderBloc, ReaderState>(
+                        builder: (context, state) {
+                          if (state is ReaderLoading) {
+                            return Skeletonizer(
+                              child: _buildBooks(
+                                List.generate(
+                                  4,
+                                  (i) => LibraryBookDisplayModel.dummy(),
+                                ),
+                              ),
+                            );
+                          }
+                          return _handleLocalErrors(state);
+                        },
+                      );
+                    }
+
+                    if (state is FetchSuccessState) {
+                      final wishlistBooks =
+                          LibraryMapper.mapWishlistEntityToDisplayModel(
+                            state.books,
+                          );
+                      return BlocBuilder<ReaderBloc, ReaderState>(
+                        builder: (context, state) {
+                          if (state is FetchLocalBooksSuccess) {
+                            final localBooks =
+                                LibraryMapper.mapLocalBookToDisplayModel(
+                                  state.localBooks,
+                                );
+                            final libraryBooks = [
+                              ...wishlistBooks,
+                              ...localBooks,
+                            ];
+                            return _buildBooks(libraryBooks);
+                          }
+                          return _handleLocalErrors(state);
+                        },
+                      );
+                    }
                     return SizedBox();
                   },
                 ),
@@ -128,7 +152,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
   }
 }
 
-Widget _buildBooks(List<WishlistEntity> books) {
+Widget _buildBooks(List<LibraryBookDisplayModel> books) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
     child: GridView.builder(
@@ -146,10 +170,26 @@ Widget _buildBooks(List<WishlistEntity> books) {
           index: i,
           child: LibraryBookCard(
             book: books[i],
-            onTap: () => context.push('/bookDeatails', extra: books[i].bookId),
+            onTap: books[i].bookSource == BookSource.server
+                ? () => context.push('/bookDeatails', extra: books[i].bookId)
+                : () {},
           ),
         );
       },
     ),
   );
+}
+
+Widget _handleLocalErrors(ReaderState state) {
+  if (state is ReaderFailure) {
+    return StaggerdAnimation(
+      index: 0,
+      child: AppError(
+        image: AppAssets.error,
+        title: 'Some Thing Happened While Loading Local Books',
+        subtitle: 'Something went wrong on our side. We\'ll be ready soon.',
+      ),
+    );
+  }
+  return SizedBox();
 }

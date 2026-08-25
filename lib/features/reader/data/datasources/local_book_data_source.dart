@@ -5,4 +5,5 @@ abstract class LocalBookDataSource {
   Future<LocalBook> fetchBook(int bookId);
   Future<void> updateProgress(int bookId, int newPage);
   Future<void> removeBook(int bookId);
+  Future<List<LocalBook>> fetchLocalBooks();
 }

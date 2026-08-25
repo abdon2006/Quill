@@ -34,6 +34,13 @@ class LocalBookDataSourceImpl implements LocalBookDataSource {
 
   @override
   Future<void> uploadBook(LocalBook book) async {
-    await isarInstance.localBooks.put(book);
+    await isarInstance.writeTxn(
+      () async => await isarInstance.localBooks.put(book),
+    );
+  }
+
+  @override
+  Future<List<LocalBook>> fetchLocalBooks() async {
+    return await isarInstance.localBooks.where().findAll();
   }
 }

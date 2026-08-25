@@ -9,6 +9,7 @@ class WishlistEntity extends Equatable {
   final String coverImage;
   final double ratingAvg;
 
+
   const WishlistEntity({
     required this.wishlistId,
     required this.bookId,

@@ -7,10 +7,12 @@ import 'package:quill/core/theme/app_text_style.dart';
 class AppSnackBar extends StatelessWidget {
   final String message;
   final String messageDisc;
+  final List<List<dynamic>> icon;
   const AppSnackBar({
     super.key,
     required this.message,
     required this.messageDisc,
+    required this.icon,
   });
 
   @override
@@ -33,7 +35,7 @@ class AppSnackBar extends StatelessWidget {
             ),
             child: Center(
               child: HugeIcon(
-                icon: HugeIcons.strokeRoundedWifiError01,
+                icon: icon,
                 color: theme.colorScheme.primary,
               ),
             ),

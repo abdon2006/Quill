@@ -5,10 +5,11 @@ void showSnackBar(
   BuildContext context, {
   required String message,
   required String messageDisc,
+  required List<List<dynamic>> icon
 }) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      content: AppSnackBar(message: message, messageDisc: messageDisc),
+      content: AppSnackBar(message: message, messageDisc: messageDisc, icon: icon,),
       backgroundColor: Colors.transparent,
       elevation: 0,
     ),
