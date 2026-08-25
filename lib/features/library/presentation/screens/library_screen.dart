@@ -3,12 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quill/core/errors/failures.dart';
+import 'package:quill/core/router/app_router.dart';
 import 'package:quill/core/states/ErrorStates/app_error.dart';
 import 'package:quill/core/theme/app_assets.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/widgets/premium_background.dart';
 import 'package:quill/features/library/data/models/library_book_display_model.dart';
-import 'package:quill/features/library/domain/entities/wishlist_entity.dart';
 import 'package:quill/features/library/presentation/bloc/library_bloc.dart';
 import 'package:quill/features/library/presentation/bloc/library_event.dart';
 import 'package:quill/features/library/presentation/bloc/library_state.dart';
@@ -32,8 +32,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
   int selectedIndex = 0;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     context.read<LibraryBloc>().add(FetchWishlistEvent());
     context.read<ReaderBloc>().add(FetchLocalBooksEvent());
   }
@@ -171,8 +171,19 @@ Widget _buildBooks(List<LibraryBookDisplayModel> books) {
           child: LibraryBookCard(
             book: books[i],
             onTap: books[i].bookSource == BookSource.server
-                ? () => context.push('/bookDeatails', extra: books[i].bookId)
-                : () {},
+                ? () => context.push(
+                    AppRoutes.bookDeatails,
+                    extra: books[i].bookId,
+                  )
+                : () async {
+                    await context.push(
+                      AppRoutes.localBookDetails,
+                      extra: books[i],
+                    );
+                    if (context.mounted) {
+                      context.read<ReaderBloc>().add(FetchLocalBooksEvent());
+                    }
+                  },
           ),
         );
       },

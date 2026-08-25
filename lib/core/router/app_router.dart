@@ -22,6 +22,7 @@ import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
 import 'package:quill/features/home/presentation/bloc/home_event.dart';
 import 'package:quill/features/home/presentation/screens/book_details_screen.dart';
 import 'package:quill/features/home/presentation/screens/home_screen.dart';
+import 'package:quill/features/library/data/models/library_book_display_model.dart';
 import 'package:quill/features/library/domain/usecases/add_to_wishlist.dart';
 import 'package:quill/features/library/domain/usecases/fetch_wishlist.dart';
 import 'package:quill/features/library/domain/usecases/remove_from_wishlist.dart';
@@ -29,6 +30,7 @@ import 'package:quill/features/library/presentation/bloc/library_bloc.dart';
 import 'package:quill/features/library/presentation/bloc/library_event.dart';
 import 'package:quill/features/library/presentation/screens/library_screen.dart';
 import 'package:quill/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:quill/features/reader/presentation/screens/local_book_details_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'app_routes.dart';
@@ -119,6 +121,13 @@ final appRouter = GoRouter(
               child: BookDetailsScreen(book: book, bookId: bookId),
             );
           },
+        ),
+        GoRoute(
+          path: AppRoutes.localBookDetails,
+          name: AppRoutes.localBookDetails,
+          builder: (context, state) => LocalBookDetailsScreen(
+            book: state.extra as LibraryBookDisplayModel,
+          ),
         ),
 
         /// Home

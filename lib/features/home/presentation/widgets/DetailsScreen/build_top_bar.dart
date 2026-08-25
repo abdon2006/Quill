@@ -3,7 +3,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:quill/core/theme/app_spacing.dart';
-import 'package:quill/features/home/presentation/widgets/DetailsScreen/circle_button.dart';
+import 'package:quill/core/widgets/circle_button.dart';
 
 Widget buildTopBar(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
