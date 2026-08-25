@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hugeicons/hugeicons.dart';
+import 'package:quill/core/theme/app_colors.dart';
 import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_shadows.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
-import 'package:quill/features/library/domain/entities/wishlist_entity.dart';
+import 'package:quill/features/library/data/models/library_book_display_model.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class LibraryBookCard extends StatelessWidget {
-  final WishlistEntity book;
+  final LibraryBookDisplayModel book;
   final VoidCallback onTap;
   const LibraryBookCard({super.key, required this.book, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -28,10 +32,20 @@ class LibraryBookCard extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: AppRadius.xl,
                   child: Image.network(
-                    book.coverImage,
+                    book.coverImage ?? '',
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stack) =>
-                        Container(color: Colors.grey[200]),
+                    errorBuilder: (context, error, stack) => Container(
+                      color: theme.surface,
+                      child: Center(
+                        child: HugeIcon(
+                          icon: HugeIcons.strokeRoundedBook02,
+                          size: 38.sp,
+                          color: isDark
+                              ? AppColors.darkTextMuted
+                              : AppColors.lightTextMuted,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -61,27 +75,31 @@ class LibraryBookCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                Skeleton.ignore(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: LinearProgressIndicator(
-                          value: 0.7,
-                          borderRadius: AppRadius.xl,
-                          valueColor: AlwaysStoppedAnimation(theme.primary),
-                          backgroundColor: theme.surface,
+                book.pages != null && book.currentPage != null
+                    ? Skeleton.ignore(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: LinearProgressIndicator(
+                                value: 0.7,
+                                borderRadius: AppRadius.xl,
+                                valueColor: AlwaysStoppedAnimation(
+                                  theme.primary,
+                                ),
+                                backgroundColor: theme.surface,
+                              ),
+                            ),
+                            const SizedBox(width: AppSpacing.sm),
+                            Text(
+                              '70 %',
+                              style: AppTextStyles.caption(context).copyWith(
+                                color: theme.onSurface.withValues(alpha: 0.3),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(width: AppSpacing.sm),
-                      Text(
-                        '70 %',
-                        style: AppTextStyles.caption(context).copyWith(
-                          color: theme.onSurface.withValues(alpha: 0.3),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                      )
+                    : SizedBox(),
               ],
             ),
           ),

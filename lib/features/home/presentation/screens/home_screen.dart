@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/widgets/book_list_tile.dart';
 import 'package:quill/core/widgets/premium_background.dart';
@@ -164,7 +165,7 @@ class HomeScreen extends StatelessWidget {
                       showSnackBar(
                         context,
                         message: 'Your shelf couldn\'t be reached.',
-                        messageDisc: 'Check your connection and try again.',
+                        messageDisc: 'Check your connection and try again.', icon: HugeIcons.strokeRoundedWifiError01,
                       );
                     }
                   },

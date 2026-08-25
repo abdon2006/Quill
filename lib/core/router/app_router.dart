@@ -4,10 +4,13 @@ import 'package:go_router/go_router.dart';
 import 'package:quill/core/constants/app_constants.dart';
 import 'package:quill/core/di/injection_container.dart';
 import 'package:quill/core/router/main_shell.dart';
-import 'package:quill/features/discover/storage/app_storage.dart';
 import 'package:quill/core/usecases/base_usecase.dart';
-import 'package:quill/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:quill/features/auth/domain/usecases/fetch_user_data_usecase.dart';
+import 'package:quill/features/auth/domain/usecases/login_usecase.dart';
+import 'package:quill/features/auth/domain/usecases/signup_usecase.dart';
 import 'package:quill/features/auth/presentation/bloc/auth_event.dart';
+import 'package:quill/features/discover/storage/app_storage.dart';
+import 'package:quill/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:quill/features/auth/presentation/screens/auth_choose_screen.dart';
 import 'package:quill/features/auth/presentation/screens/login/login_screen.dart';
 import 'package:quill/features/auth/presentation/screens/signup/signup_screen.dart';
@@ -44,10 +47,13 @@ final appRouter = GoRouter(
               fetchWishlistUsecase: sl<FetchWishlistUsecase>(),
             )..add(FetchWishlistEvent()),
           ),
-
           BlocProvider(
-            create: (_) =>
-                sl<AuthBloc>()..add(FetchUserDataEvent(params: NoParams())),
+            create: (context) => AuthBloc(
+              loginUsecase: sl<LoginUsecase>(),
+              signupUsecase: sl<SignupUsecase>(),
+              appStorage: sl<AppStorage>(),
+              fetchUserDataUsecase: sl<FetchUserDataUsecase>(),
+            )..add(FetchUserDataEvent(params: NoParams())),
           ),
         ],
         child: child,

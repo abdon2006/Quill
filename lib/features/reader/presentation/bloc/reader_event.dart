@@ -1,10 +1,10 @@
 import 'package:equatable/equatable.dart';
-import 'package:quill/features/reader/data/models/local_book.dart';
+import 'package:quill/features/reader/domain/usecases/upload_book_params.dart';
 
 abstract class ReaderEvent extends Equatable {}
 
 class UploadBookEvent extends ReaderEvent {
-  final LocalBook book;
+  final UploadBookParams book;
   UploadBookEvent({required this.book});
 
   @override
@@ -31,4 +31,9 @@ class FetchLocalBookEvent extends ReaderEvent {
   FetchLocalBookEvent({required this.bookId});
   @override
   List<Object?> get props => [bookId];
+}
+class FetchLocalBooksEvent extends ReaderEvent{
+  @override
+  List<Object?> get props => [];
+
 }

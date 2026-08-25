@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quill/features/reader/domain/usecases/fetch_local_book_usecase.dart';
+import 'package:quill/features/reader/domain/usecases/fetch_local_books_usecase.dart';
 import 'package:quill/features/reader/domain/usecases/remove_book_usecase.dart';
 import 'package:quill/features/reader/domain/usecases/update_progress_usecase.dart';
 import 'package:quill/features/reader/domain/usecases/upload_book_usecase.dart';
@@ -11,12 +12,14 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
   final RemoveBookUsecase removeBookUsecase;
   final FetchLocalBookUsecase fetchLocalBookUsecase;
   final UpdateProgressUsecase updateProgressUsecase;
+  final FetchLocalBooksUsecase fetchLocalBooksUsecase;
 
   ReaderBloc({
     required this.uploadBookUsecase,
     required this.removeBookUsecase,
     required this.fetchLocalBookUsecase,
     required this.updateProgressUsecase,
+    required this.fetchLocalBooksUsecase,
   }) : super(ReaderInitial()) {
     on<UploadBookEvent>((event, emit) async {
       emit(ReaderLoading());
@@ -46,11 +49,17 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
     });
 
     on<UpdateBookProgressEvent>((event, emit) async {
-      emit(ReaderLoading());
       final response = await updateProgressUsecase(event.bookId, event.newPage);
       response.fold(
         (failure) => emit(ReaderFailure(failure: failure)),
         (success) => emit(UpdateBookProgressSuccess()),
+      );
+    });
+    on<FetchLocalBooksEvent>((event, emit) async {
+      final response = await fetchLocalBooksUsecase();
+      response.fold(
+        (failure) => emit(ReaderFailure(failure: failure)),
+        (books) => emit(FetchLocalBooksSuccess(localBooks: books)),
       );
     });
   }

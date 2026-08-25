@@ -41,6 +41,7 @@ import 'package:quill/features/reader/data/models/local_book.dart';
 import 'package:quill/features/reader/data/repositories/local_book_repository_impl.dart';
 import 'package:quill/features/reader/domain/repositories/local_book_repository.dart';
 import 'package:quill/features/reader/domain/usecases/fetch_local_book_usecase.dart';
+import 'package:quill/features/reader/domain/usecases/fetch_local_books_usecase.dart';
 import 'package:quill/features/reader/domain/usecases/remove_book_usecase.dart';
 import 'package:quill/features/reader/domain/usecases/update_progress_usecase.dart';
 import 'package:quill/features/reader/domain/usecases/upload_book_usecase.dart';
@@ -189,6 +190,9 @@ Future<void> setupDI() async {
   sl.registerLazySingleton<LocalBookRepository>(
     () => LocalBookRepositoryImpl(bookLocalDataSource: sl()),
   );
+  sl.registerLazySingleton<FetchLocalBooksUsecase>(
+    () => FetchLocalBooksUsecase(localBookRepository: sl()),
+  );
   sl.registerLazySingleton<RemoveBookUsecase>(
     () => RemoveBookUsecase(localBookRepository: sl()),
   );
@@ -207,6 +211,7 @@ Future<void> setupDI() async {
       removeBookUsecase: sl(),
       fetchLocalBookUsecase: sl(),
       updateProgressUsecase: sl(),
+      fetchLocalBooksUsecase: sl(),
     ),
   );
 }
