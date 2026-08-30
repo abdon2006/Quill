@@ -14,4 +14,5 @@ class LocalBook {
   late int currentPage;
   late String fileType;
   late DateTime importedAt;
+  late List<String> paragraphs;
 }

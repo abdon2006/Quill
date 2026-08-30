@@ -1,5 +1,7 @@
 import 'dart:io';
-
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:dartz/dartz.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:quill/core/errors/failures.dart';
@@ -78,6 +80,15 @@ class LocalBookRepositoryImpl implements LocalBookRepository {
       final savedPath = '${dir.path}/$fileName';
       final localFile = await File(book.filePath).copy(savedPath);
       final localBook = _initLocalBook(book, localFile.path);
+
+      final List<String> paragraphs = await compute(
+        _extractParagraphs,
+        savedPath,
+      );
+      localBook.paragraphs = paragraphs;
+      localBook.totalPages = paragraphs.length;
+      print(localBook.paragraphs);
+      print(localBook.totalPages);
       final response = await bookLocalDataSource.uploadBook(localBook);
       return Right(response);
     } catch (e) {
@@ -109,4 +120,17 @@ LocalBook _initLocalBook(UploadBookParams params, String newPath) {
   book.totalPages = 0;
   book.importedAt = DateTime.now();
   return book;
+}
+
+Future<List<String>> _extractParagraphs(String path) async {
+  final bytes = await File(path).readAsBytes();
+  final doc = PdfDocument(inputBytes: bytes);
+  final extractor = PdfTextExtractor(doc);
+  final text = extractor.extractText();
+  doc.dispose();
+  return text
+      .split('\n\n')
+      .map((p) => p.trim())
+      .where((p) => p.isNotEmpty)
+      .toList();
 }
