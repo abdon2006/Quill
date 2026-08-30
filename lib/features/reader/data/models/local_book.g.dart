@@ -57,13 +57,18 @@ const LocalBookSchema = CollectionSchema(
       name: r'language',
       type: IsarType.string,
     ),
-    r'title': PropertySchema(
+    r'paragraphs': PropertySchema(
       id: 8,
+      name: r'paragraphs',
+      type: IsarType.stringList,
+    ),
+    r'title': PropertySchema(
+      id: 9,
       name: r'title',
       type: IsarType.string,
     ),
     r'totalPages': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'totalPages',
       type: IsarType.long,
     )
@@ -105,6 +110,13 @@ int _localBookEstimateSize(
   bytesCount += 3 + object.filePath.length * 3;
   bytesCount += 3 + object.fileType.length * 3;
   bytesCount += 3 + object.language.length * 3;
+  bytesCount += 3 + object.paragraphs.length * 3;
+  {
+    for (var i = 0; i < object.paragraphs.length; i++) {
+      final value = object.paragraphs[i];
+      bytesCount += value.length * 3;
+    }
+  }
   bytesCount += 3 + object.title.length * 3;
   return bytesCount;
 }
@@ -123,8 +135,9 @@ void _localBookSerialize(
   writer.writeString(offsets[5], object.fileType);
   writer.writeDateTime(offsets[6], object.importedAt);
   writer.writeString(offsets[7], object.language);
-  writer.writeString(offsets[8], object.title);
-  writer.writeLong(offsets[9], object.totalPages);
+  writer.writeStringList(offsets[8], object.paragraphs);
+  writer.writeString(offsets[9], object.title);
+  writer.writeLong(offsets[10], object.totalPages);
 }
 
 LocalBook _localBookDeserialize(
@@ -143,8 +156,9 @@ LocalBook _localBookDeserialize(
   object.importedAt = reader.readDateTime(offsets[6]);
   object.isarId = id;
   object.language = reader.readString(offsets[7]);
-  object.title = reader.readString(offsets[8]);
-  object.totalPages = reader.readLong(offsets[9]);
+  object.paragraphs = reader.readStringList(offsets[8]) ?? [];
+  object.title = reader.readString(offsets[9]);
+  object.totalPages = reader.readLong(offsets[10]);
   return object;
 }
 
@@ -172,8 +186,10 @@ P _localBookDeserializeProp<P>(
     case 7:
       return (reader.readString(offset)) as P;
     case 8:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringList(offset) ?? []) as P;
     case 9:
+      return (reader.readString(offset)) as P;
+    case 10:
       return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1338,6 +1354,231 @@ extension LocalBookQueryFilter
     });
   }
 
+  QueryBuilder<LocalBook, LocalBook, QAfterFilterCondition>
+      paragraphsElementEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'paragraphs',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<LocalBook, LocalBook, QAfterFilterCondition>
+      paragraphsElementGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'paragraphs',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<LocalBook, LocalBook, QAfterFilterCondition>
+      paragraphsElementLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'paragraphs',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<LocalBook, LocalBook, QAfterFilterCondition>
+      paragraphsElementBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'paragraphs',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<LocalBook, LocalBook, QAfterFilterCondition>
+      paragraphsElementStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'paragraphs',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<LocalBook, LocalBook, QAfterFilterCondition>
+      paragraphsElementEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'paragraphs',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<LocalBook, LocalBook, QAfterFilterCondition>
+      paragraphsElementContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'paragraphs',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<LocalBook, LocalBook, QAfterFilterCondition>
+      paragraphsElementMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'paragraphs',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<LocalBook, LocalBook, QAfterFilterCondition>
+      paragraphsElementIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'paragraphs',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<LocalBook, LocalBook, QAfterFilterCondition>
+      paragraphsElementIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'paragraphs',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<LocalBook, LocalBook, QAfterFilterCondition>
+      paragraphsLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'paragraphs',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<LocalBook, LocalBook, QAfterFilterCondition>
+      paragraphsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'paragraphs',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<LocalBook, LocalBook, QAfterFilterCondition>
+      paragraphsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'paragraphs',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<LocalBook, LocalBook, QAfterFilterCondition>
+      paragraphsLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'paragraphs',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<LocalBook, LocalBook, QAfterFilterCondition>
+      paragraphsLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'paragraphs',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<LocalBook, LocalBook, QAfterFilterCondition>
+      paragraphsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'paragraphs',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
   QueryBuilder<LocalBook, LocalBook, QAfterFilterCondition> titleEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -1818,6 +2059,12 @@ extension LocalBookQueryWhereDistinct
     });
   }
 
+  QueryBuilder<LocalBook, LocalBook, QDistinct> distinctByParagraphs() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'paragraphs');
+    });
+  }
+
   QueryBuilder<LocalBook, LocalBook, QDistinct> distinctByTitle(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1885,6 +2132,12 @@ extension LocalBookQueryProperty
   QueryBuilder<LocalBook, String, QQueryOperations> languageProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'language');
+    });
+  }
+
+  QueryBuilder<LocalBook, List<String>, QQueryOperations> paragraphsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'paragraphs');
     });
   }
 

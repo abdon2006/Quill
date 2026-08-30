@@ -57,6 +57,7 @@ dependencies:
   file_picker: ^8.1.2
   open_filex: ^4.7.0
   image_picker: ^1.2.3
+  syncfusion_flutter_pdf: ^34.2.5
 dev_dependencies:
   flutter_test:
     sdk: flutter
