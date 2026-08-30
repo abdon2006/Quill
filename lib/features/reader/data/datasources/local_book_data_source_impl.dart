@@ -32,6 +32,7 @@ class LocalBookDataSourceImpl implements LocalBookDataSource {
         book.currentPage = params.currentPage;
         book.author = params.author;
         book.title = params.title;
+        book.coverImagePath = params.coverImagePath;
 
         await isarInstance.localBooks.put(book);
       }

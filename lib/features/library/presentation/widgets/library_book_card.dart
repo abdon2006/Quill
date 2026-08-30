@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -16,8 +18,14 @@ class LibraryBookCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final source = book.bookSource;
     final theme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final progress =
+        (book.pages != null && book.currentPage != null && book.pages! > 0)
+        ? book.currentPage! / book.pages!
+        : 0.0;
+    final progressLabel = '${(progress * 100).toStringAsFixed(0)}%';
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -31,22 +39,39 @@ class LibraryBookCard extends StatelessWidget {
               child: Skeleton.leaf(
                 child: ClipRRect(
                   borderRadius: AppRadius.xl,
-                  child: Image.network(
-                    book.coverImage ?? '',
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stack) => Container(
-                      color: theme.surface,
-                      child: Center(
-                        child: HugeIcon(
-                          icon: HugeIcons.strokeRoundedLibrary,
-                          size: 42.sp,
-                          color: isDark
-                              ? AppColors.darkTextMuted
-                              : AppColors.lightTextMuted,
+                  child: source == BookSource.server
+                      ? Image.network(
+                          book.coverImage ?? '',
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stack) => Container(
+                            color: theme.surface,
+                            child: Center(
+                              child: HugeIcon(
+                                icon: HugeIcons.strokeRoundedLibrary,
+                                size: 42.sp,
+                                color: isDark
+                                    ? AppColors.darkTextMuted
+                                    : AppColors.lightTextMuted,
+                              ),
+                            ),
+                          ),
+                        )
+                      : Image.file(
+                          File(book.coverImage!),
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stack) => Container(
+                            color: theme.surface,
+                            child: Center(
+                              child: HugeIcon(
+                                icon: HugeIcons.strokeRoundedLibrary,
+                                size: 42.sp,
+                                color: isDark
+                                    ? AppColors.darkTextMuted
+                                    : AppColors.lightTextMuted,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
                 ),
               ),
             ),
@@ -81,7 +106,7 @@ class LibraryBookCard extends StatelessWidget {
                           children: [
                             Expanded(
                               child: LinearProgressIndicator(
-                                value: 0.7,
+                                value: progress,
                                 borderRadius: AppRadius.xl,
                                 valueColor: AlwaysStoppedAnimation(
                                   theme.primary,
@@ -91,7 +116,7 @@ class LibraryBookCard extends StatelessWidget {
                             ),
                             const SizedBox(width: AppSpacing.sm),
                             Text(
-                              '70 %',
+                              progressLabel,
                               style: AppTextStyles.caption(context).copyWith(
                                 color: theme.onSurface.withValues(alpha: 0.3),
                               ),

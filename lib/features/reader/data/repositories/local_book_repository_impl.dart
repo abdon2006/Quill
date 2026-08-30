@@ -36,7 +36,34 @@ class LocalBookRepositoryImpl implements LocalBookRepository {
   @override
   Future<Either<Failure, void>> updateBook(UpdateBookParams params) async {
     try {
-      final response = await bookLocalDataSource.updateBook(params);
+      /// هنا انا باخد المسار الامن في التطبيق عشان احفظ فيه كل الملفات بشكل دائم وفي مكان امن
+      final dir = await getApplicationDocumentsDirectory();
+
+      /// باخد اسم الملف من المسار الطويل اللي جبته من
+      final fileName = params.coverImagePath.split('/').last;
+
+      /// ببني المسار الجديد الامن
+      final savedPath = '${dir.path}/$fileName';
+      if (params.isCoverImageChange) {
+        /// لو الصورة اتغيرت فعلا بنسخ الملف نفسه اللي هي الصورة من المسار المؤقت اللي هي فيه للمسار الامن اللي انا جبته
+        await File(params.coverImagePath).copy(savedPath);
+      }
+
+      /// لو الصورة اتغيرت الستخدم المسار الجديد الامن لو متغيرتش خلاص استخدم المسار بتاعها القديم
+      final coverPath = params.isCoverImageChange
+          ? savedPath
+          : params.coverImagePath;
+
+      final newParams = UpdateBookParams(
+        bookId: params.bookId,
+        title: params.title,
+        author: params.author,
+        currentPage: params.currentPage,
+        coverImagePath: coverPath,
+        isCoverImageChange: params.isCoverImageChange,
+      );
+
+      final response = await bookLocalDataSource.updateBook(newParams);
       return Right(response);
     } catch (e) {
       return Left(LocalFailure(message: e.toString()));

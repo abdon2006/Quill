@@ -8,6 +8,7 @@ class UpdateBookUsecase extends BaseUsecase<void , UpdateBookParams> {
   final LocalBookRepository localBookRepository;
 
   UpdateBookUsecase({required this.localBookRepository});
+  @override
   Future<Either<Failure, void>> call(UpdateBookParams params) async {
     final response = await localBookRepository.updateBook(params);
     return response;
