@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quill/core/errors/failures.dart';
 import 'package:quill/core/router/app_router.dart';
+import 'package:quill/core/states/EmptyStates/app_empty.dart';
 import 'package:quill/core/states/ErrorStates/app_error.dart';
 import 'package:quill/core/theme/app_assets.dart';
 import 'package:quill/core/theme/app_spacing.dart';
@@ -66,6 +67,17 @@ class _LibraryScreenState extends State<LibraryScreen> {
 
                 BlocBuilder<LibraryBloc, LibraryState>(
                   builder: (context, state) {
+                    if (state is LibraryLoading) {
+                      return Skeletonizer(
+                        enabled: true,
+                        child: _buildBooks(
+                          List.generate(
+                            4,
+                            (i) => LibraryBookDisplayModel.dummy(),
+                          ),
+                        ),
+                      );
+                    }
                     if (state is LibraryError) {
                       if (state.failure is NetworkFailure) {
                         return StaggerdAnimation(
@@ -100,24 +112,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
                       );
                     }
 
-                    if (state is LibraryLoading) {
-                      return BlocBuilder<ReaderBloc, ReaderState>(
-                        builder: (context, state) {
-                          if (state is ReaderLoading) {
-                            return Skeletonizer(
-                              child: _buildBooks(
-                                List.generate(
-                                  4,
-                                  (i) => LibraryBookDisplayModel.dummy(),
-                                ),
-                              ),
-                            );
-                          }
-                          return _handleLocalErrors(state);
-                        },
-                      );
-                    }
-
                     if (state is FetchSuccessState) {
                       final wishlistBooks =
                           LibraryMapper.mapWishlistEntityToDisplayModel(
@@ -134,6 +128,17 @@ class _LibraryScreenState extends State<LibraryScreen> {
                               ...wishlistBooks,
                               ...localBooks,
                             ];
+                            if (libraryBooks.isEmpty) {
+                              return StaggerdAnimation(
+                                index: 0,
+                                child: AppEmpty(
+                                  title: "Your shelf is waiting.",
+                                  subtitle:
+                                      "Bring a book into your quiet space.",
+                                  image: AppAssets.emptyState,
+                                ),
+                              );
+                            }
                             return _buildBooks(libraryBooks);
                           }
                           return _handleLocalErrors(state);

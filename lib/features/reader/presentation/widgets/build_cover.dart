@@ -1,4 +1,4 @@
-
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -23,9 +23,10 @@ Widget buildCover(BuildContext context, String? coverImage) {
               child: Opacity(
                 opacity: 0.1,
                 child: Image.file(
-                  Uri.file(coverImage).toFilePath() as dynamic,
+                  File(coverImage),
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => const SizedBox(),
+                  errorBuilder: (context, error, stackTrace) =>
+                      const SizedBox(),
                 ),
               ),
             ),
@@ -54,10 +55,10 @@ Widget buildCover(BuildContext context, String? coverImage) {
             child: ClipRRect(
               borderRadius: AppRadius.lg,
               child: hasImage
-                  ? Image.network(
-                      coverImage,
+                  ? Image.file(
+                      File(coverImage),
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) =>
+                      errorBuilder: (context, error, stackTrace) =>
                           buildCoverPlaceholder(context),
                     )
                   : buildCoverPlaceholder(context),
@@ -68,4 +69,3 @@ Widget buildCover(BuildContext context, String? coverImage) {
     ),
   );
 }
-

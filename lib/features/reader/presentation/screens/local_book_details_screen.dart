@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:quill/core/router/app_router.dart';
 import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_spacing.dart';
@@ -27,6 +28,7 @@ class LocalBookDetailsScreen extends StatefulWidget {
 }
 
 class _LocalBookDetailsScreenState extends State<LocalBookDetailsScreen> {
+  XFile? newCover;
   final title = TextEditingController();
   final author = TextEditingController();
   @override
@@ -44,12 +46,13 @@ class _LocalBookDetailsScreenState extends State<LocalBookDetailsScreen> {
             ListView(
               padding: EdgeInsets.zero,
               children: [
-                /// Cover Section
-                buildCover(context, widget.book.coverImage),
+                buildCover(
+                  context,
+                  newCover == null ? widget.book.coverImage : newCover!.path,
+                ),
 
                 const SizedBox(height: AppSpacing.xxl),
 
-                /// Identity Section
                 BuildIdentity(
                   book: widget.book,
                   authorController: author,
@@ -58,22 +61,25 @@ class _LocalBookDetailsScreenState extends State<LocalBookDetailsScreen> {
 
                 const SizedBox(height: AppSpacing.xxl),
 
-                /// File Info Section
-                buildFileInfo(context, widget.book),
+                BuildFileInfo(
+                  book: widget.book,
+                  updateBookCoverUi: (XFile selectedImage) {
+                    setState(() {
+                      newCover = selectedImage;
+                    });
+                  },
+                ),
 
                 const SizedBox(height: AppSpacing.xxl),
 
-                /// Delete Zone
                 buildDeleteSection(context, widget.book),
 
                 const SizedBox(height: 150),
               ],
             ),
 
-            /// Top Bar
             buildTopBar(context),
 
-            /// Bottom Action
             Positioned(
               left: 5.w,
               right: 5.w,
