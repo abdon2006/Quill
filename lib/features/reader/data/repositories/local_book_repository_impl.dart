@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:dartz/dartz.dart';
@@ -87,8 +86,6 @@ class LocalBookRepositoryImpl implements LocalBookRepository {
       );
       localBook.paragraphs = paragraphs;
       localBook.totalPages = paragraphs.length;
-      print(localBook.paragraphs);
-      print(localBook.totalPages);
       final response = await bookLocalDataSource.uploadBook(localBook);
       return Right(response);
     } catch (e) {
@@ -123,11 +120,16 @@ LocalBook _initLocalBook(UploadBookParams params, String newPath) {
 }
 
 Future<List<String>> _extractParagraphs(String path) async {
+  ///  bytes بنحسب حجم الملف بال
   final bytes = await File(path).readAsBytes();
+  /// بنفتح الملف ونخليه قابل للمعالجة 
   final doc = PdfDocument(inputBytes: bytes);
+  /// بنمشي علي كل صفحات الكتاب ونجمع كله في نص واحد
   final extractor = PdfTextExtractor(doc);
   final text = extractor.extractText();
   doc.dispose();
+  /// هنا بقا بنقسم النص الكامل اللي جمعناه علي حسب الفاصل اللي هنحدده
+  /// بنشيل اي مسافات زيادة ونحذق اي باراجرافات فاضية
   return text
       .split('\n\n')
       .map((p) => p.trim())

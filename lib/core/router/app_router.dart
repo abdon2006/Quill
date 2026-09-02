@@ -30,7 +30,9 @@ import 'package:quill/features/library/presentation/bloc/library_bloc.dart';
 import 'package:quill/features/library/presentation/bloc/library_event.dart';
 import 'package:quill/features/library/presentation/screens/library_screen.dart';
 import 'package:quill/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:quill/features/reader/domain/usecases/params/reader_book_params.dart';
 import 'package:quill/features/reader/presentation/screens/local_book_details_screen.dart';
+import 'package:quill/features/reader/presentation/screens/reader_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'app_routes.dart';
@@ -127,6 +129,19 @@ final appRouter = GoRouter(
           name: AppRoutes.localBookDetails,
           builder: (context, state) => LocalBookDetailsScreen(
             book: state.extra as LibraryBookDisplayModel,
+          ),
+        ),
+        GoRoute(
+          path: AppRoutes.reader,
+          name: AppRoutes.reader,
+          builder: (context, state) => BlocProvider(
+            create: (context) => HomeBloc(
+              fetchBooksUsecase: sl<FetchBooksUsecase>(),
+              bookRepository: sl<BookRepository>(),
+              getBookByIdUsecase: sl<GetBookByIdUsecase>(),
+            ),
+            child: 
+            ReaderScreen(bookId: state.extra as ReaderBookParams ),
           ),
         ),
 
