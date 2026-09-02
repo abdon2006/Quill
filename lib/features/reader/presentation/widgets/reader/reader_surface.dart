@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart' as foundation show compute;
 import 'package:flutter/material.dart';
+import 'package:quill/core/theme/app_duration.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
+import 'package:quill/features/reader/presentation/widgets/reader/text_animation.dart';
 
 class ReaderSurface extends StatefulWidget {
   final List<String> paragraphs;
@@ -19,7 +21,8 @@ class ReaderSurface extends StatefulWidget {
 
 class _ReaderSurfaceState extends State<ReaderSurface> {
   BionicCache? _cache;
-  bool _loading = true;
+  bool _cacheReady = false;
+  bool _visible = false;
 
   @override
   void initState() {
@@ -29,33 +32,50 @@ class _ReaderSurfaceState extends State<ReaderSurface> {
 
   Future<void> _loadCache() async {
     final cache = await BionicCache.compute(widget.paragraphs);
+
     if (!mounted) return;
     setState(() {
       _cache = cache;
-      _loading = false;
+      _cacheReady = true;
     });
+    await Future.delayed(const Duration(milliseconds: 50));
+    if (!mounted) return;
+    setState(() => _visible = true);
   }
 
   @override
   Widget build(BuildContext context) {
     final cellCount = _cache?.cellCount ?? 0;
-    return ListView.builder(
-      addAutomaticKeepAlives: false,
-      addRepaintBoundaries: true,
-      padding: EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
-      itemCount: cellCount,
-      itemBuilder: (context, i) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
-          child: _BionicCell(
-            text: _cache!.cellText(i),
-            isBionicNotifier: widget.isBionicNotifier,
-            cache: _cache!,
-            index: i,
-            ready: !_loading,
+    return Stack(
+      children: [
+        ListView.builder(
+          addAutomaticKeepAlives: false,
+          addRepaintBoundaries: true,
+          padding: EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
+          itemCount: cellCount,
+          itemBuilder: (context, i) {
+            return AnimatedOpacity(
+              duration: AppDuration.slow,
+              opacity: !_visible ? 0 : 1,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                child: _BionicCell(
+                  text: _cache!.cellText(i),
+                  isBionicNotifier: widget.isBionicNotifier,
+                  cache: _cache!,
+                  index: i,
+                  ready: _cacheReady,
+                ),
+              ),
+            );
+          },
+        ),
+        if (!_cacheReady)
+          TextAnimation(
+            callBack: () {},
+            messages: ['just one step..', 'Book Ready For You'],
           ),
-        );
-      },
+      ],
     );
   }
 }
@@ -101,16 +121,15 @@ class _BionicCell extends StatelessWidget {
   }
 }
 
-
 /// split('\n\n') علي حسب  paragraph اتضح بقا ان اصلا المشكلة كانت في استحراج النص من الاول احنا كنا بنقسم كل
 /// مرة واحدة process وده كان بيعمل مشكلة كبيرة ان دلوقتي بقا البراجرافا هو واحد بس وفيه الاف الكلمات وبتتعرض وبيتعملها
 /// فقولنا هنقسم الباراجراف الواحد ده لخلايا اولما نيي نعرض ونحلل هنتعامل مع الخلايا دي بس
 /// والحد الاقصي للخلية هيبقي 140 كلمة
 const int _cellMaxWords = 140;
 
-///  tuples بتاخد الخلية الواحدة وترجع ليست من ال process دي بقا يا معلم الفانكشن اللي بتتعمل ال 
-/// ده اللي بيقول النص ده بودل ولا لا  bool ال  (String , bool) بيبقي جزأين tuple كل 
-/// hello زي كده 
+///  tuples بتاخد الخلية الواحدة وترجع ليست من ال process دي بقا يا معلم الفانكشن اللي بتتعمل ال
+/// ده اللي بيقول النص ده بودل ولا لا  bool ال  (String , bool) بيبقي جزأين tuple كل
+/// hello زي كده
 /// ("hel", true) — bold
 /// ("lo", false) — normal
 List<(String, bool)> _processChunk(String text) {
@@ -120,7 +139,7 @@ List<(String, bool)> _processChunk(String text) {
 
   for (final match in matches) {
     if (match.start > lastMatchEnd) {
-      result.add((text.substring(lastMatchEnd, match.start), false)); 
+      result.add((text.substring(lastMatchEnd, match.start), false));
     }
     final word = match.group(0)!;
     final len = word.length;
