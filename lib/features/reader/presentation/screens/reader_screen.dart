@@ -11,13 +11,13 @@ import 'package:quill/core/theme/app_text_style.dart';
 import 'package:quill/core/widgets/premium_background.dart';
 import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
 import 'package:quill/features/home/presentation/bloc/home_event.dart';
-import 'package:quill/features/library/data/models/library_book_display_model.dart';
 import 'package:quill/features/reader/data/models/local_book.dart';
 import 'package:quill/features/reader/domain/usecases/params/reader_book_params.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_bloc.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_event.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_state.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/build_bottom_actions.dart';
+import 'package:quill/core/widgets/show_app_snack_bar.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/build_top_bar.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/reader_surface.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/text_animation.dart';
@@ -45,7 +45,6 @@ class ReaderScreen extends StatefulWidget {
 class _ReaderScreenState extends State<ReaderScreen> {
   List<String> _paragraphs = [];
   final ValueNotifier<bool> _isBionicEnabled = ValueNotifier(false);
-  String _bookTitle = '';
   ReaderUiStates _uiState = ReaderUiStates.controlsVisible;
   Timer? _uiHideTimer;
   LocalBook? _book;
@@ -185,9 +184,15 @@ class _ReaderScreenState extends State<ReaderScreen> {
                     if (state is FetchLocalBookSuccess && _paragraphs.isEmpty) {
                       setState(() {
                         _paragraphs = state.book.paragraphs;
-                        _bookTitle = state.book.title;
                         _book = state.book;
                       });
+                    } else if (state is ReaderFailure) {
+                      showSnackBar(
+                        context,
+                        message: 'Something went wrong',
+                        messageDisc: 'Could not load the book.',
+                        icon: HugeIcons.strokeRoundedWifiError01,
+                      );
                     }
                   },
                   child: SizedBox(),
@@ -227,7 +232,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                     child: AnimatedOpacity(
                       opacity: showControls ? 1.0 : 0.0,
                       duration: AppDuration.normal,
-                      child: BuildTopBar(title: _bookTitle),
+                      child: BuildTopBar(),
                     ),
                   ),
                 ),

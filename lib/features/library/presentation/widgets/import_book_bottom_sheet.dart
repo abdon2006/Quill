@@ -14,8 +14,9 @@ import 'package:quill/features/reader/domain/usecases/params/upload_book_params.
 import 'package:quill/features/reader/presentation/bloc/reader_bloc.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_event.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_state.dart';
+import 'package:quill/features/reader/presentation/widgets/reader/text_animation.dart';
 
-enum ImportState { idle, preview, loading, success, error }
+enum ImportState { idle, preview }
 
 class ImportBookBottomSheet extends StatefulWidget {
   const ImportBookBottomSheet({super.key});
@@ -25,6 +26,7 @@ class ImportBookBottomSheet extends StatefulWidget {
 
 class _ImportBookBottomSheetState extends State<ImportBookBottomSheet> {
   ImportState _currentState = ImportState.idle;
+  bool _isExtracting = false;
   PlatformFile? _selectedFile;
 
   Future<void> _pickFile() async {
@@ -40,6 +42,18 @@ class _ImportBookBottomSheetState extends State<ImportBookBottomSheet> {
     }
   }
 
+  void _startImport() {
+    final params = UploadBookParams(
+      filePath: _selectedFile!.path!,
+      fileName: _selectedFile!.name,
+      fileExtension: _selectedFile!.extension ?? 'pdf',
+    );
+    context.read<ReaderBloc>().add(UploadBookEvent(book: params));
+    setState(() {
+      _isExtracting = true;
+    });
+  }
+
   String _formatFileSize(int bytes) {
     if (bytes <= 0) return "0 B";
     const suffixes = ["B", "KB", "MB", "GB"];
@@ -50,80 +64,112 @@ class _ImportBookBottomSheetState extends State<ImportBookBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        AppSpacing.lg,
-        AppSpacing.sm,
-        AppSpacing.lg,
-        AppSpacing.xxl,
-      ),
-      decoration: BoxDecoration(
-        color: theme.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28.r)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 36.w,
-            height: 4.h,
-            decoration: BoxDecoration(
-              color: theme.onSurface.withValues(alpha: 0.15),
-              borderRadius: AppRadius.lg,
+
+    return BlocConsumer<ReaderBloc, ReaderState>(
+      listener: (context, state) {
+        if (state is UploadBookSuccess) {
+          showSnackBar(
+            context,
+            message: 'Your Book Is Ready Now',
+            messageDisc: 'Ready to begin the journey.',
+            icon: HugeIcons.strokeRoundedTick01,
+          );
+          Navigator.pop(context);
+        } else if (state is ReaderFailure) {
+          setState(() {
+            _isExtracting = false;
+            _currentState = ImportState.preview;
+          });
+          showSnackBar(
+            context,
+            message: 'Import Failed',
+            messageDisc: 'Could not extract text from this file.',
+            icon: HugeIcons.strokeRoundedWifiError01,
+          );
+        }
+      },
+      builder: (context, state) {
+        return Stack(
+          children: [
+            AnimatedOpacity(
+              opacity: _isExtracting ? 1 : 0,
+              duration: AppDuration.normal,
+              child: TextAnimation(
+                callBack: () {},
+                messages: [
+                  'Your Book Is Finding Its Place.',
+                  'Just A moment',
+                  'Preparing Your Book',
+                  'One Step More',
+                ],
+                repeat: 10,
+              ),
             ),
-          ),
-          SizedBox(height: AppSpacing.xxl),
-          AnimatedSwitcher(
-            duration: AppDuration.normal,
-            key: ValueKey(_currentState),
-            child: switch (_currentState) {
-              ImportState.idle => _buildIdleContent(
-                theme: theme,
-                context: context,
-                pickFile: _pickFile,
-                key: ValueKey(_currentState),
-              ),
-
-              ImportState.preview => BlocConsumer<ReaderBloc, ReaderState>(
-                builder: (context, state) {
-                  final isLoading = state is ReaderLoading;
-                  final params = UploadBookParams(
-                    filePath: _selectedFile!.path!,
-                    fileName: _selectedFile!.name,
-                    fileExtension: _selectedFile!.extension ?? 'pdf',
-                  );
-
-                  return _buildPreviewContent(
-                    theme: theme,
-                    context: context,
-                    pickFile: _pickFile,
-                    bookTitle: _selectedFile!.name,
-                    bookSize: _formatFileSize(_selectedFile!.size),
-                    onImport: () => context.read<ReaderBloc>().add(
-                      UploadBookEvent(book: params),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: AnimatedOpacity(
+                duration: AppDuration.normal,
+                opacity: _isExtracting ? 0 : 1,
+                child: Container(
+                  padding: EdgeInsets.fromLTRB(
+                    AppSpacing.lg,
+                    AppSpacing.sm,
+                    AppSpacing.lg,
+                    AppSpacing.xxl,
+                  ),
+                  decoration: BoxDecoration(
+                    color: theme.surface,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(28.r),
                     ),
-                    isLoading: isLoading,
-                  );
-                },
-                listener: (context, state) {
-                  if (state is UploadBookSuccess) {
-                    showSnackBar(
-                      context,
-                      message: 'Your Book Is Ready Now',
-                      messageDisc: 'Ready to begin the journey.',
-                      icon: HugeIcons.strokeRoundedTick01,
-                    );
-                    Navigator.pop(context);
-                  }
-                },
+                  ),
+                  child: Stack(
+                    children: [
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 36.w,
+                            height: 4.h,
+                            decoration: BoxDecoration(
+                              color: theme.onSurface.withValues(alpha: 0.15),
+                              borderRadius: AppRadius.lg,
+                            ),
+                          ),
+                          SizedBox(height: AppSpacing.xxl),
+                          AnimatedSwitcher(
+                            duration: AppDuration.normal,
+                            child: switch (_currentState) {
+                              ImportState.idle => _buildIdleContent(
+                                theme: theme,
+                                context: context,
+                                pickFile: _pickFile,
+                                key: ValueKey('idle'),
+                              ),
+                              ImportState.preview => _buildPreviewContent(
+                                theme: theme,
+                                context: context,
+                                pickFile: _pickFile,
+                                onImport: _startImport,
+                                bookTitle: _selectedFile!.name,
+                                bookSize: _formatFileSize(_selectedFile!.size),
+                                isLoading: state is ReaderLoading,
+                                key: ValueKey('preview'),
+                              ),
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              ImportState.loading => throw UnimplementedError(),
-              ImportState.success => throw UnimplementedError(),
-              ImportState.error => throw UnimplementedError(),
-            },
-          ),
-        ],
-      ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -177,7 +223,6 @@ Widget _buildIdleContent({
         ),
       ),
       SizedBox(height: AppSpacing.xl),
-      // Title
       Text(
         'Bring something worth reading.',
         textAlign: TextAlign.center,
@@ -188,7 +233,6 @@ Widget _buildIdleContent({
 
       SizedBox(height: AppSpacing.sm),
 
-      // Description
       Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Text(
@@ -203,7 +247,6 @@ Widget _buildIdleContent({
 
       SizedBox(height: AppSpacing.xxl),
 
-      // Supported formats
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -215,7 +258,6 @@ Widget _buildIdleContent({
 
       SizedBox(height: AppSpacing.xxl),
 
-      // Choose file
       AppButton.primary(
         text: 'Choose a File',
         onPressed: pickFile,
@@ -224,7 +266,6 @@ Widget _buildIdleContent({
 
       SizedBox(height: AppSpacing.sm),
 
-      // Cancel
       TextButton(
         onPressed: () => Navigator.pop(context),
         child: Text(
@@ -246,8 +287,10 @@ Widget _buildPreviewContent({
   required String bookTitle,
   required String bookSize,
   required bool isLoading,
+  required Key key,
 }) {
   return Column(
+    key: key,
     children: [
       Container(
         width: 64.w,
@@ -275,7 +318,6 @@ Widget _buildPreviewContent({
 
       SizedBox(height: AppSpacing.md),
 
-      // Description
       Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Container(
@@ -284,13 +326,12 @@ Widget _buildPreviewContent({
             color: theme.onSurface.withValues(alpha: 0.04),
             borderRadius: AppRadius.xl,
             border: Border.all(
-              color: theme.onSurface.withValues(alpha: 0.08), // إطار خفيف ورايق
+              color: theme.onSurface.withValues(alpha: 0.08),
               width: 1,
             ),
           ),
           child: Row(
             children: [
-              // 1. أيقونة الملف
               Container(
                 padding: EdgeInsets.all(AppSpacing.md),
                 decoration: BoxDecoration(
@@ -306,7 +347,6 @@ Widget _buildPreviewContent({
 
               SizedBox(width: AppSpacing.md),
 
-              // 2. الاسم والحجم
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -336,9 +376,8 @@ Widget _buildPreviewContent({
 
       SizedBox(height: AppSpacing.xxl),
 
-      // Choose file
       AppButton.primary(
-        text: "Import Book",
+        text: isLoading ? "Importing..." : "Import Book",
         onPressed: onImport,
         isEnabled: !isLoading,
         icon: HugeIcons.strokeRoundedFolder01,
@@ -346,7 +385,6 @@ Widget _buildPreviewContent({
 
       SizedBox(height: AppSpacing.sm),
 
-      // Cancel
       TextButton(
         onPressed: pickFile,
         child: Text(

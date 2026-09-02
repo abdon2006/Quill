@@ -7,10 +7,12 @@ import 'package:quill/core/theme/app_text_style.dart';
 class TextAnimation extends StatelessWidget {
   final void Function() callBack;
   final List<String> messages;
-  const TextAnimation({
+  int repeat;
+  TextAnimation({
     super.key,
     required this.callBack,
     required this.messages,
+    this.repeat = 1,
   });
 
   @override
@@ -32,11 +34,11 @@ class TextAnimation extends StatelessWidget {
                   final isLast = m == messages[messages.length - 1];
                   return FadeAnimatedText(
                     m,
-                    duration: Duration(milliseconds:isLast ?  2500 : 1500),
+                    duration: Duration(milliseconds: isLast ? 2500 : 1500),
                   );
                 }),
               ],
-              totalRepeatCount: 1,
+              totalRepeatCount: repeat,
               pause: Duration(milliseconds: 300),
               onFinished: callBack,
             ),
