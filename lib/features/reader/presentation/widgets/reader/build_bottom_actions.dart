@@ -18,7 +18,7 @@ class _BuildBottomActionsState extends State<BuildBottomActions> {
     {'label': 'Font', 'icon': HugeIcons.strokeRoundedTextFont},
     {'label': 'Focus', 'icon': HugeIcons.strokeRoundedMoon02},
     {'label': 'Explain', 'icon': HugeIcons.strokeRoundedSparkles},
-    {'label': 'Save', 'icon': HugeIcons.strokeRoundedBookmark02},
+    {'label': 'Bionic', 'icon': HugeIcons.strokeRoundedTextFont},
   ];
   @override
   Widget build(BuildContext context) {
@@ -42,10 +42,10 @@ class _BuildBottomActionsState extends State<BuildBottomActions> {
               highlightColor: theme.primary.withValues(alpha: 0.08),
               customBorder: CircleBorder(),
               onTap: switch (i) {
-                0 => () => widget.callBack(0),
+                0 => () {},
                 1 => () => widget.callBack(1),
                 2 => () {},
-                3 => () {},
+                3 => () => widget.callBack(3),
                 int() => throw UnimplementedError(),
               },
               child: Container(
