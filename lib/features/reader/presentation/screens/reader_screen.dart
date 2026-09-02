@@ -11,6 +11,8 @@ import 'package:quill/core/theme/app_text_style.dart';
 import 'package:quill/core/widgets/premium_background.dart';
 import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
 import 'package:quill/features/home/presentation/bloc/home_event.dart';
+import 'package:quill/features/library/data/models/library_book_display_model.dart';
+import 'package:quill/features/reader/data/models/local_book.dart';
 import 'package:quill/features/reader/domain/usecases/params/reader_book_params.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_bloc.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_event.dart';
@@ -46,6 +48,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
   String _bookTitle = '';
   ReaderUiStates _uiState = ReaderUiStates.controlsVisible;
   Timer? _uiHideTimer;
+  LocalBook? _book;
 
   @override
   void initState() {
@@ -71,12 +74,10 @@ class _ReaderScreenState extends State<ReaderScreen> {
   }
 
   void _startBionicFadeIn() {
-    print('----- Bionic ON -------');
     if (_isBionicEnabled.value != true) _isBionicEnabled.value = true;
   }
 
   void _startBionicFadeOut() {
-    print('----- Bionic OFF -------');
     if (_isBionicEnabled.value != false) _isBionicEnabled.value = false;
   }
 
@@ -185,6 +186,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                       setState(() {
                         _paragraphs = state.book.paragraphs;
                         _bookTitle = state.book.title;
+                        _book = state.book;
                       });
                     }
                   },
@@ -211,6 +213,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                       : ReaderSurface(
                           paragraphs: _paragraphs,
                           isBionicNotifier: _isBionicEnabled,
+                          book: _book!,
                         ),
                 ),
 
