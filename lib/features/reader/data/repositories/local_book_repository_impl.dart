@@ -84,6 +84,9 @@ class LocalBookRepositoryImpl implements LocalBookRepository {
         _extractParagraphs,
         savedPath,
       );
+      print(
+        '----------- num of Paragraphs : ${paragraphs.length} -------------',
+      );
       localBook.paragraphs = paragraphs;
       localBook.totalPages = paragraphs.length;
       final response = await bookLocalDataSource.uploadBook(localBook);
@@ -120,19 +123,58 @@ LocalBook _initLocalBook(UploadBookParams params, String newPath) {
 }
 
 Future<List<String>> _extractParagraphs(String path) async {
-  ///  bytes بنحسب حجم الملف بال
   final bytes = await File(path).readAsBytes();
-  /// بنفتح الملف ونخليه قابل للمعالجة 
   final doc = PdfDocument(inputBytes: bytes);
-  /// بنمشي علي كل صفحات الكتاب ونجمع كله في نص واحد
   final extractor = PdfTextExtractor(doc);
-  final text = extractor.extractText();
+
+  final List<String> pages = [];
+
+  print('----------- num of pages : ${doc.pages.count} -------------');
+  for (int i = 0; i < doc.pages.count; i++) {
+    final raw = extractor
+        .extractText(startPageIndex: i, endPageIndex: i)
+        .trim();
+    final text = _cleanPageText(raw);
+    print('Page $i cleaned: ${text.substring(0, text.length.clamp(0, 100))}');
+
+    if (_isUsefulPage(text)) pages.add(text);
+  }
+  print('----------------- Pages : $pages ---------------');
+
   doc.dispose();
-  /// هنا بقا بنقسم النص الكامل اللي جمعناه علي حسب الفاصل اللي هنحدده
-  /// بنشيل اي مسافات زيادة ونحذق اي باراجرافات فاضية
-  return text
-      .split('\n\n')
-      .map((p) => p.trim())
-      .where((p) => p.isNotEmpty)
-      .toList();
+  return pages;
+}
+
+String _cleanPageText(String text) {
+  // بنوحد السطور المتقطعة - لو السطر أقل من 3 حروف بنلحقه بالسطر اللي بعده
+  final lines = text.split('\n');
+  final buffer = StringBuffer();
+
+  for (int i = 0; i < lines.length; i++) {
+    final line = lines[i].trim();
+    if (line.isEmpty) {
+      buffer.write('\n');
+      continue;
+    }
+    // سطر قصير جداً = جزء من كلمة متقطعة
+    if (line.length <= 3 && i < lines.length - 1) {
+      buffer.write(line);
+    } else {
+      buffer.write('$line ');
+    }
+  }
+
+  return buffer
+      .toString()
+      .replaceAll(RegExp(r'[əˈä·]'), '') // شيل رموز الـ pronunciation
+      .replaceAll(RegExp(r'\s{2,}'), ' ') // شيل المسافات الزيادة
+      .trim();
+}
+
+bool _isUsefulPage(String text) {
+  final words = text.split(' ').where((w) => w.isNotEmpty).toList();
+  if (words.length < 20) return false;
+  if (text.contains('http') || text.contains('www.')) return false;
+  if (text.contains('ISBN')) return false;
+  return true;
 }
