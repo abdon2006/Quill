@@ -23,6 +23,9 @@ import 'package:quill/features/reader/presentation/widgets/reader/text_animation
 enum ReaderUiStates {
   idle,
   controlsVisible,
+  bionicFadeIn,
+  bionicMode,
+  bionicFadeOut,
   focusTransitionIn,
   focusTransitionOut,
   focusMode,
@@ -67,8 +70,22 @@ class _ReaderScreenState extends State<ReaderScreen> {
     super.dispose();
   }
 
-  void _startBionicMode() {
-    _isBionicEnabled.value = true;
+  void _startBionicFadeIn() {
+    print('----- Bionic ON -------');
+    if (_isBionicEnabled.value != true) _isBionicEnabled.value = true;
+  }
+
+  void _startBionicFadeOut() {
+    print('----- Bionic OFF -------');
+    if (_isBionicEnabled.value != false) _isBionicEnabled.value = false;
+  }
+
+  void _handleBionicMode() {
+    if (_isBionicEnabled.value == true) {
+      _startBionicFadeOut();
+    } else {
+      _startBionicFadeIn();
+    }
   }
 
   void _startHideTimer() {
@@ -109,6 +126,12 @@ class _ReaderScreenState extends State<ReaderScreen> {
           break;
         case ReaderUiStates.focusTransitionOut:
           break;
+        case ReaderUiStates.bionicFadeIn:
+          break;
+        case ReaderUiStates.bionicMode:
+          break;
+        case ReaderUiStates.bionicFadeOut:
+          break;
       }
     });
   }
@@ -142,7 +165,6 @@ class _ReaderScreenState extends State<ReaderScreen> {
     final theme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark ? AppColors.darkBgPrimary : AppColors.lightBgPrimary;
-
     final bool showControls = _uiState == ReaderUiStates.controlsVisible;
     final bool isFocusDeep =
         _uiState == ReaderUiStates.focusMode ||
@@ -219,8 +241,8 @@ class _ReaderScreenState extends State<ReaderScreen> {
                       duration: AppDuration.normal,
                       child: BuildBottomActions(
                         callBack: (int i) {
-                          if (i == 0) _startBionicMode();
                           if (i == 1) _startFocusTransition();
+                          if (i == 3) _handleBionicMode();
                         },
                       ),
                     ),

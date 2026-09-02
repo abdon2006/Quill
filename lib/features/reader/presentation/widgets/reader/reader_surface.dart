@@ -108,13 +108,22 @@ class _BionicCell extends StatelessWidget {
     return ValueListenableBuilder<bool>(
       valueListenable: isBionicNotifier,
       builder: (context, isBionic, _) {
-        if (!isBionic || !ready) {
-          return Text(text, style: normalStyle, textAlign: TextAlign.justify);
-        }
         final spans = cache.spansFor(index, normalStyle, boldStyle);
-        return RichText(
-          textAlign: TextAlign.justify,
-          text: TextSpan(children: spans),
+
+        return AnimatedSwitcher(
+          duration: AppDuration.normal,
+          child: (!isBionic || !ready)
+              ? Text(
+                  key: ValueKey('Standard'),
+                  text,
+                  style: normalStyle,
+                  textAlign: TextAlign.justify,
+                )
+              : RichText(
+                  key: ValueKey('Bionic'),
+                  textAlign: TextAlign.justify,
+                  text: TextSpan(children: spans),
+                ),
         );
       },
     );
