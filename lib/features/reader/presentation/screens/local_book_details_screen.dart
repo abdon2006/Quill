@@ -11,13 +11,14 @@ import 'package:quill/core/theme/app_text_style.dart';
 import 'package:quill/core/widgets/app_button.dart';
 import 'package:quill/core/widgets/app_text_field.dart';
 import 'package:quill/features/library/data/models/library_book_display_model.dart';
+import 'package:quill/features/reader/domain/usecases/params/reader_book_params.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_bloc.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_state.dart';
-import 'package:quill/features/reader/presentation/widgets/build_cover.dart';
-import 'package:quill/features/reader/presentation/widgets/build_delete_confirmation.dart';
-import 'package:quill/features/reader/presentation/widgets/build_file_info.dart';
-import 'package:quill/features/reader/presentation/widgets/build_identity.dart';
-import 'package:quill/features/reader/presentation/widgets/build_top_bar.dart';
+import 'package:quill/features/reader/presentation/widgets/local%20book%20details/build_cover.dart';
+import 'package:quill/features/reader/presentation/widgets/local%20book%20details/build_delete_confirmation.dart';
+import 'package:quill/features/reader/presentation/widgets/local%20book%20details/build_file_info.dart';
+import 'package:quill/features/reader/presentation/widgets/local%20book%20details/build_identity.dart';
+import 'package:quill/features/reader/presentation/widgets/local%20book%20details/build_top_bar.dart';
 
 class LocalBookDetailsScreen extends StatefulWidget {
   final LibraryBookDisplayModel book;
@@ -91,7 +92,12 @@ class _LocalBookDetailsScreenState extends State<LocalBookDetailsScreen> {
                   child: AppButton.primary(
                     text: 'Start Reading',
                     icon: HugeIcons.strokeRoundedPlay,
-                    onPressed: () {},
+                    onPressed: () {
+                      context.push(
+                        AppRoutes.reader,
+                        extra: ReaderBookParams(localId: widget.book.localId),
+                      );
+                    },
                   ),
                 ),
               ),

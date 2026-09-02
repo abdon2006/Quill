@@ -8,7 +8,7 @@ import 'package:quill/features/reader/domain/usecases/params/update_book_params.
 import 'package:quill/features/reader/presentation/bloc/reader_bloc.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_event.dart';
 import 'package:quill/features/reader/presentation/screens/local_book_details_screen.dart';
-import 'package:quill/features/reader/presentation/widgets/edit_icon_button.dart';
+import 'package:quill/features/reader/presentation/widgets/local%20book%20details/edit_icon_button.dart';
 
 class BuildIdentity extends StatefulWidget {
   final LibraryBookDisplayModel book;

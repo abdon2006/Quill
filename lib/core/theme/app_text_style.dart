@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
@@ -75,6 +76,15 @@ abstract class AppTextStyles {
     letterSpacing: 0.5,
     color: AppColors.lightTextMuted,
   );
+
+  /// للقراية
+  static TextStyle defaultReading(BuildContext context) =>
+      GoogleFonts.plusJakartaSans(
+        fontSize: 16.sp,
+        fontWeight: FontWeight.w400,
+        height: 1.7,
+        color: Theme.of(context).colorScheme.onSurface,
+      );
 
   // ── Arabic ───────────────────────────────────
   static TextStyle arabicBody(BuildContext context) =>

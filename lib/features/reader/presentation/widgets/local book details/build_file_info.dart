@@ -11,8 +11,8 @@ import 'package:quill/features/library/data/models/library_book_display_model.da
 import 'package:quill/features/reader/domain/usecases/params/update_book_params.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_bloc.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_event.dart';
-import 'package:quill/features/reader/presentation/widgets/build_image_source_choice.dart';
-import 'package:quill/features/reader/presentation/widgets/build_selected_image.dart';
+import 'package:quill/features/reader/presentation/widgets/local%20book%20details/build_image_source_choice.dart';
+import 'package:quill/features/reader/presentation/widgets/local%20book%20details/build_selected_image.dart';
 
 class BuildFileInfo extends StatefulWidget {
   final LibraryBookDisplayModel book;
