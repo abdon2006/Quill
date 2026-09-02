@@ -1,18 +1,28 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart' as foundation show compute;
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:quill/core/theme/app_duration.dart';
+import 'package:quill/core/theme/app_radius.dart';
+import 'package:quill/core/theme/app_shadows.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
+import 'package:quill/core/widgets/build_cover_placeholder.dart';
+import 'package:quill/features/reader/data/models/local_book.dart';
+import 'package:quill/features/reader/presentation/widgets/reader/reader_header.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/text_animation.dart';
 
 class ReaderSurface extends StatefulWidget {
   final List<String> paragraphs;
   final ValueNotifier<bool> isBionicNotifier;
+  final LocalBook book;
 
   const ReaderSurface({
     super.key,
     required this.paragraphs,
     required this.isBionicNotifier,
+    required this.book,
   });
 
   @override
@@ -45,27 +55,34 @@ class _ReaderSurfaceState extends State<ReaderSurface> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context).colorScheme;
     final cellCount = _cache?.cellCount ?? 0;
+    final wordCount = cellCount * 140;
+    final minutes = (wordCount / 200).toInt();
+    final hours = minutes ~/ 60;
+    final mins = minutes % 60;
     return Stack(
       children: [
         ListView.builder(
           addAutomaticKeepAlives: false,
           addRepaintBoundaries: true,
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
-          itemCount: cellCount,
+          itemCount: cellCount + 1,
           itemBuilder: (context, i) {
             return AnimatedOpacity(
               duration: AppDuration.slow,
               opacity: !_visible ? 0 : 1,
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
-                child: _BionicCell(
-                  text: _cache!.cellText(i),
-                  isBionicNotifier: widget.isBionicNotifier,
-                  cache: _cache!,
-                  index: i,
-                  ready: _cacheReady,
-                ),
+                child: i == 0
+                    ? ReaderHeader(book: widget.book, hours: hours, mins: mins)
+                    : _BionicCell(
+                        text: _cache!.cellText(1),
+                        isBionicNotifier: widget.isBionicNotifier,
+                        cache: _cache!,
+                        index: 1,
+                        ready: _cacheReady,
+                      ),
               ),
             );
           },
