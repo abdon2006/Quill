@@ -230,12 +230,17 @@ class _ReaderScreenState extends State<ReaderScreen> {
                   right: 20.w,
                   child: IgnorePointer(
                     ignoring: !showControls,
-                    child: AnimatedOpacity(
-                      opacity: showControls ? 1.0 : 0.0,
-                      duration: AppDuration.normal,
-                      child: BuildTopBar(
-                        bookTitle: _book == null ? '' : _book!.title,
-                        bookAuthor: _book == null ? '' : _book!.author,
+                    child: AnimatedSlide(
+                      curve: Curves.easeInOutCubic,
+                      duration: AppDuration.slow,
+                      offset: showControls ? Offset.zero : Offset(0, -1),
+                      child: AnimatedOpacity(
+                        opacity: showControls ? 1.0 : 0.0,
+                        duration: AppDuration.slow,
+                        child: BuildTopBar(
+                          bookTitle: _book == null ? '' : _book!.title,
+                          bookAuthor: _book == null ? '' : _book!.author,
+                        ),
                       ),
                     ),
                   ),
@@ -248,14 +253,19 @@ class _ReaderScreenState extends State<ReaderScreen> {
                   right: 20.w,
                   child: IgnorePointer(
                     ignoring: !showControls,
-                    child: AnimatedOpacity(
-                      opacity: showControls ? 1.0 : 0.0,
-                      duration: AppDuration.normal,
-                      child: BuildBottomActions(
-                        callBack: (int i) {
-                          if (i == 1) _startFocusTransition();
-                          if (i == 3) _handleBionicMode();
-                        },
+                    child: AnimatedSlide(
+                      curve: Curves.easeInOutCubic,
+                      duration: AppDuration.slow,
+                      offset: showControls ? Offset.zero : Offset(0, 1),
+                      child: AnimatedOpacity(
+                        opacity: showControls ? 1.0 : 0.0,
+                        duration: AppDuration.slow,
+                        child: BuildBottomActions(
+                          callBack: (int i) {
+                            if (i == 1) _startFocusTransition();
+                            if (i == 3) _handleBionicMode();
+                          },
+                        ),
                       ),
                     ),
                   ),
