@@ -44,4 +44,9 @@ abstract class AppColors {
   static const Color glowTension = Color(0xFFEF476F);
   static const Color glowCalm = Color(0xFF06D6A0);
   static const Color glowMystery = Color(0xFFB56BF7);
+  // ── Reader Bg Colors  ───────────────────────────
+  static const Color cream = Color(0xFFF4F1E7);
+  static const Color warm = Color(0xFFF0E6C8);
+  static const Color white = Color(0xFFFFFFFF);
+  static const Color dark = Color(0xFF202020);
 }

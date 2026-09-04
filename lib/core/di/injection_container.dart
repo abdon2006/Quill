@@ -46,6 +46,7 @@ import 'package:quill/features/reader/domain/usecases/remove_book_usecase.dart';
 import 'package:quill/features/reader/domain/usecases/update_book_usecase.dart';
 import 'package:quill/features/reader/domain/usecases/upload_book_usecase.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_bloc.dart';
+import 'package:quill/features/reader/presentation/cubit/reader_preferences_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../locale/cubit/locale_cubit.dart';
 import '../theme/cubit/theme_cubit.dart';
@@ -213,5 +214,8 @@ Future<void> setupDI() async {
       updateBookUsecase: sl(),
       fetchLocalBooksUsecase: sl(),
     ),
+  );
+  sl.registerLazySingleton<ReaderPreferencesCubit>(
+    () => ReaderPreferencesCubit(),
   );
 }

@@ -1,0 +1,74 @@
+enum ReaderTheme { system, light, dark }
+
+enum ReaderBgColor { warm, cream, white, dark }
+
+enum ReaderScrollMode { scroll, pages }
+
+enum ReaderFontFamily {
+  plusJakartaSans,
+  lora,
+  merriweather;
+
+  String get fontName => switch (this) {
+    ReaderFontFamily.plusJakartaSans => 'Plus Jakarta Sans',
+    ReaderFontFamily.lora => 'Lora',
+    ReaderFontFamily.merriweather => 'Merriweather',
+  };
+}
+
+class ReaderPreferencesState {
+  final double fontSize;
+  final double lineSpacing;
+  final ReaderFontFamily fontFamily;
+  final bool isBold;
+  final bool isJustified;
+  final ReaderBgColor bgColor;
+  final ReaderTheme theme;
+  final ReaderScrollMode scrollMode;
+
+  ReaderPreferencesState({
+    required this.fontSize,
+    required this.lineSpacing,
+    required this.fontFamily,
+    required this.isBold,
+    required this.isJustified,
+    required this.bgColor,
+    required this.theme,
+    required this.scrollMode,
+  });
+
+  ReaderPreferencesState copyWith({
+    double? fontSize,
+    double? lineSpacing,
+    ReaderFontFamily? fontFamily,
+    bool? isBold,
+    bool? isJustified,
+    ReaderBgColor? bgColor,
+    ReaderTheme? theme,
+    ReaderScrollMode? scrollMode,
+  }) {
+    return ReaderPreferencesState(
+      fontSize: fontSize ?? this.fontSize,
+      lineSpacing: lineSpacing ?? this.lineSpacing,
+      fontFamily: fontFamily ?? this.fontFamily,
+      isBold: isBold ?? this.isBold,
+      isJustified: isJustified ?? this.isJustified,
+      bgColor: bgColor ?? this.bgColor,
+      theme: theme ?? this.theme,
+      scrollMode: scrollMode ?? this.scrollMode,
+    );
+  }
+
+  @override
+  String toString() =>
+      '''
+      fontSize : $fontSize , 
+    lineSpacing : $lineSpacing , 
+    fontFamily : $fontFamily , 
+    isBold : $isBold , 
+    isJustified : $isJustified , 
+    bgColor : $bgColor , 
+    theme : $theme , 
+    scrollMode : $scrollMode , 
+    ''';
+}

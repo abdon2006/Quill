@@ -16,9 +16,11 @@ import 'package:quill/features/reader/domain/usecases/params/reader_book_params.
 import 'package:quill/features/reader/presentation/bloc/reader_bloc.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_event.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_state.dart';
+import 'package:quill/features/reader/presentation/cubit/reader_preferences_cubit.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/build_bottom_actions.dart';
 import 'package:quill/core/widgets/show_app_snack_bar.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/build_top_bar.dart';
+import 'package:quill/features/reader/presentation/widgets/reader/prefernces/reader_preferences_sheet.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/reader_surface.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/text_animation.dart';
 
@@ -160,6 +162,16 @@ class _ReaderScreenState extends State<ReaderScreen> {
     });
   }
 
+  void _openPreferencesSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) => BlocProvider.value(
+        value: context.read<ReaderPreferencesCubit>(),
+        child: ReaderPreferencesSheet(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
@@ -262,6 +274,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                         duration: AppDuration.slow,
                         child: BuildBottomActions(
                           callBack: (int i) {
+                            if (i == 0) _openPreferencesSheet();
                             if (i == 1) _startFocusTransition();
                             if (i == 3) _handleBionicMode();
                           },
