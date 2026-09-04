@@ -71,7 +71,7 @@ class _ReaderSurfaceState extends State<ReaderSurface> {
                 child: i == 0
                     ? Column(
                         children: [
-                          SizedBox(height: 50.h),
+                          SizedBox(height: 70.h),
                           ReaderHeader(
                             book: widget.book,
                             hours: hours,

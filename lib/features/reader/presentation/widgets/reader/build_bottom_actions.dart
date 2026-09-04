@@ -24,7 +24,7 @@ class _BuildBottomActionsState extends State<BuildBottomActions> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+      padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
       decoration: BoxDecoration(
         boxShadow: AppShadows.bottomNav,
         color: theme.surface,
