@@ -218,6 +218,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                       : ReaderSurface(
                           paragraphs: _paragraphs,
                           isBionicNotifier: _isBionicEnabled,
+
                           book: _book!,
                         ),
                 ),
@@ -232,7 +233,10 @@ class _ReaderScreenState extends State<ReaderScreen> {
                     child: AnimatedOpacity(
                       opacity: showControls ? 1.0 : 0.0,
                       duration: AppDuration.normal,
-                      child: BuildTopBar(),
+                      child: BuildTopBar(
+                        bookTitle: _book == null ? '' : _book!.title,
+                        bookAuthor: _book == null ? '' : _book!.author,
+                      ),
                     ),
                   ),
                 ),
