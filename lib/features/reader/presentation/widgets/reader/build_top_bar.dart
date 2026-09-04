@@ -42,7 +42,7 @@ class BuildTopBar extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    bookTitle,
+                    bookAuthor,
                     style: AppTextStyles.caption(context),
                     overflow: TextOverflow.ellipsis,
                   ),

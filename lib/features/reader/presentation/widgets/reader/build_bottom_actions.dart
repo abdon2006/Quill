@@ -42,7 +42,7 @@ class _BuildBottomActionsState extends State<BuildBottomActions> {
               highlightColor: theme.primary.withValues(alpha: 0.08),
               customBorder: CircleBorder(),
               onTap: switch (i) {
-                0 => () {},
+                0 => () => widget.callBack(0),
                 1 => () => widget.callBack(1),
                 2 => () {},
                 3 => () => widget.callBack(3),
