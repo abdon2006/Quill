@@ -17,6 +17,7 @@ import 'package:quill/features/reader/presentation/bloc/reader_bloc.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_event.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_state.dart';
 import 'package:quill/features/reader/presentation/cubit/reader_preferences_cubit.dart';
+import 'package:quill/features/reader/presentation/cubit/reader_preferences_state.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/build_bottom_actions.dart';
 import 'package:quill/core/widgets/show_app_snack_bar.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/build_top_bar.dart';
@@ -172,211 +173,233 @@ class _ReaderScreenState extends State<ReaderScreen> {
     );
   }
 
+  Color _getReaderBgColor(ReaderPreferencesState state) {
+    return switch (state.theme) {
+      ReaderTheme.light => AppColors.lightBgPrimary,
+      ReaderTheme.dark => AppColors.darkBgPrimary,
+      ReaderTheme.system => switch (state.bgColor) {
+        ReaderBgColor.cream => AppColors.cream,
+        ReaderBgColor.warm => AppColors.warm,
+        ReaderBgColor.white => AppColors.white,
+        ReaderBgColor.dark => AppColors.dark,
+      },
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? AppColors.darkBgPrimary : AppColors.lightBgPrimary;
     final bool showControls = _uiState == ReaderUiStates.controlsVisible;
     final bool isFocusDeep =
         _uiState == ReaderUiStates.focusMode ||
         _uiState == ReaderUiStates.focusExitReveal;
     final bool showExitHint = _uiState == ReaderUiStates.focusExitReveal;
 
-    return PremiumAuroraBackground(
-      child: GestureDetector(
-        onTap: _handleTap,
-        child: Scaffold(
-          backgroundColor: isFocusDeep ? Colors.transparent : bgColor,
-          body: SafeArea(
-            child: Stack(
-              children: [
-                BlocListener<ReaderBloc, ReaderState>(
-                  listener: (context, state) {
-                    if (state is FetchLocalBookSuccess && _paragraphs.isEmpty) {
-                      setState(() {
-                        _paragraphs = state.book.paragraphs;
-                        _book = state.book;
-                      });
-                    } else if (state is ReaderFailure) {
-                      showSnackBar(
-                        context,
-                        message: 'Something went wrong',
-                        messageDisc: 'Could not load the book.',
-                        icon: HugeIcons.strokeRoundedWifiError01,
-                      );
-                    }
-                  },
-                  child: SizedBox(),
-                ),
-                // BlocBuilder<HomeBloc, HomeState>(
-                //   builder: (context, state) {
-                //     if (state is GetBookByIdSuccess) {
-                //       return ListView(
-                //         padding: EdgeInsets.symmetric(
-                //           horizontal: AppSpacing.xxl,
-                //           vertical: AppSpacing.xl,
-                //         ),
-                //         children: [],
-                //       );
-                //     }
-                //     return const SizedBox();
-                //   },
-                // ),
-                NotificationListener<UserScrollNotification>(
-                  onNotification: _handleScroll,
-                  child: _paragraphs.isEmpty
-                      ? SizedBox()
-                      : ReaderSurface(
-                          paragraphs: _paragraphs,
-                          isBionicNotifier: _isBionicEnabled,
+    return BlocBuilder<ReaderPreferencesCubit, ReaderPreferencesState>(
+      builder: (context, state) {
+        return PremiumAuroraBackground(
+          child: GestureDetector(
+            onTap: _handleTap,
+            child: Scaffold(
+              backgroundColor: isFocusDeep
+                  ? Colors.transparent
+                  : _getReaderBgColor(state),
+              body: SafeArea(
+                child: Stack(
+                  children: [
+                    BlocListener<ReaderBloc, ReaderState>(
+                      listener: (context, state) {
+                        if (state is FetchLocalBookSuccess &&
+                            _paragraphs.isEmpty) {
+                          setState(() {
+                            _paragraphs = state.book.paragraphs;
+                            _book = state.book;
+                          });
+                        } else if (state is ReaderFailure) {
+                          showSnackBar(
+                            context,
+                            message: 'Something went wrong',
+                            messageDisc: 'Could not load the book.',
+                            icon: HugeIcons.strokeRoundedWifiError01,
+                          );
+                        }
+                      },
+                      child: SizedBox(),
+                    ),
+                    // BlocBuilder<HomeBloc, HomeState>(
+                    //   builder: (context, state) {
+                    //     if (state is GetBookByIdSuccess) {
+                    //       return ListView(
+                    //         padding: EdgeInsets.symmetric(
+                    //           horizontal: AppSpacing.xxl,
+                    //           vertical: AppSpacing.xl,
+                    //         ),
+                    //         children: [],
+                    //       );
+                    //     }
+                    //     return const SizedBox();
+                    //   },
+                    // ),
+                    NotificationListener<UserScrollNotification>(
+                      onNotification: _handleScroll,
+                      child: _paragraphs.isEmpty
+                          ? SizedBox()
+                          : ReaderSurface(
+                              paragraphs: _paragraphs,
+                              isBionicNotifier: _isBionicEnabled,
 
-                          book: _book!,
-                        ),
-                ),
+                              book: _book!,
+                              state: state,
+                            ),
+                    ),
 
-                // 3. Top Bar
-                Positioned(
-                  top: 10.h,
-                  left: 20.w,
-                  right: 20.w,
-                  child: IgnorePointer(
-                    ignoring: !showControls,
-                    child: AnimatedSlide(
-                      curve: Curves.easeInOutCubic,
-                      duration: AppDuration.slow,
-                      offset: showControls ? Offset.zero : Offset(0, -1),
-                      child: AnimatedOpacity(
-                        opacity: showControls ? 1.0 : 0.0,
-                        duration: AppDuration.slow,
-                        child: BuildTopBar(
-                          bookTitle: _book == null ? '' : _book!.title,
-                          bookAuthor: _book == null ? '' : _book!.author,
+                    // 3. Top Bar
+                    Positioned(
+                      top: 10.h,
+                      left: 20.w,
+                      right: 20.w,
+                      child: IgnorePointer(
+                        ignoring: !showControls,
+                        child: AnimatedSlide(
+                          curve: Curves.easeInOutCubic,
+                          duration: AppDuration.slow,
+                          offset: showControls ? Offset.zero : Offset(0, -1),
+                          child: AnimatedOpacity(
+                            opacity: showControls ? 1.0 : 0.0,
+                            duration: AppDuration.slow,
+                            child: BuildTopBar(
+                              bookTitle: _book == null ? '' : _book!.title,
+                              bookAuthor: _book == null ? '' : _book!.author,
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ),
 
-                // 4. Bottom Actions
-                Positioned(
-                  bottom: 10.h,
-                  left: 20.w,
-                  right: 20.w,
-                  child: IgnorePointer(
-                    ignoring: !showControls,
-                    child: AnimatedSlide(
-                      curve: Curves.easeInOutCubic,
-                      duration: AppDuration.slow,
-                      offset: showControls ? Offset.zero : Offset(0, 1),
-                      child: AnimatedOpacity(
-                        opacity: showControls ? 1.0 : 0.0,
-                        duration: AppDuration.slow,
-                        child: BuildBottomActions(
-                          callBack: (int i) {
-                            if (i == 0) _openPreferencesSheet();
-                            if (i == 1) _startFocusTransition();
-                            if (i == 3) _handleBionicMode();
-                          },
+                    // 4. Bottom Actions
+                    Positioned(
+                      bottom: 10.h,
+                      left: 20.w,
+                      right: 20.w,
+                      child: IgnorePointer(
+                        ignoring: !showControls,
+                        child: AnimatedSlide(
+                          curve: Curves.easeInOutCubic,
+                          duration: AppDuration.slow,
+                          offset: showControls ? Offset.zero : Offset(0, 1),
+                          child: AnimatedOpacity(
+                            opacity: showControls ? 1.0 : 0.0,
+                            duration: AppDuration.slow,
+                            child: BuildBottomActions(
+                              callBack: (int i) {
+                                if (i == 0) _openPreferencesSheet();
+                                if (i == 1) _startFocusTransition();
+                                if (i == 3) _handleBionicMode();
+                              },
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ),
 
-                // 5. Exit Focus Hint (Tiny Control)
-                Positioned(
-                  bottom: 40.h,
-                  left: 0,
-                  right: 0,
-                  child: IgnorePointer(
-                    ignoring: !showExitHint,
-                    child: AnimatedOpacity(
-                      opacity: showExitHint ? 1.0 : 0.0,
-                      duration: AppDuration.normal,
-                      child: Center(
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: _startFocusOutTransition,
+                    // 5. Exit Focus Hint (Tiny Control)
+                    Positioned(
+                      bottom: 40.h,
+                      left: 0,
+                      right: 0,
+                      child: IgnorePointer(
+                        ignoring: !showExitHint,
+                        child: AnimatedOpacity(
+                          opacity: showExitHint ? 1.0 : 0.0,
+                          duration: AppDuration.normal,
+                          child: Center(
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: _startFocusOutTransition,
 
-                            borderRadius: AppRadius.xxl,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: AppSpacing.lg,
-                                vertical: AppSpacing.sm,
-                              ),
-                              decoration: BoxDecoration(
-                                color: theme.surface.withValues(alpha: 0.9),
                                 borderRadius: AppRadius.xxl,
-                                border: Border.all(
-                                  color: theme.onSurface.withValues(alpha: 0.1),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: AppSpacing.lg,
+                                    vertical: AppSpacing.sm,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: theme.surface.withValues(alpha: 0.9),
+                                    borderRadius: AppRadius.xxl,
+                                    border: Border.all(
+                                      color: theme.onSurface.withValues(
+                                        alpha: 0.1,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      HugeIcon(
+                                        icon: HugeIcons.strokeRoundedMoon02,
+                                        size: 18.sp,
+                                        color: theme.primary,
+                                      ),
+                                      SizedBox(width: AppSpacing.sm),
+                                      Text(
+                                        "Exit Focus",
+                                        style: AppTextStyles.bodyMedium(
+                                          context,
+                                        ).copyWith(color: theme.primary),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  HugeIcon(
-                                    icon: HugeIcons.strokeRoundedMoon02,
-                                    size: 18.sp,
-                                    color: theme.primary,
-                                  ),
-                                  SizedBox(width: AppSpacing.sm),
-                                  Text(
-                                    "Exit Focus",
-                                    style: AppTextStyles.bodyMedium(
-                                      context,
-                                    ).copyWith(color: theme.primary),
-                                  ),
-                                ],
                               ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ),
 
-                /// transition Overlay
-                AnimatedSwitcher(
-                  duration: AppDuration.readerGlow,
-                  switchInCurve: Curves.easeIn,
-                  switchOutCurve: Curves.easeOut,
-                  child: _uiState == ReaderUiStates.focusTransitionIn
-                      ? TextAnimation(
-                          key: const ValueKey('focus_in_animation'),
-                          callBack: () {
-                            setState(() {
-                              _uiState = ReaderUiStates.focusMode;
-                            });
-                          },
-                          messages: const [
-                            'Clearing the noise.',
-                            'Slowing down.',
-                            'Just you. And the story.',
-                          ],
-                        )
-                      : _uiState == ReaderUiStates.focusTransitionOut
-                      ? TextAnimation(
-                          key: const ValueKey('focus_out_animation'),
-                          callBack: () => setState(() {
-                            _uiState = ReaderUiStates.controlsVisible;
-                            _startHideTimer();
-                          }),
-                          messages: const [
-                            'Leaving the pages.',
-                            'Hold onto the feeling.',
-                            'See you soon.',
-                          ],
-                        )
-                      : const SizedBox.shrink(key: ValueKey('empty_box')),
+                    /// transition Overlay
+                    AnimatedSwitcher(
+                      duration: AppDuration.readerGlow,
+                      switchInCurve: Curves.easeIn,
+                      switchOutCurve: Curves.easeOut,
+                      child: _uiState == ReaderUiStates.focusTransitionIn
+                          ? TextAnimation(
+                              key: const ValueKey('focus_in_animation'),
+                              callBack: () {
+                                setState(() {
+                                  _uiState = ReaderUiStates.focusMode;
+                                });
+                              },
+                              messages: const [
+                                'Clearing the noise.',
+                                'Slowing down.',
+                                'Just you. And the story.',
+                              ],
+                            )
+                          : _uiState == ReaderUiStates.focusTransitionOut
+                          ? TextAnimation(
+                              key: const ValueKey('focus_out_animation'),
+                              callBack: () => setState(() {
+                                _uiState = ReaderUiStates.controlsVisible;
+                                _startHideTimer();
+                              }),
+                              messages: const [
+                                'Leaving the pages.',
+                                'Hold onto the feeling.',
+                                'See you soon.',
+                              ],
+                            )
+                          : const SizedBox.shrink(key: ValueKey('empty_box')),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
