@@ -14,6 +14,7 @@ Widget bgSelection({
   required void Function() onTap,
   required bool isSelected,
   required bool isDark,
+  required bool isEnabled,
 }) {
   return Expanded(
     child: InkWell(
@@ -21,7 +22,11 @@ Widget bgSelection({
       child: AnimatedScale(
         duration: AppDuration.normal,
         curve: Curves.easeInOutCubic,
-        scale: isSelected ? 1.03 : 1,
+        scale: isEnabled
+            ? isSelected
+                  ? 1.03
+                  : 1
+            : 1,
         child: AnimatedContainer(
           height: 50.h,
           duration: AppDuration.normal,
@@ -32,8 +37,12 @@ Widget bgSelection({
             borderRadius: AppRadius.sm,
             color: bgColor,
             border: Border.all(
-              color: isSelected
-                  ? theme.secondary
+              color: isEnabled
+                  ? isSelected
+                        ? theme.secondary
+                        : isDark
+                        ? AppColors.darkTextMuted.withValues(alpha: 0.15)
+                        : AppColors.lightTextMuted.withValues(alpha: 0.15)
                   : isDark
                   ? AppColors.darkTextMuted.withValues(alpha: 0.15)
                   : AppColors.lightTextMuted.withValues(alpha: 0.15),
@@ -43,11 +52,15 @@ Widget bgSelection({
           child: Center(
             child: DefaultTextStyle(
               style: AppTextStyles.bodyMedium(context).copyWith(
-                color: isSelected
-                    ? theme.secondary
+                color: isEnabled
+                    ? isSelected
+                          ? theme.secondary
+                          : isDark
+                          ? AppColors.darkTextMuted.withValues(alpha: 0.15)
+                          : AppColors.lightTextMuted.withValues(alpha: 0.15)
                     : isDark
-                    ? AppColors.darkTextMuted.withValues(alpha: 0.5)
-                    : AppColors.lightTextMuted.withValues(alpha: 0.5),
+                    ? AppColors.darkTextMuted.withValues(alpha: 0.15)
+                    : AppColors.lightTextMuted.withValues(alpha: 0.15),
                 fontSize: 16.sp,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
               ),
