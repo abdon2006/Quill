@@ -26,31 +26,27 @@ Widget buildFontBadge({
           height: 50.h,
           duration: AppDuration.normal,
           curve: Curves.easeInOutCubic,
-          padding: EdgeInsets.all(AppSpacing.md),
-          margin: EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+          padding: EdgeInsets.all(AppSpacing.sm),
+          margin: EdgeInsets.symmetric(horizontal: AppSpacing.md),
           decoration: BoxDecoration(
-            borderRadius: AppRadius.lg,
+            borderRadius: AppRadius.md,
             color: isSelected
-                ? theme.primary
+                ? theme.secondary
+                : isDark
+                ? theme.onSurface.withValues(alpha: 0.02)
                 : theme.onSurface.withValues(alpha: 0.05),
-            border: Border.all(
-              color: isSelected
-                  ? theme.secondary
-                  : isDark
-                  ? AppColors.darkTextMuted.withValues(alpha: 0.15)
-                  : AppColors.lightTextMuted.withValues(alpha: 0.15),
-              width: isSelected ? 1.2 : 1,
-            ),
           ),
           child: Center(
             child: DefaultTextStyle(
               style: AppTextStyles.bodyMedium(context).copyWith(
                 fontFamily: fontFamily,
                 color: isSelected
-                    ? theme.surface
+                    ? isDark
+                          ? theme.onSurface
+                          : theme.surface
                     : isDark
-                    ? AppColors.darkTextMuted.withValues(alpha: 0.5)
-                    : AppColors.lightTextMuted.withValues(alpha: 0.5),
+                    ? AppColors.darkTextMuted
+                    : AppColors.lightTextMuted,
                 fontSize: 16.sp,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
               ),
