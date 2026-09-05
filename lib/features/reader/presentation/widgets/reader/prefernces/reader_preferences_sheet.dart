@@ -126,12 +126,19 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
         ),
 
         1 => () => setState(
-          () => _tempState = _tempState.copyWith(theme: ReaderTheme.light),
+          () => _tempState = _tempState.copyWith(
+            theme: ReaderTheme.light,
+            bgColor: ReaderBgColor.cream,
+          ),
         ),
 
         2 => () => setState(
-          () => _tempState = _tempState.copyWith(theme: ReaderTheme.dark),
+          () => _tempState = _tempState.copyWith(
+            theme: ReaderTheme.dark,
+            bgColor: ReaderBgColor.cream,
+          ),
         ),
+
         int() => throw UnimplementedError(),
       };
     }
@@ -224,7 +231,7 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
       },
     ];
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
+    bool isEnabled = _tempState.theme == ReaderTheme.system;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -235,20 +242,42 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
           ).copyWith(color: AppColors.lightTextMuted),
         ),
         const SizedBox(height: AppSpacing.sm),
-        Row(
-          children: List.generate(4, (i) {
-            final item = bgSelectionData[i];
-            bool isSelected = _tempState.bgColor == item['value'];
-            return bgSelection(
-              context: context,
-              theme: theme,
-              label: item['label'],
-              bgColor: item['color'],
-              onTap: handleOnTap(i),
-              isDark: isDark,
-              isSelected: isSelected,
-            );
-          }),
+        IgnorePointer(
+          ignoring: !isEnabled,
+          child: Row(
+            children: List.generate(4, (i) {
+              final item = bgSelectionData[i];
+              bool isSelected = _tempState.bgColor == item['value'];
+              return bgSelection(
+                context: context,
+                theme: theme,
+                label: item['label'],
+                bgColor: item['color'],
+                onTap: handleOnTap(i),
+                isDark: isDark,
+                isSelected: isSelected,
+                isEnabled: isEnabled,
+              );
+            }),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        AnimatedScale(
+          scale: isEnabled ? .95 : 1,
+          duration: AppDuration.slow,
+          curve: Curves.easeInOutCubic,
+          child: AnimatedOpacity(
+            opacity: isEnabled ? 0 : 1,
+            curve: Curves.easeInOutCubic,
+            duration: AppDuration.slow,
+            child: Center(
+              child: Text(
+                textAlign: TextAlign.center,
+                "Theme controls the canvas , switch The Theme\n to System to choose your own.",
+                style: AppTextStyles.caption(context),
+              ),
+            ),
+          ),
         ),
       ],
     );

@@ -1,3 +1,5 @@
+import 'package:equatable/equatable.dart';
+
 enum ReaderTheme { system, light, dark }
 
 enum ReaderBgColor { warm, cream, white, dark }
@@ -16,7 +18,7 @@ enum ReaderFontFamily {
   };
 }
 
-class ReaderPreferencesState {
+class ReaderPreferencesState extends Equatable {
   final double fontSize;
   final double lineSpacing;
   final ReaderFontFamily fontFamily;
@@ -27,7 +29,7 @@ class ReaderPreferencesState {
   final ReaderTheme theme;
   final ReaderScrollMode scrollMode;
 
-  ReaderPreferencesState({
+  const ReaderPreferencesState({
     required this.fontSize,
     required this.lineSpacing,
     required this.fontFamily,
@@ -76,4 +78,17 @@ class ReaderPreferencesState {
     theme : $theme , 
     scrollMode : $scrollMode , 
     ''';
+
+  @override
+  List<Object?> get props => [
+    fontSize,
+    lineSpacing,
+    fontFamily,
+    isBold,
+    isJustified,
+    bgColor,
+    theme,
+    scrollMode,
+    isItalic,
+  ];
 }
