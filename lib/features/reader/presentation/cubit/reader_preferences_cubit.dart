@@ -13,6 +13,7 @@ class ReaderPreferencesCubit extends Cubit<ReaderPreferencesState> {
           bgColor: ReaderBgColor.cream,
           theme: ReaderTheme.system,
           scrollMode: ReaderScrollMode.scroll,
+          isItalic: false,
         ),
       );
 
@@ -30,4 +31,6 @@ class ReaderPreferencesCubit extends Cubit<ReaderPreferencesState> {
   void setTheme(ReaderTheme newTheme) => emit(state.copyWith(theme: newTheme));
   void setScrollMode(ReaderScrollMode newScrollMode) =>
       emit(state.copyWith(scrollMode: newScrollMode));
+  void setIsItalic(bool isItalic) => emit(state.copyWith(isItalic: isItalic));
+  void applynewTheme(ReaderPreferencesState newState) => emit(newState);
 }
