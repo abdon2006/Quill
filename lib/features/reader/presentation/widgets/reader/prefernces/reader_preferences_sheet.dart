@@ -135,7 +135,7 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
         2 => () => setState(
           () => _tempState = _tempState.copyWith(
             theme: ReaderTheme.dark,
-            bgColor: ReaderBgColor.cream,
+            bgColor: ReaderBgColor.dark,
           ),
         ),
 

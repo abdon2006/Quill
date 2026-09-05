@@ -1,15 +1,18 @@
 import 'package:flutter/foundation.dart' as foundation show compute;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:quill/core/theme/app_colors.dart';
 import 'package:quill/core/theme/app_duration.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 import 'package:quill/features/reader/data/models/local_book.dart';
+import 'package:quill/features/reader/presentation/cubit/reader_preferences_state.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/reader_header.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/text_animation.dart';
 
 class ReaderSurface extends StatefulWidget {
   final List<String> paragraphs;
+  final ReaderPreferencesState state;
   final ValueNotifier<bool> isBionicNotifier;
   final LocalBook book;
 
@@ -18,6 +21,7 @@ class ReaderSurface extends StatefulWidget {
     required this.paragraphs,
     required this.isBionicNotifier,
     required this.book,
+    required this.state,
   });
 
   @override
@@ -85,6 +89,7 @@ class _ReaderSurfaceState extends State<ReaderSurface> {
                         cache: _cache!,
                         index: i - 1,
                         ready: _cacheReady,
+                        state: widget.state,
                       ),
               ),
             );
@@ -109,6 +114,7 @@ class _BionicCell extends StatelessWidget {
   final BionicCache cache;
   final int index;
   final bool ready;
+  final ReaderPreferencesState state;
 
   const _BionicCell({
     required this.text,
@@ -116,13 +122,29 @@ class _BionicCell extends StatelessWidget {
     required this.cache,
     required this.index,
     required this.ready,
+    required this.state,
   });
 
   @override
   Widget build(BuildContext context) {
-    final normalStyle = AppTextStyles.defaultReading(
-      context,
-    ).copyWith(height: 1.8);
+    // final isDark = Theme.of(context).brightness == Brightness.dark;
+    final normalStyle = AppTextStyles.defaultReading(context).copyWith(
+      color:
+          (state.theme == ReaderTheme.dark ||
+              state.bgColor == ReaderBgColor.dark)
+          ? AppColors.darkTextPrimary
+          : AppColors.lightTextPrimary,
+      fontSize: state.fontSize,
+      height: state.lineSpacing,
+      fontStyle: state.isItalic ? FontStyle.italic : FontStyle.normal,
+      fontWeight: state.isBold ? FontWeight.bold : FontWeight.normal,
+      fontFamily: switch (state.fontFamily) {
+        ReaderFontFamily.plusJakartaSans =>
+          ReaderFontFamily.plusJakartaSans.fontName,
+        ReaderFontFamily.lora => ReaderFontFamily.lora.fontName,
+        ReaderFontFamily.merriweather => ReaderFontFamily.merriweather.fontName,
+      },
+    );
     final boldStyle = normalStyle.copyWith(fontWeight: FontWeight.w800);
 
     return ValueListenableBuilder<bool>(
@@ -137,11 +159,15 @@ class _BionicCell extends StatelessWidget {
                   key: ValueKey('Standard'),
                   text,
                   style: normalStyle,
-                  textAlign: TextAlign.justify,
+                  textAlign: state.isJustified
+                      ? TextAlign.justify
+                      : TextAlign.start,
                 )
               : RichText(
                   key: ValueKey('Bionic'),
-                  textAlign: TextAlign.justify,
+                  textAlign: state.isJustified
+                      ? TextAlign.justify
+                      : TextAlign.start,
                   text: TextSpan(children: spans),
                 ),
         );
