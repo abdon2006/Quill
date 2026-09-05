@@ -3,12 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:quill/core/theme/app_colors.dart';
+import 'package:quill/core/theme/app_duration.dart';
 import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 import 'package:quill/features/reader/presentation/cubit/reader_preferences_cubit.dart';
 import 'package:quill/features/reader/presentation/cubit/reader_preferences_state.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/prefernces/alignment_selection.dart';
+import 'package:quill/features/reader/presentation/widgets/reader/prefernces/apply_button.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/prefernces/bg_selection.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/prefernces/build_font_badge.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/prefernces/theme_selection.dart';
@@ -21,6 +23,72 @@ class ReaderPreferencesSheet extends StatefulWidget {
 }
 
 class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
+  late ReaderPreferencesState _tempState;
+  @override
+  void initState() {
+    super.initState();
+    _tempState = context.read<ReaderPreferencesCubit>().state;
+  }
+
+  Widget _buildPreview({required ColorScheme theme}) {
+    ReaderPreferencesState state = _tempState;
+    final isDark = theme.brightness == Brightness.dark;
+    return AnimatedContainer(
+      duration: AppDuration.slow,
+      curve: Curves.easeInOutCubic,
+      padding: EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: isDark
+              ? state.bgColor == ReaderBgColor.dark
+                    ? theme.onSurface.withValues(alpha: 0.2)
+                    : theme.surface
+              : state.bgColor == ReaderBgColor.white
+              ? theme.onSurface.withValues(alpha: 0.2)
+              : theme.surface,
+        ),
+        borderRadius: AppRadius.xl,
+        color: switch (state.bgColor) {
+          ReaderBgColor.cream => AppColors.cream,
+          ReaderBgColor.warm => AppColors.warm,
+          ReaderBgColor.white => AppColors.white,
+          ReaderBgColor.dark => AppColors.dark,
+        },
+      ),
+      child: AnimatedDefaultTextStyle(
+        duration: AppDuration.normal,
+        curve: Curves.easeInOutCubic,
+        textAlign: state.isJustified ? TextAlign.justify : TextAlign.start,
+        style: AppTextStyles.defaultReading(context).copyWith(
+          fontFamily: switch (state.fontFamily) {
+            ReaderFontFamily.plusJakartaSans =>
+              ReaderFontFamily.plusJakartaSans.fontName,
+            ReaderFontFamily.lora => ReaderFontFamily.lora.fontName,
+            ReaderFontFamily.merriweather =>
+              ReaderFontFamily.merriweather.fontName,
+          },
+          color: isDark
+              ? state.bgColor == ReaderBgColor.dark
+                    ? theme.onSurface
+                    : theme.surface
+              : switch (state.bgColor) {
+                  ReaderBgColor.warm => theme.onSurface,
+                  ReaderBgColor.cream => theme.onSurface,
+                  ReaderBgColor.white => theme.onSurface,
+                  ReaderBgColor.dark => theme.surface,
+                },
+          height: _tempState.lineSpacing,
+          fontSize: _tempState.fontSize,
+          fontWeight: _tempState.isBold ? FontWeight.bold : FontWeight.normal,
+          fontStyle: _tempState.isItalic ? FontStyle.italic : FontStyle.normal,
+        ),
+        child: Text(
+          'The sun sets slowly over the quiet hills, casting a warm golden glow across the valley below.',
+        ),
+      ),
+    );
+  }
+
   Widget _buildThemeSection({required BuildContext context}) {
     final theme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -54,20 +122,15 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
     VoidCallback handleOnTap(int i) {
       return switch (i) {
         0 => () => setState(
-          () => context.read<ReaderPreferencesCubit>().setTheme(
-            ReaderTheme.system,
-          ),
+          () => _tempState = _tempState.copyWith(theme: ReaderTheme.system),
         ),
 
         1 => () => setState(
-          () => context.read<ReaderPreferencesCubit>().setTheme(
-            ReaderTheme.light,
-          ),
+          () => _tempState = _tempState.copyWith(theme: ReaderTheme.light),
         ),
 
         2 => () => setState(
-          () =>
-              context.read<ReaderPreferencesCubit>().setTheme(ReaderTheme.dark),
+          () => _tempState = _tempState.copyWith(theme: ReaderTheme.dark),
         ),
         int() => throw UnimplementedError(),
       };
@@ -87,8 +150,7 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
         Row(
           children: List.generate(3, (i) {
             final item = themeSelectionData[i];
-            final state = context.read<ReaderPreferencesCubit>().state;
-            bool isSelected = item['theme'] == state.theme;
+            bool isSelected = item['theme'] == _tempState.theme;
             return themeSelection(
               context: context,
               theme: theme,
@@ -124,24 +186,16 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
     VoidCallback handleOnTap(int i) {
       return switch (i) {
         0 => () => setState(
-          () => context.read<ReaderPreferencesCubit>().setBgColor(
-            ReaderBgColor.warm,
-          ),
+          () => _tempState = _tempState.copyWith(bgColor: ReaderBgColor.warm),
         ),
         1 => () => setState(
-          () => context.read<ReaderPreferencesCubit>().setBgColor(
-            ReaderBgColor.cream,
-          ),
+          () => _tempState = _tempState.copyWith(bgColor: ReaderBgColor.cream),
         ),
         2 => () => setState(
-          () => context.read<ReaderPreferencesCubit>().setBgColor(
-            ReaderBgColor.white,
-          ),
+          () => _tempState = _tempState.copyWith(bgColor: ReaderBgColor.white),
         ),
         3 => () => setState(
-          () => context.read<ReaderPreferencesCubit>().setBgColor(
-            ReaderBgColor.dark,
-          ),
+          () => _tempState = _tempState.copyWith(bgColor: ReaderBgColor.dark),
         ),
         _ => throw UnimplementedError(),
       };
@@ -184,8 +238,7 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
         Row(
           children: List.generate(4, (i) {
             final item = bgSelectionData[i];
-            final state = context.read<ReaderPreferencesCubit>().state;
-            bool isSelected = state.bgColor == item['value'];
+            bool isSelected = _tempState.bgColor == item['value'];
             return bgSelection(
               context: context,
               theme: theme,
@@ -208,18 +261,18 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
     VoidCallback handleOnTap(int i) {
       return switch (i) {
         0 => () => setState(
-          () => context.read<ReaderPreferencesCubit>().setFontFamily(
-            ReaderFontFamily.plusJakartaSans,
+          () => _tempState = _tempState.copyWith(
+            fontFamily: ReaderFontFamily.plusJakartaSans,
           ),
         ),
         1 => () => setState(
-          () => context.read<ReaderPreferencesCubit>().setFontFamily(
-            ReaderFontFamily.lora,
+          () => _tempState = _tempState.copyWith(
+            fontFamily: ReaderFontFamily.lora,
           ),
         ),
         2 => () => setState(
-          () => context.read<ReaderPreferencesCubit>().setFontFamily(
-            ReaderFontFamily.merriweather,
+          () => _tempState = _tempState.copyWith(
+            fontFamily: ReaderFontFamily.merriweather,
           ),
         ),
         int() => throw UnimplementedError(),
@@ -256,9 +309,8 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
         const SizedBox(height: AppSpacing.sm),
         Row(
           children: List.generate(fontsData.length, (i) {
-            final state = context.read<ReaderPreferencesCubit>().state;
             final item = fontsData[i];
-            bool isSelected = state.fontFamily == item['value'];
+            bool isSelected = _tempState.fontFamily == item['value'];
             return buildFontBadge(
               onTap: handleOnTap(i),
               context: context,
@@ -274,8 +326,81 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
     );
   }
 
+  Widget _buildFontCustomization({required ColorScheme theme}) {
+    bool isBold = _tempState.isBold;
+    bool isItalic = _tempState.isItalic;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        InkWell(
+          onTap: () => setState(
+            () => _tempState = _tempState.copyWith(isBold: !_tempState.isBold),
+          ),
+          child: AnimatedScale(
+            scale: isBold ? 1.03 : 1,
+            duration: AppDuration.normal,
+            curve: Curves.easeInOutCubic,
+            child: AnimatedContainer(
+              duration: AppDuration.normal,
+              curve: Curves.easeInOutCubic,
+              margin: EdgeInsets.all(AppSpacing.sm),
+              padding: EdgeInsets.all(AppSpacing.lg),
+              decoration: BoxDecoration(
+                borderRadius: AppRadius.lg,
+                border: Border.all(
+                  color: isBold
+                      ? theme.secondary
+                      : theme.onSurface.withValues(alpha: 0.1),
+                ),
+              ),
+              child: HugeIcon(
+                size: AppSpacing.xl,
+                color: isBold
+                    ? theme.secondary
+                    : theme.onSurface.withValues(alpha: 0.3),
+                icon: HugeIcons.strokeRoundedTextBold,
+              ),
+            ),
+          ),
+        ),
+        InkWell(
+          onTap: () => setState(
+            () => _tempState = _tempState.copyWith(
+              isItalic: !_tempState.isItalic,
+            ),
+          ),
+          child: AnimatedScale(
+            scale: isItalic ? 1.03 : 1,
+            duration: AppDuration.normal,
+            curve: Curves.easeInOutCubic,
+            child: AnimatedContainer(
+              duration: AppDuration.normal,
+              curve: Curves.easeInOutCubic,
+              margin: EdgeInsets.all(AppSpacing.sm),
+              padding: EdgeInsets.all(AppSpacing.lg),
+              decoration: BoxDecoration(
+                borderRadius: AppRadius.lg,
+                border: Border.all(
+                  color: isItalic
+                      ? theme.secondary
+                      : theme.onSurface.withValues(alpha: 0.1),
+                ),
+              ),
+              child: HugeIcon(
+                size: AppSpacing.xl,
+                color: isItalic
+                    ? theme.secondary
+                    : theme.onSurface.withValues(alpha: 0.3),
+                icon: HugeIcons.strokeRoundedTextItalic,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildFontSizeSlider({required BuildContext context}) {
-    final state = context.read<ReaderPreferencesCubit>().state;
     final theme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -307,10 +432,10 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
                   inactiveColor: theme.onSurface.withValues(alpha: 0.1),
                   min: 14,
                   max: 24,
-                  value: state.fontSize,
-                  onChanged: (double val) => setState(() {
-                    context.read<ReaderPreferencesCubit>().setFontSize(val);
-                  }),
+                  value: _tempState.fontSize,
+                  onChanged: (double val) => setState(
+                    () => _tempState = _tempState.copyWith(fontSize: val),
+                  ),
                 ),
               ),
             ),
@@ -322,7 +447,7 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
               style: AppTextStyles.caption(
                 context,
               ).copyWith(fontSize: 20, color: theme.secondary),
-              child: Text('${state.fontSize.toInt()}px'),
+              child: Text('${_tempState.fontSize.toInt()}px'),
             ),
           ],
         ),
@@ -331,7 +456,6 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
   }
 
   Widget _buildLineSpacingSlider({required BuildContext context}) {
-    final state = context.read<ReaderPreferencesCubit>().state;
     final theme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -366,17 +490,17 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
                   inactiveColor: theme.onSurface.withValues(alpha: 0.1),
                   min: 1.2,
                   max: 2.4,
-                  value: state.lineSpacing,
-                  onChanged: (double val) => setState(() {
-                    context.read<ReaderPreferencesCubit>().setLineSpacing(val);
-                  }),
+                  value: _tempState.lineSpacing,
+                  onChanged: (double val) => setState(
+                    () => _tempState = _tempState.copyWith(lineSpacing: val),
+                  ),
                 ),
               ),
             ),
 
             const SizedBox(width: AppSpacing.sm),
             Text(
-              '${state.lineSpacing.toStringAsFixed(1)}px',
+              '${_tempState.lineSpacing.toStringAsFixed(1)}px',
               style: AppTextStyles.caption(
                 context,
               ).copyWith(fontSize: 20, color: theme.secondary),
@@ -391,10 +515,10 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
     void handleAlignmentTap(int i) {
       return switch (i) {
         0 => setState(
-          () => context.read<ReaderPreferencesCubit>().setIsJustified(true),
+          () => _tempState = _tempState.copyWith(isJustified: true),
         ),
         1 => setState(
-          () => context.read<ReaderPreferencesCubit>().setIsJustified(false),
+          () => _tempState = _tempState.copyWith(isJustified: false),
         ),
         _ => throw UnimplementedError(),
       };
@@ -402,7 +526,6 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
 
     final theme = Theme.of(context).colorScheme;
     final isDark = theme.brightness == Brightness.dark;
-    final state = context.read<ReaderPreferencesCubit>().state;
     final List<Map<String, dynamic>> alignmentData = [
       {
         'label': "Justified",
@@ -430,7 +553,7 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
             final item = alignmentData[i];
             return buildAlignmentSelection(
               onTap: () => handleAlignmentTap(i),
-              isSelected: item['isJustified'] == state.isJustified,
+              isSelected: item['isJustified'] == _tempState.isJustified,
               theme: theme,
               label: item['label'],
               icon: item['icon'],
@@ -443,9 +566,124 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
     );
   }
 
+  Widget _buildScrollSelectionChip({required ColorScheme theme}) {
+    final List<Map<String, dynamic>> chipsData = [
+      {
+        'label': 'Scroll',
+        'value': ReaderScrollMode.scroll,
+        'icon': HugeIcons.strokeRoundedCarouselVertical,
+      },
+      {
+        'label': 'Pages',
+        'value': ReaderScrollMode.pages,
+        'icon': HugeIcons.strokeRoundedBookOpenText,
+      },
+    ];
+    int selectedIndex = _tempState.scrollMode == ReaderScrollMode.scroll
+        ? 0
+        : 1;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final itemWidth = constraints.maxWidth / 2;
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              height: 50.h,
+              padding: EdgeInsets.all(AppSpacing.md),
+              decoration: BoxDecoration(
+                borderRadius: AppRadius.xxl,
+                color: theme.onSurface.withValues(alpha: 0.1),
+              ),
+            ),
+            AnimatedPositioned(
+              width: itemWidth,
+              left: selectedIndex * itemWidth,
+              duration: AppDuration.normal,
+              curve: Curves.easeInOutCubic,
+              child: Container(
+                height: 50.h,
+                decoration: BoxDecoration(
+                  borderRadius: AppRadius.xxl,
+                  color: theme.secondary,
+                ),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List.generate(2, (i) {
+                final item = chipsData[i];
+                bool isSelected = _tempState.scrollMode == item['value'];
+                return GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () {
+                    setState(() {
+                      selectedIndex = i;
+                      switch (i) {
+                        case 0:
+                          _tempState = _tempState.copyWith(
+                            scrollMode: ReaderScrollMode.scroll,
+                          );
+                          break;
+                        case 1:
+                          _tempState = _tempState.copyWith(
+                            scrollMode: ReaderScrollMode.pages,
+                          );
+                          break;
+                        default:
+                      }
+                    });
+                  },
+                  child: AnimatedContainer(
+                    duration: AppDuration.normal,
+                    curve: Curves.easeInOutCubic,
+                    width: itemWidth,
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          HugeIcon(
+                            icon: item['icon'],
+                            color: isSelected
+                                ? isDark
+                                      ? theme.onSurface
+                                      : theme.surface
+                                : theme.onSurface.withValues(alpha: 0.5),
+                          ),
+                          const SizedBox(width: AppSpacing.lg),
+                          AnimatedDefaultTextStyle(
+                            duration: AppDuration.normal,
+                            curve: Curves.easeInOutCubic,
+                            style: AppTextStyles.heading2(context).copyWith(
+                              color: isSelected
+                                  ? isDark
+                                        ? theme.onSurface
+                                        : theme.surface
+                                  : theme.onSurface.withValues(alpha: 0.5),
+                            ),
+                            child: Text(item['label']),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+    final originalState = context.read<ReaderPreferencesCubit>().state;
+    bool isStateChanged = _tempState != originalState;
     return Container(
       padding: EdgeInsets.fromLTRB(
         AppSpacing.lg,
@@ -459,27 +697,40 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
       ),
       child: Stack(
         children: [
-          SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildIndicator(theme),
-                const SizedBox(height: AppSpacing.xxl),
-                _buildThemeSection(context: context),
-                const SizedBox(height: AppSpacing.xl),
-                _buildBgSelection(context: context, theme: theme),
-                const SizedBox(height: AppSpacing.xl),
-                _buildFontSection(context: context, theme: theme),
-                const SizedBox(height: AppSpacing.xl),
-                _buildFontSizeSlider(context: context),
-                const SizedBox(height: AppSpacing.xl),
-                _buildLineSpacingSlider(context: context),
-                const SizedBox(height: AppSpacing.xl),
-                _buildAlignmentSection(context: context),
-                const SizedBox(height: 200),
-              ],
-            ),
+          Column(
+            children: [
+              _buildIndicator(theme),
+              const SizedBox(height: AppSpacing.xxl),
+              _buildPreview(theme: theme),
+              const SizedBox(height: AppSpacing.xl),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildThemeSection(context: context),
+                      const SizedBox(height: AppSpacing.xl),
+                      _buildBgSelection(context: context, theme: theme),
+                      const SizedBox(height: AppSpacing.xl),
+                      _buildFontSection(context: context, theme: theme),
+                      _buildFontCustomization(theme: theme),
+                      const SizedBox(height: AppSpacing.xl),
+                      _buildFontSizeSlider(context: context),
+                      const SizedBox(height: AppSpacing.xl),
+                      _buildLineSpacingSlider(context: context),
+                      const SizedBox(height: AppSpacing.xl),
+                      _buildAlignmentSection(context: context),
+                      const SizedBox(height: AppSpacing.xl),
+                      _buildScrollSelectionChip(theme: theme),
+                      SizedBox(height: isStateChanged ? 80.h : AppSpacing.xxxl),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
+
+          /// linear fade
           Positioned(
             bottom: 0,
             left: 0,
@@ -496,6 +747,16 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
                 ),
               ),
             ),
+          ),
+          applyButton(
+            context: context,
+            isStateChanged: isStateChanged,
+            theme: theme,
+            isDark: isDark,
+            onTap: () {
+              context.read<ReaderPreferencesCubit>().applynewTheme(_tempState);
+              Navigator.of(context).pop();
+            },
           ),
         ],
       ),

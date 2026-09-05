@@ -7,8 +7,8 @@ import 'package:quill/core/theme/app_text_style.dart';
 class TextAnimation extends StatelessWidget {
   final void Function() callBack;
   final List<String> messages;
-  int repeat;
-  TextAnimation({
+  final int repeat;
+  const TextAnimation({
     super.key,
     required this.callBack,
     required this.messages,

@@ -21,6 +21,7 @@ class ReaderPreferencesState {
   final double lineSpacing;
   final ReaderFontFamily fontFamily;
   final bool isBold;
+  final bool isItalic;
   final bool isJustified;
   final ReaderBgColor bgColor;
   final ReaderTheme theme;
@@ -35,6 +36,7 @@ class ReaderPreferencesState {
     required this.bgColor,
     required this.theme,
     required this.scrollMode,
+    required this.isItalic,
   });
 
   ReaderPreferencesState copyWith({
@@ -46,6 +48,7 @@ class ReaderPreferencesState {
     ReaderBgColor? bgColor,
     ReaderTheme? theme,
     ReaderScrollMode? scrollMode,
+    bool? isItalic,
   }) {
     return ReaderPreferencesState(
       fontSize: fontSize ?? this.fontSize,
@@ -56,6 +59,7 @@ class ReaderPreferencesState {
       bgColor: bgColor ?? this.bgColor,
       theme: theme ?? this.theme,
       scrollMode: scrollMode ?? this.scrollMode,
+      isItalic: isItalic ?? this.isItalic,
     );
   }
 
@@ -67,6 +71,7 @@ class ReaderPreferencesState {
     fontFamily : $fontFamily , 
     isBold : $isBold , 
     isJustified : $isJustified , 
+    isItalic : $isItalic
     bgColor : $bgColor , 
     theme : $theme , 
     scrollMode : $scrollMode , 
