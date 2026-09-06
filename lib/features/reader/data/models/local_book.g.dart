@@ -130,7 +130,7 @@ void _localBookSerialize(
   writer.writeString(offsets[0], object.author);
   writer.writeStringList(offsets[1], object.categories);
   writer.writeString(offsets[2], object.coverImagePath);
-  writer.writeLong(offsets[3], object.currentPage);
+  writer.writeLong(offsets[3], object.progress);
   writer.writeString(offsets[4], object.filePath);
   writer.writeString(offsets[5], object.fileType);
   writer.writeDateTime(offsets[6], object.importedAt);
@@ -150,7 +150,7 @@ LocalBook _localBookDeserialize(
   object.author = reader.readString(offsets[0]);
   object.categories = reader.readStringList(offsets[1]) ?? [];
   object.coverImagePath = reader.readStringOrNull(offsets[2]);
-  object.currentPage = reader.readLong(offsets[3]);
+  object.progress = reader.readLong(offsets[3]);
   object.filePath = reader.readString(offsets[4]);
   object.fileType = reader.readString(offsets[5]);
   object.importedAt = reader.readDateTime(offsets[6]);

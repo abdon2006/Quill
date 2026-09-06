@@ -62,7 +62,7 @@ class _BuildIdentityState extends State<BuildIdentity> {
                       bookId: widget.book.localId!,
                       title: widget.titleController.text,
                       author: widget.book.author,
-                      currentPage: widget.book.currentPage!,
+                      currentPage: widget.book.progress!,
                       coverImagePath: widget.book.coverImage ?? '', isCoverImageChange: false,
                     );
                     context.read<ReaderBloc>().add(
@@ -104,7 +104,7 @@ class _BuildIdentityState extends State<BuildIdentity> {
                       bookId: widget.book.localId!,
                       title: widget.book.title,
                       author: widget.authorController.text,
-                      currentPage: widget.book.currentPage!,
+                      currentPage: widget.book.progress!,
                       coverImagePath: widget.book.coverImage ?? '', isCoverImageChange: false,
                     );
                     context.read<ReaderBloc>().add(

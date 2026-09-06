@@ -11,7 +11,7 @@ class LocalBook {
   late String filePath;
   late String? coverImagePath;
   late int totalPages;
-  late int currentPage;
+  late int progress;
   late String fileType;
   late DateTime importedAt;
   late List<String> paragraphs;

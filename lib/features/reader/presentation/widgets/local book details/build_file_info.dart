@@ -33,14 +33,8 @@ class _BuildFileInfoState extends State<BuildFileInfo> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
-    final progress =
-        (widget.book.pages != null &&
-            widget.book.currentPage != null &&
-            widget.book.pages! > 0)
-        ? widget.book.currentPage! / widget.book.pages!
-        : 0.0;
 
-    final progressLabel = '${(progress * 100).toStringAsFixed(0)}%';
+    final progressLabel = '${widget.book.progress} %';
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
       child: Container(
@@ -91,8 +85,9 @@ class _BuildFileInfoState extends State<BuildFileInfo> {
                         bookId: widget.book.localId!,
                         title: widget.book.title,
                         author: widget.book.author,
-                        currentPage: widget.book.currentPage!,
-                        coverImagePath: newImage.path, isCoverImageChange: true,
+                        currentPage: widget.book.progress!,
+                        coverImagePath: newImage.path,
+                        isCoverImageChange: true,
                       );
                       context.read<ReaderBloc>().add(
                         UpdateBookEvent(params: params),
@@ -109,8 +104,7 @@ class _BuildFileInfoState extends State<BuildFileInfo> {
               ],
             ),
 
-            if (widget.book.pages != null &&
-                widget.book.currentPage != null) ...[
+            if (widget.book.pages != null && widget.book.progress != null) ...[
               const SizedBox(height: AppSpacing.lg),
               Divider(color: theme.onSurface.withValues(alpha: 0.06)),
               const SizedBox(height: AppSpacing.lg),
@@ -147,7 +141,7 @@ class _BuildFileInfoState extends State<BuildFileInfo> {
                           children: [
                             Expanded(
                               child: LinearProgressIndicator(
-                                value: progress,
+                                value: widget.book.progress!.toDouble() / 100,
                                 borderRadius: AppRadius.xl,
                                 valueColor: AlwaysStoppedAnimation(
                                   theme.primary,

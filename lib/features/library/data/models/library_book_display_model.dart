@@ -11,7 +11,7 @@ class LibraryBookDisplayModel {
   int? localId;
   final BookSource bookSource;
   int? pages;
-  int? currentPage;
+  int? progress;
 
   LibraryBookDisplayModel({
     required this.title,
@@ -20,7 +20,7 @@ class LibraryBookDisplayModel {
     this.bookId,
     required this.bookSource,
     this.pages,
-    this.currentPage,
+    this.progress,
     this.localId,
   });
   LibraryBookDisplayModel.dummy({
@@ -30,7 +30,7 @@ class LibraryBookDisplayModel {
     this.bookId = '',
     this.bookSource = BookSource.local,
     this.pages = 0,
-    this.currentPage = 0,
+    this.progress = 0,
     this.localId = 1,
   });
 }
@@ -59,7 +59,7 @@ class LibraryMapper {
         author: book.author,
         coverImage: book.coverImagePath ?? '',
         bookSource: BookSource.local,
-        currentPage: book.currentPage,
+        progress: book.progress,
         pages: book.totalPages,
         localId: book.isarId,
       );

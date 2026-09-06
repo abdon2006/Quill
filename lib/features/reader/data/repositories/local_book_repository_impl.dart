@@ -116,7 +116,7 @@ LocalBook _initLocalBook(UploadBookParams params, String newPath) {
   book.language = 'Unknown';
   book.categories = [];
   book.coverImagePath = null;
-  book.currentPage = 0;
+  book.progress = 0;
   book.totalPages = 0;
   book.importedAt = DateTime.now();
   return book;

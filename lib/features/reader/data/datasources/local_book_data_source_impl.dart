@@ -29,7 +29,7 @@ class LocalBookDataSourceImpl implements LocalBookDataSource {
           .isarIdEqualTo(params.bookId)
           .findFirst();
       if (book != null) {
-        book.currentPage = params.currentPage;
+        book.progress = params.currentPage;
         book.author = params.author;
         book.title = params.title;
         book.coverImagePath = params.coverImagePath;
