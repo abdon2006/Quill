@@ -56,11 +56,11 @@ final sl = GetIt.instance;
 Future<Isar> initIsar() async {
   final dir = await getApplicationDocumentsDirectory();
 
-  return await Isar.open([
-    BookCacheSchema,
-    WishlistCacheSchema,
-    LocalBookSchema,
-  ], directory: dir.path);
+  return await Isar.open(
+    [BookCacheSchema, WishlistCacheSchema, LocalBookSchema],
+    directory: dir.path,
+    inspector: true,
+  );
 }
 
 Future<void> setupDI() async {

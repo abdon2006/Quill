@@ -9,12 +9,14 @@ import 'package:quill/features/reader/data/models/local_book.dart';
 import 'package:quill/features/reader/presentation/cubit/reader_preferences_state.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/reader_header.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/text_animation.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class ReaderSurface extends StatefulWidget {
   final List<String> paragraphs;
   final ReaderPreferencesState state;
   final ValueNotifier<bool> isBionicNotifier;
   final LocalBook book;
+  final void Function(double) updateProgress;
 
   const ReaderSurface({
     super.key,
@@ -22,6 +24,7 @@ class ReaderSurface extends StatefulWidget {
     required this.isBionicNotifier,
     required this.book,
     required this.state,
+    required this.updateProgress,
   });
 
   @override
@@ -32,10 +35,24 @@ class _ReaderSurfaceState extends State<ReaderSurface> {
   BionicCache? _cache;
   bool _cacheReady = false;
   bool _visible = false;
+  final ItemScrollController scrollController = ItemScrollController();
+  final ItemPositionsListener listener = ItemPositionsListener.create();
 
   @override
   void initState() {
     super.initState();
+    listener.itemPositions.addListener(() {
+      final positions = listener.itemPositions.value;
+      if (positions.isEmpty || _cache == null) return;
+      final minIndex = positions
+          .where((p) => p.itemTrailingEdge > 0)
+          .map((p) => p.index)
+          .reduce((a, b) => a < b ? a : b);
+
+      final currentCell = (minIndex - 1).clamp(0, _cache!.cellCount - 1);
+      final progress = currentCell / _cache!.cellCount * 100;
+      widget.updateProgress(progress);
+    });
     _loadCache();
   }
 
@@ -61,10 +78,13 @@ class _ReaderSurfaceState extends State<ReaderSurface> {
     final mins = minutes % 60;
     return Stack(
       children: [
-        ListView.builder(
+        ScrollablePositionedList.builder(
+          padding: EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
           addAutomaticKeepAlives: false,
           addRepaintBoundaries: true,
-          padding: EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
+
+          itemScrollController: scrollController,
+          itemPositionsListener: listener,
           itemCount: cellCount + 1,
           itemBuilder: (context, i) {
             return AnimatedOpacity(
@@ -79,7 +99,8 @@ class _ReaderSurfaceState extends State<ReaderSurface> {
                           ReaderHeader(
                             book: widget.book,
                             hours: hours,
-                            mins: mins, state: widget.state,
+                            mins: mins,
+                            state: widget.state,
                           ),
                         ],
                       )
@@ -95,6 +116,7 @@ class _ReaderSurfaceState extends State<ReaderSurface> {
             );
           },
         ),
+
         if (!_cacheReady)
           TextAnimation(
             callBack: () {},

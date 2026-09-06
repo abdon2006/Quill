@@ -12,6 +12,7 @@ import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
 import 'package:quill/features/home/presentation/bloc/home_event.dart';
 import 'package:quill/features/reader/data/models/local_book.dart';
 import 'package:quill/features/reader/domain/usecases/params/reader_book_params.dart';
+import 'package:quill/features/reader/domain/usecases/params/update_book_params.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_bloc.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_event.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_state.dart';
@@ -51,10 +52,12 @@ class _ReaderScreenState extends State<ReaderScreen> {
   ReaderUiStates _uiState = ReaderUiStates.controlsVisible;
   Timer? _uiHideTimer;
   LocalBook? _book;
-
+  double? _currentProgress;
+  late final ReaderBloc _bloc;
   @override
   void initState() {
     super.initState();
+    _bloc = context.read<ReaderBloc>();
     _startHideTimer();
 
     if (widget.bookId.localId == null) {
@@ -70,6 +73,20 @@ class _ReaderScreenState extends State<ReaderScreen> {
 
   @override
   void dispose() {
+    if (_book != null && _currentProgress != null) {
+      _bloc.add(
+        UpdateBookEvent(
+          params: UpdateBookParams(
+            bookId: _book!.isarId,
+            title: _book!.title,
+            author: _book!.author,
+            currentPage: _currentProgress!.toInt(),
+            coverImagePath: _book!.coverImagePath ?? '',
+            isCoverImageChange: false,
+          ),
+        ),
+      );
+    }
     _isBionicEnabled.dispose();
     _uiHideTimer?.cancel();
     super.dispose();
@@ -250,6 +267,10 @@ class _ReaderScreenState extends State<ReaderScreen> {
 
                             book: _book!,
                             state: state,
+                            updateProgress: (double progress) {
+                              _currentProgress = progress;
+                              print(' Progress : $progress');
+                            },
                           ),
                   ),
 
