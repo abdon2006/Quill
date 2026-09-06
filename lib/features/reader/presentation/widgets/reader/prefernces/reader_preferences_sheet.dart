@@ -16,7 +16,8 @@ import 'package:quill/features/reader/presentation/widgets/reader/prefernces/bui
 import 'package:quill/features/reader/presentation/widgets/reader/prefernces/theme_selection.dart';
 
 class ReaderPreferencesSheet extends StatefulWidget {
-  const ReaderPreferencesSheet({super.key});
+  final void Function() onApply;
+  const ReaderPreferencesSheet({super.key, required this.onApply});
 
   @override
   State<ReaderPreferencesSheet> createState() => _ReaderPreferencesSheetState();
@@ -783,6 +784,8 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
             theme: theme,
             isDark: isDark,
             onTap: () {
+              widget.onApply();
+
               context.read<ReaderPreferencesCubit>().applynewTheme(_tempState);
               Navigator.of(context).pop();
             },

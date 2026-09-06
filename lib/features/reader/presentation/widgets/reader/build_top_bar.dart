@@ -102,9 +102,6 @@ class BuildTopBar extends StatelessWidget {
     );
   }
 }
-// bgColor: theme.surface.withValues(alpha: 0.07),
-// fgColor: theme.onSurface,
-// borderColor: theme.onSurface.withValues(alpha: 0.1),
 
 Widget _buildTopBarButton({
   required ReaderPreferencesState state,
@@ -113,47 +110,18 @@ Widget _buildTopBarButton({
   required ColorScheme theme,
   required BuildContext context,
 }) {
-  Color getIconsBgColor({
-    required ReaderPreferencesState state,
-    required BuildContext context,
-    required ColorScheme theme,
-  }) {
-    return switch (state.theme) {
-      ReaderTheme.light => AppColors.lightBgSurface.withValues(alpha: 0.07),
-      ReaderTheme.dark => AppColors.darkBgSurface.withValues(alpha: 0.07),
-      ReaderTheme.system => Theme.of(
-        context,
-      ).colorScheme.onSurface.withValues(alpha: 0.02),
-    };
-  }
-
-  Color getIconsFgColor({
-    required ReaderPreferencesState state,
-    required BuildContext context,
-    required ColorScheme theme,
-  }) {
-    return switch (state.theme) {
-      ReaderTheme.light => AppColors.darkBgSurface,
-      ReaderTheme.dark => AppColors.lightBgSurface,
-      ReaderTheme.system => Theme.of(context).colorScheme.onSurface,
-    };
-  }
-
   return Material(
     color: Colors.transparent,
     child: InkWell(
       onTap: onTap,
       customBorder: CircleBorder(),
       child: Container(
-        decoration: BoxDecoration(
-          color: getIconsBgColor(state: state, context: context, theme: theme),
-          border: Border.all(color: theme.onSurface.withValues(alpha: 0.1)),
-          shape: BoxShape.circle,
-        ),
+        decoration: BoxDecoration(shape: BoxShape.circle),
         padding: EdgeInsets.all(AppSpacing.sm),
         child: HugeIcon(
           icon: icon,
-          color: getIconsFgColor(state: state, context: context, theme: theme),
+          color: theme.secondary.withValues(alpha: 0.7),
+          // getIconsFgColor(state: state, context: context, theme: theme),
         ),
       ),
     ),

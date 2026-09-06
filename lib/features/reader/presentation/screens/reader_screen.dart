@@ -18,7 +18,7 @@ import 'package:quill/features/reader/presentation/bloc/reader_event.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_state.dart';
 import 'package:quill/features/reader/presentation/cubit/reader_preferences_cubit.dart';
 import 'package:quill/features/reader/presentation/cubit/reader_preferences_state.dart';
-import 'package:quill/features/reader/presentation/widgets/reader/build_bottom_actions.dart';
+import 'package:quill/features/reader/presentation/widgets/reader/prefernces/build_bottom_actions.dart';
 import 'package:quill/core/widgets/show_app_snack_bar.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/build_top_bar.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/prefernces/reader_preferences_sheet.dart';
@@ -35,6 +35,7 @@ enum ReaderUiStates {
   focusTransitionOut,
   focusMode,
   focusExitReveal,
+  applyPreferences,
 }
 
 class ReaderScreen extends StatefulWidget {
@@ -135,6 +136,8 @@ class _ReaderScreenState extends State<ReaderScreen> {
           break;
         case ReaderUiStates.bionicFadeOut:
           break;
+        case ReaderUiStates.applyPreferences:
+          break;
       }
     });
   }
@@ -163,12 +166,16 @@ class _ReaderScreenState extends State<ReaderScreen> {
     });
   }
 
+  void _startEditAnimation() async {
+    setState(() => _uiState = ReaderUiStates.applyPreferences);
+  }
+
   void _openPreferencesSheet() {
     showModalBottomSheet(
       context: context,
       builder: (_) => BlocProvider.value(
         value: context.read<ReaderPreferencesCubit>(),
-        child: ReaderPreferencesSheet(),
+        child: ReaderPreferencesSheet(onApply: () => _startEditAnimation()),
       ),
     );
   }
@@ -365,34 +372,48 @@ class _ReaderScreenState extends State<ReaderScreen> {
                       duration: AppDuration.readerGlow,
                       switchInCurve: Curves.easeIn,
                       switchOutCurve: Curves.easeOut,
-                      child: _uiState == ReaderUiStates.focusTransitionIn
-                          ? TextAnimation(
-                              key: const ValueKey('focus_in_animation'),
-                              callBack: () {
-                                setState(() {
-                                  _uiState = ReaderUiStates.focusMode;
-                                });
-                              },
-                              messages: const [
-                                'Clearing the noise.',
-                                'Slowing down.',
-                                'Just you. And the story.',
-                              ],
-                            )
-                          : _uiState == ReaderUiStates.focusTransitionOut
-                          ? TextAnimation(
-                              key: const ValueKey('focus_out_animation'),
-                              callBack: () => setState(() {
-                                _uiState = ReaderUiStates.controlsVisible;
-                                _startHideTimer();
-                              }),
-                              messages: const [
-                                'Leaving the pages.',
-                                'Hold onto the feeling.',
-                                'See you soon.',
-                              ],
-                            )
-                          : const SizedBox.shrink(key: ValueKey('empty_box')),
+                      child: switch (_uiState) {
+                        ReaderUiStates.focusTransitionIn => TextAnimation(
+                          key: const ValueKey('focus_in_animation'),
+                          callBack: () {
+                            setState(() {
+                              _uiState = ReaderUiStates.focusMode;
+                            });
+                          },
+                          messages: const [
+                            'Clearing the noise.',
+                            'Slowing down.',
+                            'Just you. And the story.',
+                          ],
+                        ),
+                        ReaderUiStates.focusTransitionOut => TextAnimation(
+                          key: const ValueKey('focus_out_animation'),
+                          callBack: () => setState(() {
+                            _uiState = ReaderUiStates.controlsVisible;
+                            _startHideTimer();
+                          }),
+                          messages: const [
+                            'Leaving the pages.',
+                            'Hold onto the feeling.',
+                            'See you soon.',
+                          ],
+                        ),
+                        ReaderUiStates.applyPreferences => TextAnimation(
+                          key: ValueKey("Preferences"),
+                          callBack: () =>
+                              setState(() => _uiState = ReaderUiStates.idle),
+                          messages: const [
+                            'applying Your Own Preferences......',
+                          ],
+                        ),
+                        ReaderUiStates.idle => SizedBox(),
+                        ReaderUiStates.controlsVisible => SizedBox(),
+                        ReaderUiStates.bionicFadeIn => SizedBox(),
+                        ReaderUiStates.bionicMode => SizedBox(),
+                        ReaderUiStates.bionicFadeOut => SizedBox(),
+                        ReaderUiStates.focusMode => SizedBox(),
+                        ReaderUiStates.focusExitReveal => SizedBox(),
+                      },
                     ),
                   ],
                 ),
