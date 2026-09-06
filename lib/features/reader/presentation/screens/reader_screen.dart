@@ -54,10 +54,12 @@ class _ReaderScreenState extends State<ReaderScreen> {
   LocalBook? _book;
   double? _currentProgress;
   late final ReaderBloc _bloc;
+
   @override
   void initState() {
     super.initState();
     _bloc = context.read<ReaderBloc>();
+    context.read<ReaderPreferencesCubit>().loadPreferences();
     _startHideTimer();
 
     if (widget.bookId.localId == null) {
