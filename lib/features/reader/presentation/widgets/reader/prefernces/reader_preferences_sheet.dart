@@ -786,8 +786,8 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
             onTap: () {
               widget.onApply();
 
-              context.read<ReaderPreferencesCubit>().applynewTheme(_tempState);
               Navigator.of(context).pop();
+              context.read<ReaderPreferencesCubit>().applynewTheme(_tempState);
             },
           ),
         ],

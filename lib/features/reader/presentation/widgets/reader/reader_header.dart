@@ -16,6 +16,7 @@ class ReaderHeader extends StatelessWidget {
   final int hours;
   final int mins;
   final LocalBook book;
+
   const ReaderHeader({
     super.key,
     required this.book,
@@ -23,69 +24,112 @@ class ReaderHeader extends StatelessWidget {
     required this.mins,
     required this.state,
   });
-  Color getBgColor(ReaderPreferencesState state, BuildContext context) {
+
+  Color _getTextColor(ReaderPreferencesState state, BuildContext context) {
     return switch (state.theme) {
-      ReaderTheme.light => AppColors.lightBgSurface,
-      ReaderTheme.dark => AppColors.darkBgSurface,
-      ReaderTheme.system => Theme.of(context).colorScheme.surface,
+      ReaderTheme.dark => AppColors.darkTextPrimary,
+      ReaderTheme.light => AppColors.lightTextPrimary,
+      ReaderTheme.system =>
+        state.bgColor == ReaderBgColor.dark
+            ? AppColors.darkTextPrimary
+            : AppColors.lightTextPrimary,
     };
+  }
+
+  Color _getMutedColor(ReaderPreferencesState state, BuildContext context) {
+    return _getTextColor(state, context).withValues(alpha: 0.45);
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context).colorScheme;
-    return Container(
-      padding: EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        borderRadius: AppRadius.xl,
-        color: getBgColor(state, context),
-        boxShadow: AppShadows.card,
+    final textColor = _getTextColor(state, context);
+    final mutedColor = _getMutedColor(state, context);
+    final readingTime = hours > 0
+        ? '$hours hr $mins min read'
+        : '$mins min read';
+
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSpacing.xxl,
+        vertical: AppSpacing.xl,
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  overflow: TextOverflow.ellipsis,
-                  book.title,
-                  style: AppTextStyles.heading1(
-                    context,
-                  ).copyWith(color: theme.primary),
-                ),
-                Text(
-                  overflow: TextOverflow.ellipsis,
-                  book.author,
-                  style: AppTextStyles.caption(
-                    context,
-                  ).copyWith(fontSize: 12.sp),
-                ),
-
-                Text(
-                  hours > 0 ? '$hours hr $mins min read' : '$mins min read',
-                  style: AppTextStyles.caption(
-                    context,
-                  ).copyWith(fontSize: 12.sp),
-                ),
-              ],
-            ),
-          ),
           Container(
-            height: 150.h,
-            width: 100.w,
-            margin: EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-            decoration: BoxDecoration(borderRadius: AppRadius.md),
-
+            height: 220.h,
+            width: 155.w,
+            decoration: BoxDecoration(
+              borderRadius: AppRadius.lg,
+              boxShadow: AppShadows.bookCover,
+            ),
             child: ClipRRect(
-              borderRadius: AppRadius.md,
+              borderRadius: AppRadius.lg,
               child:
                   book.coverImagePath != null && book.coverImagePath!.isNotEmpty
                   ? Image.file(File(book.coverImagePath!), fit: BoxFit.cover)
                   : buildCoverPlaceholder(context),
             ),
           ),
+
+          SizedBox(height: AppSpacing.xl),
+
+          Container(
+            width: 32.w,
+            height: 1,
+            color: textColor.withValues(alpha: 0.15),
+          ),
+
+          SizedBox(height: AppSpacing.lg),
+
+          Text(
+            book.title,
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: AppTextStyles.displayMedium(context).copyWith(
+              color: textColor,
+              fontWeight: FontWeight.w600,
+              height: 1.2,
+            ),
+          ),
+
+          SizedBox(height: AppSpacing.sm),
+
+          // المؤلف
+          Text(
+            book.author,
+            textAlign: TextAlign.center,
+            style: AppTextStyles.bodyMedium(context).copyWith(
+              color: mutedColor,
+              fontWeight: FontWeight.w400,
+              letterSpacing: 0.3,
+            ),
+          ),
+
+          SizedBox(height: AppSpacing.lg),
+
+          // وقت القراءة — pill هادي
+          Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.xs,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: AppRadius.xxl,
+              color: textColor.withValues(alpha: 0.06),
+            ),
+            child: Text(
+              readingTime,
+              style: AppTextStyles.caption(context).copyWith(
+                color: mutedColor,
+                fontSize: 11.sp,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ),
+
+          SizedBox(height: AppSpacing.xxxl),
         ],
       ),
     );
