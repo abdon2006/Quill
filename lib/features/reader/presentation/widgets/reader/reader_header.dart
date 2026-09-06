@@ -2,14 +2,17 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:quill/core/theme/app_colors.dart';
 import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_shadows.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 import 'package:quill/core/widgets/build_cover_placeholder.dart';
 import 'package:quill/features/reader/data/models/local_book.dart';
+import 'package:quill/features/reader/presentation/cubit/reader_preferences_state.dart';
 
 class ReaderHeader extends StatelessWidget {
+  final ReaderPreferencesState state;
   final int hours;
   final int mins;
   final LocalBook book;
@@ -18,7 +21,15 @@ class ReaderHeader extends StatelessWidget {
     required this.book,
     required this.hours,
     required this.mins,
+    required this.state,
   });
+  Color getBgColor(ReaderPreferencesState state, BuildContext context) {
+    return switch (state.theme) {
+      ReaderTheme.light => AppColors.lightBgSurface,
+      ReaderTheme.dark => AppColors.darkBgSurface,
+      ReaderTheme.system => Theme.of(context).colorScheme.surface,
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +38,7 @@ class ReaderHeader extends StatelessWidget {
       padding: EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         borderRadius: AppRadius.xl,
-        color: theme.surface,
+        color: getBgColor(state, context),
         boxShadow: AppShadows.card,
       ),
       child: Row(

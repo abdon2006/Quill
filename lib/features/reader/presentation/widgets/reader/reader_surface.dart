@@ -79,7 +79,7 @@ class _ReaderSurfaceState extends State<ReaderSurface> {
                           ReaderHeader(
                             book: widget.book,
                             hours: hours,
-                            mins: mins,
+                            mins: mins, state: widget.state,
                           ),
                         ],
                       )
@@ -125,15 +125,22 @@ class _BionicCell extends StatelessWidget {
     required this.state,
   });
 
+  Color _getTextColor(ReaderPreferencesState state) {
+    return switch (state.theme) {
+      ReaderTheme.dark => AppColors.darkTextPrimary,
+      ReaderTheme.light => AppColors.lightTextPrimary,
+      ReaderTheme.system =>
+        state.bgColor == ReaderBgColor.dark
+            ? AppColors.darkTextPrimary
+            : AppColors.lightTextPrimary,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     // final isDark = Theme.of(context).brightness == Brightness.dark;
     final normalStyle = AppTextStyles.defaultReading(context).copyWith(
-      color:
-          (state.theme == ReaderTheme.dark ||
-              state.bgColor == ReaderBgColor.dark)
-          ? AppColors.darkTextPrimary
-          : AppColors.lightTextPrimary,
+      color: _getTextColor(state),
       fontSize: state.fontSize,
       height: state.lineSpacing,
       fontStyle: state.isItalic ? FontStyle.italic : FontStyle.normal,

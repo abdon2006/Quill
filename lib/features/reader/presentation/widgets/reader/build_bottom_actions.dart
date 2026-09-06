@@ -1,19 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:quill/core/theme/app_colors.dart';
 import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_shadows.dart';
 import 'package:quill/core/theme/app_spacing.dart';
+import 'package:quill/core/theme/app_text_style.dart';
+import 'package:quill/features/reader/presentation/cubit/reader_preferences_state.dart';
 
 class BuildBottomActions extends StatefulWidget {
+  final ReaderPreferencesState state;
   final void Function(int) callBack;
-  const BuildBottomActions({super.key, required this.callBack});
+  const BuildBottomActions({
+    super.key,
+    required this.callBack,
+    required this.state,
+  });
 
   @override
   State<BuildBottomActions> createState() => _BuildBottomActionsState();
 }
 
 class _BuildBottomActionsState extends State<BuildBottomActions> {
+  Color getBgColor(ReaderPreferencesState state, BuildContext context) {
+    return switch (state.theme) {
+      ReaderTheme.light => AppColors.lightBgSurface,
+      ReaderTheme.dark => AppColors.darkBgSurface,
+      ReaderTheme.system => Theme.of(context).colorScheme.surface,
+    };
+  }
+
+  Color _getTextColor(ReaderPreferencesState state, BuildContext context) {
+    return switch (state.theme) {
+      ReaderTheme.dark => AppColors.darkTextMuted,
+      ReaderTheme.light => AppColors.lightTextMuted,
+      ReaderTheme.system =>
+        Theme.of(context).brightness == Brightness.dark
+            ? AppColors.darkTextMuted
+            : AppColors.lightTextMuted,
+    };
+  }
+
   final List controlsData = [
     {'label': 'Font', 'icon': HugeIcons.strokeRoundedTextFont},
     {'label': 'Focus', 'icon': HugeIcons.strokeRoundedMoon02},
@@ -27,9 +54,8 @@ class _BuildBottomActionsState extends State<BuildBottomActions> {
       padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
       decoration: BoxDecoration(
         boxShadow: AppShadows.bottomNav,
-        color: theme.surface,
+        color: getBgColor(widget.state, context),
         borderRadius: AppRadius.xxl,
-        // border: Border.all(color: theme.primary),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -56,9 +82,16 @@ class _BuildBottomActionsState extends State<BuildBottomActions> {
                     HugeIcon(
                       icon: item['icon'],
                       size: 20.sp,
-                      color: theme.primary,
+                      color: theme.secondary,
                     ),
-                    Text(item['label']),
+                    Text(
+                      item['label'],
+                      style: AppTextStyles.caption(context).copyWith(
+                        color: _getTextColor(widget.state, context),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12.sp,
+                      ),
+                    ),
                   ],
                 ),
               ),

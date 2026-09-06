@@ -43,7 +43,7 @@ Widget buildCover(BuildContext context, String? coverImage) {
             height: 240.h,
             decoration: BoxDecoration(
               borderRadius: AppRadius.lg,
-              color: Theme.of(context).colorScheme.surfaceVariant,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.22),

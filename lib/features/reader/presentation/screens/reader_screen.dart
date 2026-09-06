@@ -189,7 +189,6 @@ class _ReaderScreenState extends State<ReaderScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final bool showControls = _uiState == ReaderUiStates.controlsVisible;
     final bool isFocusDeep =
         _uiState == ReaderUiStates.focusMode ||
@@ -271,6 +270,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                             child: BuildTopBar(
                               bookTitle: _book == null ? '' : _book!.title,
                               bookAuthor: _book == null ? '' : _book!.author,
+                              state: state,
                             ),
                           ),
                         ),
@@ -297,6 +297,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                                 if (i == 1) _startFocusTransition();
                                 if (i == 3) _handleBionicMode();
                               },
+                              state: state,
                             ),
                           ),
                         ),
