@@ -48,7 +48,6 @@ class _ReaderSurfaceState extends State<ReaderSurface> {
           .where((p) => p.itemTrailingEdge > 0)
           .map((p) => p.index)
           .reduce((a, b) => a < b ? a : b);
-
       final currentCell = (minIndex - 1).clamp(0, _cache!.cellCount - 1);
       final progress = currentCell / _cache!.cellCount * 100;
       widget.updateProgress(progress);
@@ -64,8 +63,15 @@ class _ReaderSurfaceState extends State<ReaderSurface> {
       _cache = cache;
       _cacheReady = true;
     });
+
     await Future.delayed(const Duration(milliseconds: 50));
     if (!mounted) return;
+    final savedIndex = (widget.book.progress / 100 * _cache!.cellCount).toInt();
+    scrollController.scrollTo(
+      index: savedIndex,
+      duration: AppDuration.readerGlow,
+      curve: Curves.easeInOutCubic,
+    );
     setState(() => _visible = true);
   }
 
