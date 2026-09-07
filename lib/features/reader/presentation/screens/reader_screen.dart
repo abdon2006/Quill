@@ -95,7 +95,6 @@ class _ReaderScreenState extends State<ReaderScreen> {
     _uiHideTimer?.cancel();
     super.dispose();
   }
-
   void _startBionicFadeIn() {
     if (_isBionicEnabled.value != true) _isBionicEnabled.value = true;
   }
