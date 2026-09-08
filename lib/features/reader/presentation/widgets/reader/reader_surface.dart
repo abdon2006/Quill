@@ -35,9 +35,27 @@ class _ReaderSurfaceState extends State<ReaderSurface> {
   BionicCache? _cache;
   bool _cacheReady = false;
   bool _visible = false;
+  int? initialCell;
   CellCache? _pages;
   final ItemScrollController scrollController = ItemScrollController();
   final ItemPositionsListener listener = ItemPositionsListener.create();
+  @override
+  void didUpdateWidget(covariant ReaderSurface oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.state.scrollMode != widget.state.scrollMode &&
+        widget.state.scrollMode == ReaderScrollMode.scroll) {
+      widget.updateProgress(initialCell! / _cache!.cellCount * 100);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          scrollController.scrollTo(
+            index: initialCell!,
+            duration: AppDuration.readerGlow,
+            curve: Curves.easeInOutCubic,
+          );
+        }
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -49,7 +67,12 @@ class _ReaderSurfaceState extends State<ReaderSurface> {
           .where((p) => p.itemTrailingEdge > 0)
           .map((p) => p.index)
           .reduce((a, b) => a < b ? a : b);
+
       final currentCell = (minIndex - 1).clamp(0, _cache!.cellCount - 1);
+      print(' --------- the current Cell : $currentCell ------------ ');
+
+      initialCell = currentCell;
+
       final progress = currentCell / _cache!.cellCount * 100;
       widget.updateProgress(progress);
     });
@@ -65,21 +88,28 @@ class _ReaderSurfaceState extends State<ReaderSurface> {
       _cache = cache;
       _cacheReady = true;
     });
+    final savedIndex = (widget.book.progress / 100 * _cache!.cellCount).toInt();
+    setState(() => initialCell = savedIndex);
+    print(
+      ' ------------------------- calculating the initial cell from the progress : $initialCell ------------------------- ',
+    );
     await _loadPages();
 
     await Future.delayed(const Duration(milliseconds: 50));
     if (!mounted) return;
-    final savedIndex = (widget.book.progress / 100 * _cache!.cellCount).toInt();
-    scrollController.scrollTo(
-      index: savedIndex,
-      duration: AppDuration.readerGlow,
-      curve: Curves.easeInOutCubic,
-    );
+    if (widget.state.scrollMode == ReaderScrollMode.scroll) {
+      scrollController.scrollTo(
+        index: savedIndex,
+        duration: AppDuration.readerGlow,
+        curve: Curves.easeInOutCubic,
+      );
+    }
+
     setState(() => _visible = true);
   }
 
   Future<void> _loadPages() async {
-    print('----------- load PAges Called --------------');
+    print('----------- load Pages Called --------------');
     final pages = await CellCache.compute(
       PageLayoutParams(
         cellText: _cache!._cellTexts,
@@ -104,7 +134,7 @@ class _ReaderSurfaceState extends State<ReaderSurface> {
     return Stack(
       children: [
         AnimatedSwitcher(
-          duration: AppDuration.slow,
+          duration: Duration.zero,
           child: widget.state.scrollMode == ReaderScrollMode.scroll
               ? ScrollablePositionedList.builder(
                   key: ValueKey(widget.state.scrollMode),
@@ -148,8 +178,10 @@ class _ReaderSurfaceState extends State<ReaderSurface> {
                   },
                 )
               : _pages == null
+              /// هنعمل error state هنا فكرني بيها بعدين
               ? const SizedBox.shrink()
               : CellPageView(
+                  key: ValueKey(widget.state.scrollMode),
                   state: widget.state,
                   cache: _pages!,
                   bionicCache: _cache!,
@@ -157,6 +189,8 @@ class _ReaderSurfaceState extends State<ReaderSurface> {
                   totalCells: cellCount,
                   updateOnSwipe: (double progress) =>
                       widget.updateProgress(progress),
+                  initialCellIndex: initialCell!,
+                  onPageChanged: (int newCell) => initialCell = newCell,
                 ),
         ),
 
@@ -387,6 +421,8 @@ class CellPageView extends StatefulWidget {
   final ValueNotifier<bool> isBionicNotifier;
   final int totalCells;
   final void Function(double) updateOnSwipe;
+  final int initialCellIndex;
+  final void Function(int) onPageChanged;
   const CellPageView({
     super.key,
     this.state,
@@ -395,6 +431,8 @@ class CellPageView extends StatefulWidget {
     required this.isBionicNotifier,
     required this.totalCells,
     required this.updateOnSwipe,
+    required this.initialCellIndex,
+    required this.onPageChanged,
   });
 
   @override
@@ -403,6 +441,17 @@ class CellPageView extends StatefulWidget {
 
 class _CellPageViewState extends State<CellPageView> {
   int currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    print(
+      '------- init state of CellPAge View : ${widget.initialCellIndex} --------------- ',
+    );
+    currentIndex = widget.cache.pages.indexWhere(
+      (page) => page.contains(widget.initialCellIndex),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -429,6 +478,7 @@ class _CellPageViewState extends State<CellPageView> {
             );
             print(' ------------- current Progress : $progress -------------');
             widget.updateOnSwipe(progress);
+            widget.onPageChanged(widget.cache.pages[currentIndex].first);
           }
         } else {
           print(
