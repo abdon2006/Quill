@@ -82,10 +82,10 @@ class _ReaderScreenState extends State<ReaderScreen> {
             bookId: _book!.isarId,
             title: _book!.title,
             author: _book!.author,
-            currentPage: 
-            // _currentProgress!.toInt() < (_book!.progress).round()
-            //     ? _book!.progress
-            //     : 
+            currentPage:
+                // _currentProgress!.toInt() < (_book!.progress).round()
+                //     ? _book!.progress
+                //     :
                 _currentProgress!.toInt(),
             coverImagePath: _book!.coverImagePath ?? '',
             isCoverImageChange: false,
@@ -277,6 +277,10 @@ class _ReaderScreenState extends State<ReaderScreen> {
                               _currentProgress = progress;
                               print(' Progress : ${progress.round()}');
                             },
+                            isFocusMode:
+                                _uiState == ReaderUiStates.focusExitReveal ||
+                                _uiState == ReaderUiStates.focusMode,
+                            bgColor: _getReaderBgColor(state),
                           ),
                   ),
 
@@ -386,6 +390,8 @@ class _ReaderScreenState extends State<ReaderScreen> {
                       ),
                     ),
                   ),
+
+                  /// Bottom Focus Overlay
 
                   /// transition Overlay
                   AnimatedSwitcher(

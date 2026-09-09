@@ -9,6 +9,7 @@ import 'package:quill/core/theme/app_text_style.dart';
 import 'package:quill/features/reader/data/models/local_book.dart';
 import 'package:quill/features/reader/presentation/cubit/reader_preferences_state.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/milestone_notch.dart';
+import 'package:quill/features/reader/presentation/widgets/reader/overlay_gradient.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/page_flip_transition.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/reader_header.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/text_animation.dart';
@@ -20,6 +21,8 @@ class ReaderSurface extends StatefulWidget {
   final ValueNotifier<bool> isBionicNotifier;
   final LocalBook book;
   final void Function(double) updateProgress;
+  final bool isFocusMode;
+  final Color bgColor;
 
   const ReaderSurface({
     super.key,
@@ -28,6 +31,8 @@ class ReaderSurface extends StatefulWidget {
     required this.book,
     required this.state,
     required this.updateProgress,
+    required this.isFocusMode,
+    required this.bgColor,
   });
 
   @override
@@ -320,6 +325,38 @@ class _ReaderSurfaceState extends State<ReaderSurface>
                   onPageChanged: (int newCell) => initialCell = newCell,
                 ),
         ),
+
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 0,
+          child: AnimatedOpacity(
+            opacity: widget.isFocusMode ? 1.0 : 0.0,
+            duration: AppDuration.normal,
+            child: overlayGradient(
+              theme: theme,
+              isTop: false,
+              bgColor: widget.bgColor,
+            ),
+          ),
+        ),
+
+        /// Top Focus Overlay
+        Positioned(
+          left: 0,
+          right: 0,
+          top: 0,
+          child: AnimatedOpacity(
+            opacity: widget.isFocusMode ? 1.0 : 0.0,
+            duration: AppDuration.normal,
+            child: overlayGradient(
+              theme: theme,
+              isTop: true,
+              bgColor: widget.bgColor,
+            ),
+          ),
+        ),
+
         milestoneNotch(
           context: context,
           slide: _slide,
@@ -332,23 +369,6 @@ class _ReaderSurfaceState extends State<ReaderSurface>
             callBack: () {},
             messages: ['just one step..', 'Book Ready For You'],
           ),
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: IgnorePointer(
-            child: Container(
-              height: 50.h,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [theme.surface.withValues(alpha: 0), theme.surface],
-                ),
-              ),
-            ),
-          ),
-        ),
       ],
     );
   }

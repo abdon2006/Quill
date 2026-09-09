@@ -743,6 +743,7 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
                       _buildBgSelection(context: context, theme: theme),
                       const SizedBox(height: AppSpacing.xl),
                       _buildFontSection(context: context, theme: theme),
+                      const SizedBox(height: AppSpacing.lg),
                       _buildFontCustomization(theme: theme),
                       const SizedBox(height: AppSpacing.xl),
                       _buildFontSizeSlider(context: context),
