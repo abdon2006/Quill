@@ -95,6 +95,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
     _uiHideTimer?.cancel();
     super.dispose();
   }
+
   void _startBionicFadeIn() {
     if (_isBionicEnabled.value != true) _isBionicEnabled.value = true;
   }
@@ -272,7 +273,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                             state: state,
                             updateProgress: (double progress) {
                               _currentProgress = progress;
-                              print(' Progress : $progress');
+                              print(' Progress : ${progress.round()}');
                             },
                           ),
                   ),
