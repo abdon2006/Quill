@@ -8,6 +8,7 @@ import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 import 'package:quill/features/reader/data/models/local_book.dart';
 import 'package:quill/features/reader/presentation/cubit/reader_preferences_state.dart';
+import 'package:quill/features/reader/presentation/widgets/reader/milestone_notch.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/page_flip_transition.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/reader_header.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/text_animation.dart';
@@ -33,19 +34,58 @@ class ReaderSurface extends StatefulWidget {
   State<ReaderSurface> createState() => _ReaderSurfaceState();
 }
 
-class _ReaderSurfaceState extends State<ReaderSurface> {
+class _ReaderSurfaceState extends State<ReaderSurface>
+    with SingleTickerProviderStateMixin {
   BionicCache? _cache;
   bool _cacheReady = false;
   bool _visible = false;
   int? initialCell;
   CellCache? _pages;
+  bool isAnimationReady = false;
+  String _currentMessage = '';
+  final Map<int, String> _milestones = {
+    10: 'Settling into the story.',
+    25: "The journey unfolds.",
+    50: "Deep in the narrative.",
+    75: "Getting closer to the truth.",
+    90: "The final stretch.",
+    100: "A journey completed.",
+  };
+  final Map<int, String> _achievedMilestones = {};
+
   final ItemScrollController scrollController = ItemScrollController();
   final ItemPositionsListener listener = ItemPositionsListener.create();
+  late AnimationController _animationController;
+  late Animation<double> _opacity;
+  late Animation<Offset> _slide;
+
+  void _startMilestoneAnimation({required String message}) async {
+    setState(() {
+      _currentMessage = message;
+    });
+    _animationController.forward();
+    await Future.delayed(Duration(seconds: 4));
+    if (mounted) _animationController.reverse();
+    print('🎯 Started MileStone Animation , message : $message  ');
+  }
+
+  void _initMilestones() {
+    final savedPrgress = widget.book.progress;
+    for (final i in _milestones.keys) {
+      if (savedPrgress >= i) _achievedMilestones[i] = _milestones[i]!;
+    }
+    print('🎯 Pre-loaded milestones: $_achievedMilestones');
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _animationController.dispose();
+  }
 
   @override
   void didUpdateWidget(covariant ReaderSurface oldWidget) {
     super.didUpdateWidget(oldWidget);
-
     // لما اليوزر يبدل من pages لـ scroll — نحفظ الموقع ونروح ليه
     if (oldWidget.state.scrollMode != widget.state.scrollMode &&
         widget.state.scrollMode == ReaderScrollMode.scroll) {
@@ -74,8 +114,27 @@ class _ReaderSurfaceState extends State<ReaderSurface> {
   @override
   void initState() {
     super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: AppDuration.readerGlow,
+    );
+    _slide = Tween<Offset>(begin: Offset(0, -2), end: Offset.zero).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOutCubic,
+        reverseCurve: Curves.easeInQuart,
+      ),
+    );
+    _opacity = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeOut,
+        reverseCurve: Curves.easeIn,
+      ),
+    );
 
-    // السماع للـ scroll position وتحديث التقدم
+    _initMilestones();
+
     listener.itemPositions.addListener(() {
       final positions = listener.itemPositions.value;
       if (positions.isEmpty || _cache == null) return;
@@ -90,6 +149,16 @@ class _ReaderSurfaceState extends State<ReaderSurface> {
 
       initialCell = currentCell;
       final progress = currentCell / _cache!.cellCount * 100;
+
+      for (var i in _milestones.entries) {
+        final target = i.key;
+        final message = i.value;
+        if (progress >= target && !_achievedMilestones.containsKey(target)) {
+          _achievedMilestones[target] = message;
+          _startMilestoneAnimation(message: message);
+        }
+      }
+
       widget.updateProgress(progress);
     });
 
@@ -184,7 +253,7 @@ class _ReaderSurfaceState extends State<ReaderSurface> {
     final minutes = (wordCount / 200).toInt();
     final hours = minutes ~/ 60;
     final mins = minutes % 60;
-
+    final theme = Theme.of(context).colorScheme;
     return Stack(
       children: [
         AnimatedSwitcher(
@@ -251,12 +320,35 @@ class _ReaderSurfaceState extends State<ReaderSurface> {
                   onPageChanged: (int newCell) => initialCell = newCell,
                 ),
         ),
-
+        milestoneNotch(
+          context: context,
+          slide: _slide,
+          opacity: _opacity,
+          theme: theme,
+          currentMessage: _currentMessage,
+        ),
         if (!_visible)
           TextAnimation(
             callBack: () {},
             messages: ['just one step..', 'Book Ready For You'],
           ),
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: IgnorePointer(
+            child: Container(
+              height: 50.h,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [theme.surface.withValues(alpha: 0), theme.surface],
+                ),
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
