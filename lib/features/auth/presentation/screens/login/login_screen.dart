@@ -9,7 +9,9 @@ import 'package:quill/core/theme/app_icons.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/widgets/app_button.dart';
 import 'package:quill/core/widgets/premium_background.dart';
+import 'package:quill/features/auth/domain/auth_params.dart';
 import 'package:quill/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:quill/features/auth/presentation/bloc/auth_event.dart';
 import 'package:quill/features/auth/presentation/bloc/auth_state.dart';
 import 'package:quill/features/auth/presentation/screens/login/login_email_screen.dart';
 import 'package:quill/features/auth/presentation/screens/login/login_pass_screen.dart';
@@ -141,6 +143,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               } else {
                                 print("Email: ${email.text}");
                                 print("Pass: ${pass.text}");
+                                context.read<AuthBloc>().add(
+                                  LoginEvent(
+                                    params: LoginParams(
+                                      email: email.text,
+                                      password: pass.text,
+                                    ),
+                                  ),
+                                );
                               }
                             },
                           );

@@ -39,6 +39,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 part 'app_routes.dart';
 
 final appRouter = GoRouter(
+  // initialLocation: AppRoutes.choose,
   debugLogDiagnostics: true,
 
   routes: [

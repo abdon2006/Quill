@@ -8,6 +8,7 @@ import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 import 'package:quill/features/reader/data/models/local_book.dart';
 import 'package:quill/features/reader/presentation/cubit/reader_preferences_state.dart';
+import 'package:quill/features/reader/presentation/widgets/reader/page_flip_transition.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/reader_header.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/text_animation.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -407,7 +408,10 @@ class _CellPageViewState extends State<CellPageView> {
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
         child: AnimatedSwitcher(
-          duration: AppDuration.normal,
+          duration: AppDuration.slow,
+          transitionBuilder: (child, animation) {
+            return PageFlipTransition(animation: animation, child: child);
+          },
           child: ListView(
             physics: NeverScrollableScrollPhysics(),
             padding: EdgeInsets.zero,
