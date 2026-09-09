@@ -48,13 +48,14 @@ class _ReaderSurfaceState extends State<ReaderSurface>
   CellCache? _pages;
   bool isAnimationReady = false;
   String _currentMessage = '';
+  int _currentMilestonePercentage = 0;
   final Map<int, String> _milestones = {
-    10: 'Settling into the story.',
-    25: "The journey unfolds.",
-    50: "Deep in the narrative.",
-    75: "Getting closer to the truth.",
-    90: "The final stretch.",
-    100: "A journey completed.",
+    10: 'Settling into the story',
+    25: "The journey unfolds",
+    50: "Deep in the narrative",
+    75: "Getting closer to the truth",
+    90: "The final stretch",
+    100: "A journey completed",
   };
   final Map<int, String> _achievedMilestones = {};
 
@@ -64,9 +65,13 @@ class _ReaderSurfaceState extends State<ReaderSurface>
   late Animation<double> _opacity;
   late Animation<Offset> _slide;
 
-  void _startMilestoneAnimation({required String message}) async {
+  void _startMilestoneAnimation({
+    required String message,
+    required int progress,
+  }) async {
     setState(() {
       _currentMessage = message;
+      _currentMilestonePercentage = progress;
     });
     _animationController.forward();
     await Future.delayed(Duration(seconds: 4));
@@ -160,7 +165,7 @@ class _ReaderSurfaceState extends State<ReaderSurface>
         final message = i.value;
         if (progress >= target && !_achievedMilestones.containsKey(target)) {
           _achievedMilestones[target] = message;
-          _startMilestoneAnimation(message: message);
+          _startMilestoneAnimation(message: message, progress: target);
         }
       }
 
@@ -363,6 +368,7 @@ class _ReaderSurfaceState extends State<ReaderSurface>
           opacity: _opacity,
           theme: theme,
           currentMessage: _currentMessage,
+          currentProgress: _currentMilestonePercentage,
         ),
         if (!_visible)
           TextAnimation(
