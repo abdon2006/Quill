@@ -8,6 +8,7 @@ import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 import 'package:quill/features/reader/data/models/local_book.dart';
 import 'package:quill/features/reader/presentation/cubit/reader_preferences_state.dart';
+import 'package:quill/features/reader/presentation/widgets/reader/bottom_dock.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/milestone_notch.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/overlay_gradient.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/page_flip_transition.dart';
@@ -46,6 +47,8 @@ class _ReaderSurfaceState extends State<ReaderSurface>
   bool _visible = false;
   int? initialCell;
   CellCache? _pages;
+
+  /// For Notch
   bool isAnimationReady = false;
   String _currentMessage = '';
   int _currentMilestonePercentage = 0;
@@ -58,12 +61,13 @@ class _ReaderSurfaceState extends State<ReaderSurface>
     100: "A journey completed",
   };
   final Map<int, String> _achievedMilestones = {};
-
-  final ItemScrollController scrollController = ItemScrollController();
-  final ItemPositionsListener listener = ItemPositionsListener.create();
   late AnimationController _animationController;
   late Animation<double> _opacity;
   late Animation<Offset> _slide;
+
+  /// For Dock
+  final ItemScrollController scrollController = ItemScrollController();
+  final ItemPositionsListener listener = ItemPositionsListener.create();
 
   void _startMilestoneAnimation({
     required String message,
@@ -328,9 +332,11 @@ class _ReaderSurfaceState extends State<ReaderSurface>
                       widget.updateProgress(progress),
                   initialCellIndex: initialCell!,
                   onPageChanged: (int newCell) => initialCell = newCell,
+                  isFocusMode: widget.isFocusMode,
                 ),
         ),
 
+        /// Bottom Focus Overlay
         Positioned(
           left: 0,
           right: 0,
@@ -362,19 +368,28 @@ class _ReaderSurfaceState extends State<ReaderSurface>
           ),
         ),
 
-        milestoneNotch(
-          context: context,
-          slide: _slide,
-          opacity: _opacity,
-          theme: theme,
-          currentMessage: _currentMessage,
-          currentProgress: _currentMilestonePercentage,
-        ),
-        if (!_visible)
-          TextAnimation(
-            callBack: () {},
-            messages: ['just one step..', 'Book Ready For You'],
+        /// scroll Milestone Notch
+        if (widget.state.scrollMode == ReaderScrollMode.scroll)
+          milestoneNotch(
+            context: context,
+            slide: _slide,
+            opacity: _opacity,
+            theme: theme,
+            currentMessage: _currentMessage,
+            currentProgress: _currentMilestonePercentage,
           ),
+
+        if (widget.state.scrollMode == ReaderScrollMode.pages)
+          if (!_visible)
+            TextAnimation(
+              callBack: () {},
+              messages: [
+                'just one step...',
+                'getting Book Ready For You...',
+                'Writing The Last Words...',
+                'Book Is Ready Now.',
+              ],
+            ),
       ],
     );
   }
@@ -462,6 +477,7 @@ class CellPageView extends StatefulWidget {
   final void Function(double) updateOnSwipe;
   final int initialCellIndex;
   final void Function(int) onPageChanged;
+  final bool isFocusMode;
 
   const CellPageView({
     super.key,
@@ -473,6 +489,7 @@ class CellPageView extends StatefulWidget {
     required this.updateOnSwipe,
     required this.initialCellIndex,
     required this.onPageChanged,
+    required this.isFocusMode,
   });
 
   @override
@@ -481,7 +498,10 @@ class CellPageView extends StatefulWidget {
 
 class _CellPageViewState extends State<CellPageView> {
   int currentIndex = 0;
-
+  bool _isDockExpanded = false;
+  String _dockMessage = '';
+  int _totalParts = 0;
+  int _currentPart = 1;
   @override
   void initState() {
     super.initState();
@@ -494,68 +514,119 @@ class _CellPageViewState extends State<CellPageView> {
     );
     print('📖 CellPageView init — starting at page: $currentIndex');
     print('📊 Total pages: ${widget.cache.pages.length}');
+    _initDockCalculations();
+    _handleMilestoneOnSwipe(_currentPart);
+  }
+
+  void _initDockCalculations() {
+    final pagesLength = widget.cache.pages.length;
+    _totalParts = (pagesLength > 50 ? 10 : 5);
+    _currentPart = _calculatePart();
+  }
+
+  int _calculatePart() {
+    final pagesLength = widget.cache.pages.length;
+    if (pagesLength <= 1) return 1;
+    double percent = currentIndex / (pagesLength - 1);
+    int part = (percent * _totalParts).ceil();
+    return part == 0 ? 1 : part;
+  }
+
+  void _handleMilestoneOnSwipe(int part) async {
+    setState(() {
+      _dockMessage = 'Part $part of $_totalParts';
+    });
+    setState(() => _isDockExpanded = true);
+    await Future.delayed(Duration(seconds: 3));
+    if (mounted) setState(() => _isDockExpanded = false);
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onHorizontalDragEnd: (details) {
-        if (details.primaryVelocity! < 0) {
-          // سوايب لليسار — الصفحة الجاية
-          if (currentIndex < widget.cache.pages.length - 1) {
-            setState(() => currentIndex++);
-            final firstCell = widget.cache.pages[currentIndex].first;
-            final progress = (firstCell / widget.totalCells) * 100;
-            print(
-              '➡️ Next page: $currentIndex — first cell: $firstCell — progress: $progress%',
-            );
-            widget.updateOnSwipe(progress);
-            widget.onPageChanged(firstCell);
-          }
-        } else {
-          // سوايب لليمين — الصفحة السابقة
-          if (currentIndex > 0) {
-            setState(() => currentIndex--);
-            final firstCell = widget.cache.pages[currentIndex].first;
-            print('⬅️ Prev page: $currentIndex — first cell: $firstCell');
-            widget.onPageChanged(firstCell);
-          }
-        }
-      },
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
-        child: AnimatedSwitcher(
-          duration: AppDuration.slow,
-          transitionBuilder: (child, animation) {
-            return PageFlipTransition(animation: animation, child: child);
+    final theme = Theme.of(context).colorScheme;
+    return Stack(
+      children: [
+        /// Cells
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onHorizontalDragEnd: (details) {
+            if (details.primaryVelocity! < 0) {
+              /// Next Page
+              if (currentIndex < widget.cache.pages.length - 1) {
+                setState(() => currentIndex++);
+                final firstCell = widget.cache.pages[currentIndex].first;
+                final progress = (firstCell / widget.totalCells) * 100;
+                print(
+                  '➡️ Next page: $currentIndex — first cell: $firstCell — progress: $progress%  , CurrentPart : $_currentPart , Total Parts : $_totalParts',
+                );
+                final int newPart = _calculatePart();
+                if (newPart != _currentPart) {
+                  _currentPart = newPart;
+                  _handleMilestoneOnSwipe(newPart);
+                }
+                widget.updateOnSwipe(progress);
+                widget.onPageChanged(firstCell);
+              }
+            } else {
+              /// Prev Page
+              if (currentIndex > 0) {
+                setState(() => currentIndex--);
+
+                final firstCell = widget.cache.pages[currentIndex].first;
+
+                print(
+                  '⬅️ Prev page: $currentIndex — first cell: $firstCell  , CurrentPart : $_currentPart , Total Parts : $_totalParts',
+                );
+
+                final int newPart = _calculatePart();
+                if (newPart != _currentPart) {
+                  _currentPart = newPart;
+                  _handleMilestoneOnSwipe(newPart);
+                }
+                widget.onPageChanged(firstCell);
+              }
+            }
           },
-          child: ListView(
-            physics: NeverScrollableScrollPhysics(),
-            padding: EdgeInsets.zero,
-            key: ValueKey(currentIndex),
-            children: widget.cache.pages[currentIndex]
-                .map(
-                  (i) => _BionicCell(
-                    text: widget.bionicCache.cellText(i),
-                    isBionicNotifier: widget.isBionicNotifier,
-                    cache: widget.bionicCache,
-                    index: i,
-                    ready: true,
-                    state: widget.state!,
-                  ),
-                )
-                .toList(),
+
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
+            child: AnimatedSwitcher(
+              duration: AppDuration.slow,
+              transitionBuilder: (child, animation) {
+                return PageFlipTransition(animation: animation, child: child);
+              },
+              child: ListView(
+                physics: NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.zero,
+                key: ValueKey(currentIndex),
+                children: widget.cache.pages[currentIndex]
+                    .map(
+                      (i) => _BionicCell(
+                        text: widget.bionicCache.cellText(i),
+                        isBionicNotifier: widget.isBionicNotifier,
+                        cache: widget.bionicCache,
+                        index: i,
+                        ready: true,
+                        state: widget.state!,
+                      ),
+                    )
+                    .toList(),
+              ),
+            ),
           ),
         ),
-      ),
+        if (!widget.isFocusMode)
+          /// Bottom Dock
+          bottomDock(
+            context: context,
+            isDockExpanded: _isDockExpanded,
+            theme: theme,
+            dockMessage: _dockMessage,
+          ),
+      ],
     );
   }
 }
-
-// ─────────────────────────────────────────────
-// BionicCache
-// ─────────────────────────────────────────────
 
 const int _cellMaxWords = 140;
 

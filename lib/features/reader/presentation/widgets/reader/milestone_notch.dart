@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:quill/core/theme/app_colors.dart';
 import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_shadows.dart';
 import 'package:quill/core/theme/app_spacing.dart';
@@ -36,7 +37,9 @@ Widget milestoneNotch({
             children: [
               Text(
                 '$currentProgress%',
-                style: AppTextStyles.defaultReading(context).copyWith(),
+                style: AppTextStyles.defaultReading(
+                  context,
+                ).copyWith(color: AppColors.darkTextPrimary),
               ),
               SizedBox(width: AppSpacing.sm),
 
@@ -44,13 +47,15 @@ Widget milestoneNotch({
               Container(
                 height: 12.h,
                 width: 1.w,
-                color: const Color(0xFFF5F0E8).withValues(alpha: 0.3),
+                color: AppColors.lightTextMuted,
               ),
 
               SizedBox(width: AppSpacing.sm),
               Text(
                 currentMessage,
-                style: AppTextStyles.defaultReading(context).copyWith(),
+                style: AppTextStyles.defaultReading(
+                  context,
+                ).copyWith(color: AppColors.darkTextPrimary),
               ),
             ],
           ),
