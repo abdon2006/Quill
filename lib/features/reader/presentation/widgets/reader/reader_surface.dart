@@ -48,7 +48,6 @@ class _ReaderSurfaceState extends State<ReaderSurface>
   int? initialCell;
   CellCache? _pages;
 
-  /// For Notch
   bool isAnimationReady = false;
   String _currentMessage = '';
   int _currentMilestonePercentage = 0;
@@ -65,7 +64,6 @@ class _ReaderSurfaceState extends State<ReaderSurface>
   late Animation<double> _opacity;
   late Animation<Offset> _slide;
 
-  /// For Dock
   final ItemScrollController scrollController = ItemScrollController();
   final ItemPositionsListener listener = ItemPositionsListener.create();
 
@@ -100,7 +98,6 @@ class _ReaderSurfaceState extends State<ReaderSurface>
   @override
   void didUpdateWidget(covariant ReaderSurface oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // لما اليوزر يبدل من pages لـ scroll — نحفظ الموقع ونروح ليه
     if (oldWidget.state.scrollMode != widget.state.scrollMode &&
         widget.state.scrollMode == ReaderScrollMode.scroll) {
       widget.updateProgress(initialCell! / _cache!.cellCount * 100);
@@ -115,7 +112,6 @@ class _ReaderSurfaceState extends State<ReaderSurface>
       });
     }
 
-    // لما الـ fontSize أو lineSpacing يتغير — نعيد بناء الصفحات
     if (oldWidget.state.fontSize != widget.state.fontSize ||
         oldWidget.state.lineSpacing != widget.state.lineSpacing) {
       if (widget.state.scrollMode == ReaderScrollMode.pages) {
@@ -191,7 +187,6 @@ class _ReaderSurfaceState extends State<ReaderSurface>
 
     print('✅ BionicCache loaded — total cells: ${_cache!.cellCount}');
 
-    // حساب الخلية الابتدائية من التقدم المحفوظ
     final savedIndex = (widget.book.progress / 100 * _cache!.cellCount).toInt();
     setState(() => initialCell = savedIndex);
     print('📍 Restored initial cell from progress: $initialCell');
@@ -215,7 +210,7 @@ class _ReaderSurfaceState extends State<ReaderSurface>
   Future<void> _loadPages([double? newFontSize]) async {
     if (_cache == null) return;
     setState(() => _pages = null);
-
+    await Future.delayed(const Duration(milliseconds: 20));
     print('📄 Building pages layout...');
 
     final textScalar = MediaQuery.textScalerOf(context).scale(1.0);
@@ -248,7 +243,6 @@ class _ReaderSurfaceState extends State<ReaderSurface>
 
     if (!mounted) return;
 
-    // لو في extra cells من الـ splitting — نضيفها للـ BionicCache
     if (result.extraCells.isNotEmpty) {
       print('✂️ Adding ${result.extraCells.length} split cells to BionicCache');
       _cache!._addExtraCells(result.extraCells);
@@ -273,66 +267,90 @@ class _ReaderSurfaceState extends State<ReaderSurface>
         AnimatedSwitcher(
           duration: Duration.zero,
           child: widget.state.scrollMode == ReaderScrollMode.scroll
-              ? ScrollablePositionedList.builder(
-                  key: ValueKey(widget.state.scrollMode),
-                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
-                  addAutomaticKeepAlives: false,
-                  addRepaintBoundaries: true,
-                  itemScrollController: scrollController,
-                  itemPositionsListener: listener,
-                  itemCount: cellCount + 1,
-                  itemBuilder: (context, i) {
-                    return AnimatedOpacity(
-                      duration: AppDuration.slow,
-                      opacity: !_visible ? 0 : 1,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: AppSpacing.lg,
-                        ),
-                        child: i == 0
-                            ? Column(
-                                children: [
-                                  SizedBox(height: 70.h),
-                                  ReaderHeader(
-                                    book: widget.book,
-                                    hours: hours,
-                                    mins: mins,
-                                    state: widget.state,
-                                  ),
-                                ],
-                              )
-                            : _BionicCell(
-                                text: _cache!.cellText(i - 1),
-                                isBionicNotifier: widget.isBionicNotifier,
-                                cache: _cache!,
-                                index: i - 1,
-                                ready: _cacheReady,
-                                state: widget.state,
+              ? AnimatedSwitcher(
+                  duration: AppDuration.slow,
+                  child: _cacheReady
+                      ? ScrollablePositionedList.builder(
+                          key: ValueKey(_cache),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: AppSpacing.xxl,
+                          ),
+                          addAutomaticKeepAlives: false,
+                          addRepaintBoundaries: true,
+                          itemScrollController: scrollController,
+                          itemPositionsListener: listener,
+                          itemCount: cellCount + 1,
+                          itemBuilder: (context, i) {
+                            return AnimatedOpacity(
+                              duration: AppDuration.slow,
+                              opacity: !_visible ? 0 : 1,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: AppSpacing.lg,
+                                ),
+                                child: i == 0
+                                    ? Column(
+                                        children: [
+                                          SizedBox(height: 70.h),
+                                          ReaderHeader(
+                                            book: widget.book,
+                                            hours: hours,
+                                            mins: mins,
+                                            state: widget.state,
+                                          ),
+                                        ],
+                                      )
+                                    : _BionicCell(
+                                        text: _cache!.cellText(i - 1),
+                                        isBionicNotifier:
+                                            widget.isBionicNotifier,
+                                        cache: _cache!,
+                                        index: i - 1,
+                                        ready: _cacheReady,
+                                        state: widget.state,
+                                      ),
                               ),
-                      ),
-                    );
-                  },
+                            );
+                          },
+                        )
+                      : TextAnimation(
+                          key: ValueKey(_cache),
+
+                          callBack: () {},
+                          messages: const [
+                            'just one step...',
+                            'getting Book Ready For You...',
+                            'Writing The Last Words...',
+                            'Book Is Ready Now.',
+                          ],
+                        ),
                 )
-              : _pages == null
-              ? const Center(child: CircularProgressIndicator())
-              : CellPageView(
-                  key: ValueKey(
-                    KeyParamsForCellView(
-                      fontSize: widget.state.fontSize,
-                      lineSpacing: widget.state.lineSpacing,
-                      scrollMode: widget.state.scrollMode,
-                    ),
-                  ),
-                  state: widget.state,
-                  cache: _pages!,
-                  bionicCache: _cache!,
-                  isBionicNotifier: widget.isBionicNotifier,
-                  totalCells: cellCount,
-                  updateOnSwipe: (double progress) =>
-                      widget.updateProgress(progress),
-                  initialCellIndex: initialCell!,
-                  onPageChanged: (int newCell) => initialCell = newCell,
-                  isFocusMode: widget.isFocusMode,
+              : AnimatedSwitcher(
+                  duration: AppDuration.slow,
+                  child: _pages == null
+                      ? TextAnimation(
+                          key: const ValueKey('loading_animation'),
+                          callBack: () {},
+                          messages: const [
+                            'just one step...',
+                            'getting Book Ready For You...',
+                            'Writing The Last Words...',
+                            'Book Is Ready Now.',
+                          ],
+                        )
+                      : CellPageView(
+                          key: ValueKey(_pages),
+                          state: widget.state,
+                          cache: _pages!,
+                          bionicCache: _cache!,
+                          isBionicNotifier: widget.isBionicNotifier,
+                          totalCells: cellCount,
+                          updateOnSwipe: (double progress) =>
+                              widget.updateProgress(progress),
+                          initialCellIndex: initialCell!,
+                          onPageChanged: (int newCell) => initialCell = newCell,
+                          isFocusMode: widget.isFocusMode,
+                        ),
                 ),
         ),
 
@@ -368,7 +386,6 @@ class _ReaderSurfaceState extends State<ReaderSurface>
           ),
         ),
 
-        /// scroll Milestone Notch
         if (widget.state.scrollMode == ReaderScrollMode.scroll)
           milestoneNotch(
             context: context,
@@ -378,18 +395,6 @@ class _ReaderSurfaceState extends State<ReaderSurface>
             currentMessage: _currentMessage,
             currentProgress: _currentMilestonePercentage,
           ),
-
-        if (widget.state.scrollMode == ReaderScrollMode.pages)
-          if (!_visible)
-            TextAnimation(
-              callBack: () {},
-              messages: [
-                'just one step...',
-                'getting Book Ready For You...',
-                'Writing The Last Words...',
-                'Book Is Ready Now.',
-              ],
-            ),
       ],
     );
   }
@@ -502,6 +507,7 @@ class _CellPageViewState extends State<CellPageView> {
   String _dockMessage = '';
   int _totalParts = 0;
   int _currentPart = 1;
+
   @override
   void initState() {
     super.initState();
@@ -546,12 +552,10 @@ class _CellPageViewState extends State<CellPageView> {
     final theme = Theme.of(context).colorScheme;
     return Stack(
       children: [
-        /// Cells
         GestureDetector(
           behavior: HitTestBehavior.opaque,
           onHorizontalDragEnd: (details) {
             if (details.primaryVelocity! < 0) {
-              /// Next Page
               if (currentIndex < widget.cache.pages.length - 1) {
                 setState(() => currentIndex++);
                 final firstCell = widget.cache.pages[currentIndex].first;
@@ -568,7 +572,6 @@ class _CellPageViewState extends State<CellPageView> {
                 widget.onPageChanged(firstCell);
               }
             } else {
-              /// Prev Page
               if (currentIndex > 0) {
                 setState(() => currentIndex--);
 
@@ -587,7 +590,6 @@ class _CellPageViewState extends State<CellPageView> {
               }
             }
           },
-
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
             child: AnimatedSwitcher(
@@ -616,7 +618,6 @@ class _CellPageViewState extends State<CellPageView> {
           ),
         ),
         if (!widget.isFocusMode)
-          /// Bottom Dock
           bottomDock(
             context: context,
             isDockExpanded: _isDockExpanded,
@@ -694,7 +695,6 @@ class BionicCache {
   int get cellCount => _cellTexts.length;
   String cellText(int index) => _cellTexts[index];
 
-  /// يضيف cells جديدة ناتجة من splitting — بيتنادى بعد _buildPageView
   void _addExtraCells(List<String> extras) {
     for (final text in extras) {
       _cellTexts.add(text);
@@ -716,29 +716,33 @@ class BionicCache {
   }
 }
 
-/// نتيجة بناء الصفحات — فيها الصفحات + الـ cells الجديدة من الـ splitting
 class PageLayoutResult {
   final CellCache cache;
-  final List<String> extraCells; // cells اتضافت من تقسيم cells كبيرة
+  final List<String> extraCells;
 
   const PageLayoutResult({required this.cache, required this.extraCells});
 }
 
-/// بيبني الصفحات ويقسم الـ cells اللي أكبر من الـ pageHeight
-List<Object> _buildPageView(PageLayoutParams params) {
+Future<List<Object>> _buildPageView(PageLayoutParams params) async {
   print('🏗️ _buildPageView started — total cells: ${params.cellText.length}');
   print('📐 pageHeight: ${params.pageHeight}, pageWidth: ${params.pageWidth}');
 
   final List<List<int>> pages = [];
-  final List<String> extraCells = []; // النصوص المضافة من الـ splitting
+  final List<String> extraCells = [];
   List<int> currentPage = [];
   double currentHeight = 0;
 
-  // نبدأ بنسخة قابلة للتعديل من الـ cells
   final allCells = List<String>.from(params.cellText);
   int i = 0;
 
+  final stopwatch = Stopwatch()..start();
+
   while (i < allCells.length) {
+    if (stopwatch.elapsedMilliseconds > 8) {
+      await Future.delayed(Duration.zero);
+      stopwatch.reset();
+    }
+
     final painter = TextPainter(
       text: TextSpan(
         text: allCells[i],
@@ -761,7 +765,6 @@ List<Object> _buildPageView(PageLayoutParams params) {
       '📏 Cell $i — height: $cellHeight — "${allCells[i].substring(0, allCells[i].length.clamp(0, 40))}..."',
     );
 
-    // لو الـ cell نفسها أكبر من الـ pageHeight — نقسمها
     if (cellHeight > params.pageHeight) {
       print(
         '✂️ Cell $i is too tall ($cellHeight > ${params.pageHeight}) — splitting...',
@@ -779,20 +782,16 @@ List<Object> _buildPageView(PageLayoutParams params) {
         '✂️ Second half: "${secondHalf.substring(0, secondHalf.length.clamp(0, 40))}..."',
       );
 
-      // بنستبدل الـ cell الحالية بالنص الأول
       allCells[i] = firstHalf;
 
-      // بنضيف النص التاني كـ cell جديدة بعدها مباشرةً
       allCells.insert(i + 1, secondHalf);
       extraCells.add(secondHalf);
 
       print('📦 Total cells after split: ${allCells.length}');
 
-      // نعيد قياس الـ cell المعدلة
       continue;
     }
 
-    // لو الصفحة الحالية هتتجاوز الـ pageHeight — ابدأ صفحة جديدة
     if (currentPage.isNotEmpty &&
         currentHeight + cellHeight > params.pageHeight) {
       print(
@@ -825,8 +824,7 @@ class CellCache {
 
   static Future<PageLayoutResult> compute(PageLayoutParams params) async {
     print('⚙️ CellCache.compute called');
-    // _buildPageView بترجع List عشان تعدي الاتنين من الـ isolate
-    final result = _buildPageView(params);
+    final result = await _buildPageView(params);
     final pages = result[0] as List<List<int>>;
     final extraCells = result[1] as List<String>;
     print(
