@@ -269,22 +269,22 @@ class _ReaderSurfaceState extends State<ReaderSurface>
           child: widget.state.scrollMode == ReaderScrollMode.scroll
               ? AnimatedSwitcher(
                   duration: AppDuration.slow,
-                  child: _cacheReady
-                      ? ScrollablePositionedList.builder(
-                          key: ValueKey(_cache),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: AppSpacing.xxl,
-                          ),
-                          addAutomaticKeepAlives: false,
-                          addRepaintBoundaries: true,
-                          itemScrollController: scrollController,
-                          itemPositionsListener: listener,
-                          itemCount: cellCount + 1,
-                          itemBuilder: (context, i) {
-                            return AnimatedOpacity(
-                              duration: AppDuration.slow,
-                              opacity: !_visible ? 0 : 1,
-                              child: Padding(
+                  child: _pages != null
+                      ? AnimatedOpacity(
+                          key: const ValueKey('scroll_list_view'),
+                          duration: AppDuration.slow,
+                          opacity: _visible ? 1 : 0,
+                          child: ScrollablePositionedList.builder(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: AppSpacing.xxl,
+                            ),
+                            addAutomaticKeepAlives: false,
+                            addRepaintBoundaries: true,
+                            itemScrollController: scrollController,
+                            itemPositionsListener: listener,
+                            itemCount: cellCount + 1,
+                            itemBuilder: (context, i) {
+                              return Padding(
                                 padding: const EdgeInsets.symmetric(
                                   vertical: AppSpacing.lg,
                                 ),
@@ -309,13 +309,12 @@ class _ReaderSurfaceState extends State<ReaderSurface>
                                         ready: _cacheReady,
                                         state: widget.state,
                                       ),
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         )
                       : TextAnimation(
-                          key: ValueKey(_cache),
-
+                          key: const ValueKey('text_animation'),
                           callBack: () {},
                           messages: const [
                             'just one step...',
