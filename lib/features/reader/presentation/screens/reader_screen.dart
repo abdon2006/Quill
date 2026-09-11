@@ -2,14 +2,19 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:quill/core/states/ErrorStates/app_error.dart';
+import 'package:quill/core/theme/app_assets.dart';
 import 'package:quill/core/theme/app_colors.dart';
 import 'package:quill/core/theme/app_duration.dart';
+import 'package:quill/core/theme/app_icons.dart';
 import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
 import 'package:quill/features/home/presentation/bloc/home_event.dart';
+import 'package:quill/features/library/presentation/widgets/staggerd_animation.dart';
 import 'package:quill/features/reader/data/models/local_book.dart';
 import 'package:quill/features/reader/domain/usecases/params/reader_book_params.dart';
 import 'package:quill/features/reader/domain/usecases/params/update_book_params.dart';
@@ -19,7 +24,6 @@ import 'package:quill/features/reader/presentation/bloc/reader_state.dart';
 import 'package:quill/features/reader/presentation/cubit/reader_preferences_cubit.dart';
 import 'package:quill/features/reader/presentation/cubit/reader_preferences_state.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/prefernces/build_bottom_actions.dart';
-import 'package:quill/core/widgets/show_app_snack_bar.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/build_top_bar.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/prefernces/reader_preferences_sheet.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/reader_surface.dart';
@@ -54,7 +58,8 @@ class _ReaderScreenState extends State<ReaderScreen> {
   LocalBook? _book;
   double? _currentProgress;
   late final ReaderBloc _bloc;
-
+  bool _bookError = false;
+  bool _readerError = false;
   @override
   void initState() {
     super.initState();
@@ -133,7 +138,9 @@ class _ReaderScreenState extends State<ReaderScreen> {
     setState(() {
       switch (_uiState) {
         case ReaderUiStates.idle:
-          _uiState = ReaderUiStates.controlsVisible;
+          _bookError || _readerError
+              ? null
+              : _uiState = ReaderUiStates.controlsVisible;
           _startHideTimer();
           break;
         case ReaderUiStates.controlsVisible:
@@ -215,6 +222,17 @@ class _ReaderScreenState extends State<ReaderScreen> {
     };
   }
 
+  Color _getTextColor(ReaderPreferencesState state, BuildContext context) {
+    return switch (state.theme) {
+      ReaderTheme.dark => AppColors.darkTextPrimary,
+      ReaderTheme.light => AppColors.lightTextPrimary,
+      ReaderTheme.system =>
+        Theme.of(context).brightness == Brightness.dark
+            ? AppColors.darkTextPrimary
+            : AppColors.lightTextPrimary,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
@@ -232,19 +250,24 @@ class _ReaderScreenState extends State<ReaderScreen> {
                 children: [
                   BlocListener<ReaderBloc, ReaderState>(
                     listener: (context, state) {
-                      if (state is FetchLocalBookSuccess &&
-                          _paragraphs.isEmpty) {
+                      if (state is FetchLocalBookSuccess) {
+                        if (state.book.paragraphs.isEmpty) {
+                          setState(() {
+                            _uiState = ReaderUiStates.idle;
+                            _bookError = true;
+                          });
+                        } else {
+                          setState(() {
+                            _paragraphs = state.book.paragraphs;
+                            _book = state.book;
+                          });
+                        }
+                      }
+                      if (state is ReaderFailure) {
                         setState(() {
-                          _paragraphs = state.book.paragraphs;
-                          _book = state.book;
+                          _readerError = true;
+                          _uiState = ReaderUiStates.idle;
                         });
-                      } else if (state is ReaderFailure) {
-                        showSnackBar(
-                          context,
-                          message: 'Something went wrong',
-                          messageDisc: 'Could not load the book.',
-                          icon: HugeIcons.strokeRoundedWifiError01,
-                        );
                       }
                     },
                     child: SizedBox(),
@@ -265,8 +288,8 @@ class _ReaderScreenState extends State<ReaderScreen> {
                   // ),
                   NotificationListener<UserScrollNotification>(
                     onNotification: _handleScroll,
-                    child: _paragraphs.isEmpty
-                        ? SizedBox()
+                    child: _book == null
+                        ? SizedBox.shrink()
                         : ReaderSurface(
                             paragraphs: _paragraphs,
                             isBionicNotifier: _isBionicEnabled,
@@ -281,6 +304,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                                 _uiState == ReaderUiStates.focusExitReveal ||
                                 _uiState == ReaderUiStates.focusMode,
                             bgColor: _getReaderBgColor(state),
+                            uiState: _uiState,
                           ),
                   ),
 
@@ -428,7 +452,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                         key: ValueKey("Preferences"),
                         callBack: () =>
                             setState(() => _uiState = ReaderUiStates.idle),
-                        messages: const ['applying Your Own Preferences......'],
+                        messages: const ['applying Your Own Preferences...'],
                       ),
                       ReaderUiStates.idle => SizedBox(),
                       ReaderUiStates.controlsVisible => SizedBox(),
@@ -439,6 +463,45 @@ class _ReaderScreenState extends State<ReaderScreen> {
                       ReaderUiStates.focusExitReveal => SizedBox(),
                     },
                   ),
+
+                  if (_readerError)
+                    AnimatedOpacity(
+                      opacity: _readerError ? 1 : 0,
+                      duration: AppDuration.slow,
+                      curve: Curves.easeInOutCubic,
+                      child: StaggerdAnimation(
+                        index: 0,
+                        child: AppError(
+                          title: "Couldn't Open Your Book",
+                          subtitle:
+                              "Something went wrong while loading. Please try again.",
+                          image: AppAssets.bookWithGlasses,
+                          // textColor: _getTextColor(state, context),
+                        ),
+                      ),
+                    ),
+                  if (_bookError || _readerError)
+                    Positioned(
+                      top: 10.h,
+                      left: 20.w,
+                      child: _errorBackButton(context: context, theme: theme),
+                    ),
+                  if (_bookError)
+                    AnimatedOpacity(
+                      opacity: _bookError ? 1 : 0,
+                      duration: AppDuration.slow,
+                      curve: Curves.easeInOutCubic,
+                      child: StaggerdAnimation(
+                        index: 0,
+                        child: AppError(
+                          title: "This Book Has No Content",
+                          subtitle:
+                              "We couldn't read any text from this file. It may be unsupported or corrupted.",
+                          image: AppAssets.bookWithGlasses,
+                          // textColor: _getTextColor(state, context),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -448,3 +511,26 @@ class _ReaderScreenState extends State<ReaderScreen> {
     );
   }
 }
+
+Widget _errorBackButton({
+  required BuildContext context,
+  required ColorScheme theme,
+}) => Material(
+  color: Colors.transparent,
+  child: InkWell(
+    onTap: () => context.pop(),
+    customBorder: CircleBorder(),
+    child: Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: theme.secondary.withValues(alpha: 0.1),
+      ),
+      padding: EdgeInsets.all(AppSpacing.sm),
+      child: HugeIcon(
+        icon: AppIcons.back,
+        color: theme.secondary.withValues(alpha: 0.7),
+        // getIconsFgColor(state: state, context: context, theme: theme),
+      ),
+    ),
+  ),
+);

@@ -8,6 +8,7 @@ import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 import 'package:quill/features/reader/data/models/local_book.dart';
 import 'package:quill/features/reader/presentation/cubit/reader_preferences_state.dart';
+import 'package:quill/features/reader/presentation/screens/reader_screen.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/bottom_dock.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/milestone_notch.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/overlay_gradient.dart';
@@ -24,6 +25,7 @@ class ReaderSurface extends StatefulWidget {
   final void Function(double) updateProgress;
   final bool isFocusMode;
   final Color bgColor;
+  final ReaderUiStates uiState;
 
   const ReaderSurface({
     super.key,
@@ -34,6 +36,7 @@ class ReaderSurface extends StatefulWidget {
     required this.updateProgress,
     required this.isFocusMode,
     required this.bgColor,
+    required this.uiState,
   });
 
   @override
@@ -44,9 +47,11 @@ class _ReaderSurfaceState extends State<ReaderSurface>
     with SingleTickerProviderStateMixin {
   BionicCache? _cache;
   bool _cacheReady = false;
-  bool _visible = false;
   int? initialCell;
   CellCache? _pages;
+
+  bool _cacheError = false;
+  bool _pagesError = false;
 
   bool isAnimationReady = false;
   String _currentMessage = '';
@@ -82,6 +87,8 @@ class _ReaderSurfaceState extends State<ReaderSurface>
   }
 
   void _initMilestones() {
+    print('🎯 milestone method called --------- ');
+
     final savedPrgress = widget.book.progress;
     for (final i in _milestones.keys) {
       if (savedPrgress >= i) _achievedMilestones[i] = _milestones[i]!;
@@ -176,6 +183,10 @@ class _ReaderSurfaceState extends State<ReaderSurface>
   }
 
   Future<void> _loadCache() async {
+    if (widget.paragraphs.isEmpty) {
+      setState(() => _cacheError = true);
+      return;
+    }
     print('📚 Loading BionicCache...');
     final cache = await BionicCache.compute(widget.paragraphs);
 
@@ -203,12 +214,13 @@ class _ReaderSurfaceState extends State<ReaderSurface>
         curve: Curves.easeInOutCubic,
       );
     }
-
-    setState(() => _visible = true);
   }
 
   Future<void> _loadPages([double? newFontSize]) async {
-    if (_cache == null) return;
+    if (_cache == null || _cache!.cellCount == 0) {
+      setState(() => _pagesError = true);
+      return;
+    }
     setState(() => _pages = null);
     await Future.delayed(const Duration(milliseconds: 20));
     print('📄 Building pages layout...');
@@ -273,7 +285,7 @@ class _ReaderSurfaceState extends State<ReaderSurface>
                       ? AnimatedOpacity(
                           key: const ValueKey('scroll_list_view'),
                           duration: AppDuration.slow,
-                          opacity: _visible ? 1 : 0,
+                          opacity: _pages != null ? 1 : 0,
                           child: ScrollablePositionedList.builder(
                             padding: EdgeInsets.symmetric(
                               horizontal: AppSpacing.xxl,
@@ -327,16 +339,18 @@ class _ReaderSurfaceState extends State<ReaderSurface>
               : AnimatedSwitcher(
                   duration: AppDuration.slow,
                   child: _pages == null
-                      ? TextAnimation(
-                          key: const ValueKey('loading_animation'),
-                          callBack: () {},
-                          messages: const [
-                            'just one step...',
-                            'getting Book Ready For You...',
-                            'Writing The Last Words...',
-                            'Book Is Ready Now.',
-                          ],
-                        )
+                      ? widget.uiState == ReaderUiStates.applyPreferences
+                            ? null
+                            : TextAnimation(
+                                key: const ValueKey('loading_animation'),
+                                callBack: () {},
+                                messages: const [
+                                  'just one step...',
+                                  'getting Book Ready For You...',
+                                  'Writing The Last Words...',
+                                  'Book Is Ready Now.',
+                                ],
+                              )
                       : CellPageView(
                           key: ValueKey(_pages),
                           state: widget.state,
