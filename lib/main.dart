@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:quill/core/Obesrver/my_bloc_observer.dart';
 import 'package:quill/core/di/injection_container.dart';
 import 'package:quill/core/locale/cubit/locale_cubit.dart';
+import 'package:quill/core/network/network_service.dart';
 import 'package:quill/core/router/app_router.dart';
 import 'package:quill/core/theme/app_theme.dart';
 import 'package:quill/core/theme/cubit/theme_cubit.dart';
@@ -48,6 +49,7 @@ void main() async {
               fetchLocalBookUsecase: sl<FetchLocalBookUsecase>(),
               updateBookUsecase: sl<UpdateBookUsecase>(),
               fetchLocalBooksUsecase: sl<FetchLocalBooksUsecase>(),
+              networkService: sl<NetworkService>(),
             )),
           ),
           BlocProvider(create: (_) => sl<ThemeCubit>()),

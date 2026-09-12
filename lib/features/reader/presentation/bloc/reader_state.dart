@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:quill/core/errors/failures.dart';
+import 'package:quill/features/home/domain/entities/book_entity.dart';
 import 'package:quill/features/reader/data/models/local_book.dart';
 
 abstract class ReaderState extends Equatable {}
@@ -51,4 +52,26 @@ class FetchLocalBooksSuccess extends ReaderState {
   FetchLocalBooksSuccess({required this.localBooks});
   @override
   List<Object?> get props => [localBooks];
+}
+
+class FetchServerBookSuccess extends ReaderState {
+  final List<String> paragraphs;
+  final BookEntity book;
+
+  FetchServerBookSuccess({required this.paragraphs, required this.book});
+  @override
+  List<Object?> get props => [paragraphs, book];
+}
+
+class FetchProgressSuccess extends ReaderState {
+  final double progress;
+
+  FetchProgressSuccess({required this.progress});
+  @override
+  List<Object?> get props => [progress];
+}
+
+class UpdateServerProgressSuccess extends ReaderState {
+  @override
+  List<Object?> get props => [];
 }

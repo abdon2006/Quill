@@ -12,8 +12,7 @@ import 'package:quill/core/theme/app_icons.dart';
 import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
-import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
-import 'package:quill/features/home/presentation/bloc/home_event.dart';
+import 'package:quill/features/home/domain/entities/book_entity.dart';
 import 'package:quill/features/library/presentation/widgets/staggerd_animation.dart';
 import 'package:quill/features/reader/data/models/local_book.dart';
 import 'package:quill/features/reader/domain/usecases/params/reader_book_params.dart';
@@ -28,6 +27,7 @@ import 'package:quill/features/reader/presentation/widgets/reader/build_top_bar.
 import 'package:quill/features/reader/presentation/widgets/reader/prefernces/reader_preferences_sheet.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/reader_surface.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/text_animation.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 enum ReaderUiStates {
   idle,
@@ -55,11 +55,21 @@ class _ReaderScreenState extends State<ReaderScreen> {
   final ValueNotifier<bool> _isBionicEnabled = ValueNotifier(false);
   ReaderUiStates _uiState = ReaderUiStates.controlsVisible;
   Timer? _uiHideTimer;
+
+  /// Books
+  BookEntity? _serverBook;
   LocalBook? _book;
+
+  /// variable for local progress
   double? _currentProgress;
+
+  /// ReaderBloc Instance To Update The Local Progress on Dispose
   late final ReaderBloc _bloc;
+
+  /// Errors
   bool _bookError = false;
   bool _readerError = false;
+
   @override
   void initState() {
     super.initState();
@@ -68,8 +78,8 @@ class _ReaderScreenState extends State<ReaderScreen> {
     _startHideTimer();
 
     if (widget.bookId.localId == null) {
-      context.read<HomeBloc>().add(
-        GetBookByIdEvent(bookId: widget.bookId.serverId!),
+      context.read<ReaderBloc>().add(
+        FetchServerBookEvent(bookId: widget.bookId.serverId!),
       );
     } else {
       context.read<ReaderBloc>().add(
@@ -87,14 +97,19 @@ class _ReaderScreenState extends State<ReaderScreen> {
             bookId: _book!.isarId,
             title: _book!.title,
             author: _book!.author,
-            currentPage:
-                // _currentProgress!.toInt() < (_book!.progress).round()
-                //     ? _book!.progress
-                //     :
-                _currentProgress!.toInt(),
+            currentPage: _currentProgress!.toInt(),
             coverImagePath: _book!.coverImagePath ?? '',
             isCoverImageChange: false,
           ),
+        ),
+      );
+    }
+    if (_serverBook != null && _currentProgress != null) {
+      _bloc.add(
+        UpdateServerProgressEvent(
+          progress: _currentProgress!,
+          bookId: widget.bookId.serverId!,
+          totalChunks: _serverBook!.totalChunks,
         ),
       );
     }
@@ -222,17 +237,6 @@ class _ReaderScreenState extends State<ReaderScreen> {
     };
   }
 
-  Color _getTextColor(ReaderPreferencesState state, BuildContext context) {
-    return switch (state.theme) {
-      ReaderTheme.dark => AppColors.darkTextPrimary,
-      ReaderTheme.light => AppColors.lightTextPrimary,
-      ReaderTheme.system =>
-        Theme.of(context).brightness == Brightness.dark
-            ? AppColors.darkTextPrimary
-            : AppColors.lightTextPrimary,
-    };
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
@@ -248,6 +252,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
             body: SafeArea(
               child: Stack(
                 children: [
+                  /// Bloc Listener
                   BlocListener<ReaderBloc, ReaderState>(
                     listener: (context, state) {
                       if (state is FetchLocalBookSuccess) {
@@ -260,8 +265,26 @@ class _ReaderScreenState extends State<ReaderScreen> {
                           setState(() {
                             _paragraphs = state.book.paragraphs;
                             _book = state.book;
+                            _currentProgress = state.book.progress.toDouble();
                           });
                         }
+                      }
+                      if (state is FetchServerBookSuccess) {
+                        setState(() {
+                          _serverBook = state.book;
+                          _paragraphs = state.paragraphs;
+                        });
+
+                        /// عشان نتاكد ان الكتاب جه مالسيرفر الاول initState مكتبناش الريكويست دي في ال
+                        context.read<ReaderBloc>().add(
+                          FetchProgressEvent(
+                            bookId: widget.bookId.serverId!,
+                            totalChunks: _serverBook!.totalChunks,
+                          ),
+                        );
+                      }
+                      if (state is FetchProgressSuccess) {
+                        setState(() => _currentProgress = state.progress);
                       }
                       if (state is ReaderFailure) {
                         setState(() {
@@ -272,29 +295,36 @@ class _ReaderScreenState extends State<ReaderScreen> {
                     },
                     child: SizedBox(),
                   ),
-                  // BlocBuilder<HomeBloc, HomeState>(
-                  //   builder: (context, state) {
-                  //     if (state is GetBookByIdSuccess) {
-                  //       return ListView(
-                  //         padding: EdgeInsets.symmetric(
-                  //           horizontal: AppSpacing.xxl,
-                  //           vertical: AppSpacing.xl,
-                  //         ),
-                  //         children: [],
-                  //       );
-                  //     }
-                  //     return const SizedBox();
-                  //   },
-                  // ),
+
+                  BlocBuilder<ReaderBloc, ReaderState>(
+                    builder: (context, state) {
+                      bool isLoading = state is ReaderLoading;
+                      return AnimatedSwitcher(
+                        duration: AppDuration.slow,
+                        child: isLoading
+                            ? buildSkeletonizerReaderEffect()
+                            : SizedBox(key: ValueKey('sized box')),
+                      );
+                    },
+                  ),
+
+                  /// Reader Surface
                   NotificationListener<UserScrollNotification>(
                     onNotification: _handleScroll,
-                    child: _book == null
+                    child: _paragraphs.isEmpty || _currentProgress == null
                         ? SizedBox.shrink()
                         : ReaderSurface(
                             paragraphs: _paragraphs,
+                            bookTitle: _book?.title ?? _serverBook?.title ?? '',
+                            bookAuthor:
+                                _book?.author ?? _serverBook?.author ?? '',
+                            coverImage:
+                                _book?.coverImagePath ??
+                                _serverBook?.coverImage,
+                            initialProgress: _currentProgress!,
+                            bgColor: _getReaderBgColor(state),
+                            uiState: _uiState,
                             isBionicNotifier: _isBionicEnabled,
-
-                            book: _book!,
                             state: state,
                             updateProgress: (double progress) {
                               _currentProgress = progress;
@@ -303,8 +333,6 @@ class _ReaderScreenState extends State<ReaderScreen> {
                             isFocusMode:
                                 _uiState == ReaderUiStates.focusExitReveal ||
                                 _uiState == ReaderUiStates.focusMode,
-                            bgColor: _getReaderBgColor(state),
-                            uiState: _uiState,
                           ),
                   ),
 
@@ -323,8 +351,9 @@ class _ReaderScreenState extends State<ReaderScreen> {
                           opacity: showControls ? 1.0 : 0.0,
                           duration: AppDuration.slow,
                           child: BuildTopBar(
-                            bookTitle: _book == null ? '' : _book!.title,
-                            bookAuthor: _book == null ? '' : _book!.author,
+                            bookTitle: _book?.title ?? _serverBook?.title ?? '',
+                            bookAuthor:
+                                _book?.author ?? _serverBook?.author ?? '',
                             state: state,
                           ),
                         ),
@@ -415,8 +444,6 @@ class _ReaderScreenState extends State<ReaderScreen> {
                     ),
                   ),
 
-                  /// Bottom Focus Overlay
-
                   /// transition Overlay
                   AnimatedSwitcher(
                     duration: AppDuration.readerGlow,
@@ -464,6 +491,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                     },
                   ),
 
+                  /// Error State for Bloc reader Failure
                   if (_readerError)
                     AnimatedOpacity(
                       opacity: _readerError ? 1 : 0,
@@ -480,12 +508,16 @@ class _ReaderScreenState extends State<ReaderScreen> {
                         ),
                       ),
                     ),
+
+                  /// Back Button appears in every error state
                   if (_bookError || _readerError)
                     Positioned(
                       top: 10.h,
                       left: 20.w,
                       child: _errorBackButton(context: context, theme: theme),
                     ),
+
+                  /// Error State for empty paragraphs
                   if (_bookError)
                     AnimatedOpacity(
                       opacity: _bookError ? 1 : 0,
@@ -532,5 +564,35 @@ Widget _errorBackButton({
         // getIconsFgColor(state: state, context: context, theme: theme),
       ),
     ),
+  ),
+);
+
+Widget buildSkeletonizerReaderEffect() => Skeletonizer(
+  enabled: true,
+  effect: ShimmerEffect(),
+  child: ListView.builder(
+    key: const ValueKey('loading'),
+    physics: const NeverScrollableScrollPhysics(),
+    padding: EdgeInsets.symmetric(horizontal: AppSpacing.xxl, vertical: 100.h),
+    itemCount: 15,
+    itemBuilder: (context, index) {
+      return Padding(
+        padding: EdgeInsets.only(bottom: AppSpacing.xl),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ' *
+                  2,
+              style: TextStyle(fontSize: 16.sp, height: 1.8),
+            ),
+            Text(
+              'Ut enim ad minim veniam, quis nostrud exercitation.',
+              style: TextStyle(fontSize: 16.sp, height: 1.8),
+            ),
+          ],
+        ),
+      );
+    },
   ),
 );

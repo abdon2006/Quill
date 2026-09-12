@@ -213,6 +213,7 @@ Future<void> setupDI() async {
       fetchLocalBookUsecase: sl(),
       updateBookUsecase: sl(),
       fetchLocalBooksUsecase: sl(),
+      networkService: sl(),
     ),
   );
   sl.registerLazySingleton<ReaderPreferencesCubit>(

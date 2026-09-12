@@ -6,7 +6,6 @@ import 'package:quill/core/theme/app_colors.dart';
 import 'package:quill/core/theme/app_duration.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
-import 'package:quill/features/reader/data/models/local_book.dart';
 import 'package:quill/features/reader/presentation/cubit/reader_preferences_state.dart';
 import 'package:quill/features/reader/presentation/screens/reader_screen.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/bottom_dock.dart';
@@ -21,7 +20,12 @@ class ReaderSurface extends StatefulWidget {
   final List<String> paragraphs;
   final ReaderPreferencesState state;
   final ValueNotifier<bool> isBionicNotifier;
-  final LocalBook book;
+
+  final String bookTitle;
+  final String bookAuthor;
+  final double initialProgress;
+  final String? coverImage;
+
   final void Function(double) updateProgress;
   final bool isFocusMode;
   final Color bgColor;
@@ -31,12 +35,15 @@ class ReaderSurface extends StatefulWidget {
     super.key,
     required this.paragraphs,
     required this.isBionicNotifier,
-    required this.book,
     required this.state,
     required this.updateProgress,
     required this.isFocusMode,
     required this.bgColor,
     required this.uiState,
+    required this.initialProgress,
+    required this.bookTitle,
+    required this.bookAuthor,
+    this.coverImage,
   });
 
   @override
@@ -89,7 +96,7 @@ class _ReaderSurfaceState extends State<ReaderSurface>
   void _initMilestones() {
     print('🎯 milestone method called --------- ');
 
-    final savedPrgress = widget.book.progress;
+    final savedPrgress = widget.initialProgress;
     for (final i in _milestones.keys) {
       if (savedPrgress >= i) _achievedMilestones[i] = _milestones[i]!;
     }
@@ -131,6 +138,9 @@ class _ReaderSurfaceState extends State<ReaderSurface>
   @override
   void initState() {
     super.initState();
+    print(
+      ' ------------------- cover Image : ${widget.coverImage}  ------------------ ',
+    );
     _animationController = AnimationController(
       vsync: this,
       duration: AppDuration.readerGlow,
@@ -198,7 +208,8 @@ class _ReaderSurfaceState extends State<ReaderSurface>
 
     print('✅ BionicCache loaded — total cells: ${_cache!.cellCount}');
 
-    final savedIndex = (widget.book.progress / 100 * _cache!.cellCount).toInt();
+    final savedIndex = (widget.initialProgress / 100 * _cache!.cellCount)
+        .toInt();
     setState(() => initialCell = savedIndex);
     print('📍 Restored initial cell from progress: $initialCell');
 
@@ -305,10 +316,12 @@ class _ReaderSurfaceState extends State<ReaderSurface>
                                         children: [
                                           SizedBox(height: 70.h),
                                           ReaderHeader(
-                                            book: widget.book,
                                             hours: hours,
                                             mins: mins,
                                             state: widget.state,
+                                            title: widget.bookTitle,
+                                            author: widget.bookAuthor,
+                                            coverImage: widget.coverImage,
                                           ),
                                         ],
                                       )

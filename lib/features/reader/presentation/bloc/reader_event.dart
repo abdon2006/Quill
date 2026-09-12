@@ -37,3 +37,33 @@ class FetchLocalBooksEvent extends ReaderEvent {
   @override
   List<Object?> get props => [];
 }
+
+class FetchServerBookEvent extends ReaderEvent {
+  final String bookId;
+
+  FetchServerBookEvent({required this.bookId});
+  @override
+  List<Object?> get props => [bookId];
+}
+
+class FetchProgressEvent extends ReaderEvent {
+  final String bookId;
+  final int totalChunks;
+  FetchProgressEvent({required this.bookId, required this.totalChunks});
+
+  @override
+  List<Object?> get props => [bookId, totalChunks];
+}
+
+class UpdateServerProgressEvent extends ReaderEvent {
+  final double progress;
+  final String bookId;
+  final int totalChunks;
+  UpdateServerProgressEvent({
+    required this.progress,
+    required this.bookId,
+    required this.totalChunks,
+  });
+  @override
+  List<Object?> get props => [progress, bookId, totalChunks];
+}

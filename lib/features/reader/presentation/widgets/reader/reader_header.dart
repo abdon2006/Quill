@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:quill/core/theme/app_colors.dart';
@@ -8,21 +7,24 @@ import 'package:quill/core/theme/app_shadows.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 import 'package:quill/core/widgets/build_cover_placeholder.dart';
-import 'package:quill/features/reader/data/models/local_book.dart';
 import 'package:quill/features/reader/presentation/cubit/reader_preferences_state.dart';
 
 class ReaderHeader extends StatelessWidget {
   final ReaderPreferencesState state;
   final int hours;
   final int mins;
-  final LocalBook book;
+  final String title;
+  final String author;
+  final String? coverImage; 
 
   const ReaderHeader({
     super.key,
-    required this.book,
     required this.hours,
     required this.mins,
     required this.state,
+    required this.title,
+    required this.author,
+    this.coverImage,
   });
 
   Color _getTextColor(ReaderPreferencesState state, BuildContext context) {
@@ -38,6 +40,16 @@ class ReaderHeader extends StatelessWidget {
 
   Color _getMutedColor(ReaderPreferencesState state, BuildContext context) {
     return _getTextColor(state, context).withValues(alpha: 0.45);
+  }
+
+  Widget _buildCover() {
+    if (coverImage == null || coverImage!.isEmpty) {
+      return Builder(builder: (context) => buildCoverPlaceholder(context));
+    }
+    if (coverImage!.startsWith('http')) {
+      return Image.network(coverImage!, fit: BoxFit.cover);
+    }
+    return Image.file(File(coverImage!), fit: BoxFit.cover);
   }
 
   @override
@@ -65,10 +77,7 @@ class ReaderHeader extends StatelessWidget {
             ),
             child: ClipRRect(
               borderRadius: AppRadius.lg,
-              child:
-                  book.coverImagePath != null && book.coverImagePath!.isNotEmpty
-                  ? Image.file(File(book.coverImagePath!), fit: BoxFit.cover)
-                  : buildCoverPlaceholder(context),
+              child: _buildCover(), 
             ),
           ),
 
@@ -83,7 +92,7 @@ class ReaderHeader extends StatelessWidget {
           SizedBox(height: AppSpacing.lg),
 
           Text(
-            book.title,
+            title, 
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -96,9 +105,8 @@ class ReaderHeader extends StatelessWidget {
 
           SizedBox(height: AppSpacing.sm),
 
-          // المؤلف
           Text(
-            book.author,
+            author, 
             textAlign: TextAlign.center,
             style: AppTextStyles.bodyMedium(context).copyWith(
               color: mutedColor,
@@ -109,7 +117,6 @@ class ReaderHeader extends StatelessWidget {
 
           SizedBox(height: AppSpacing.lg),
 
-          // وقت القراءة — pill هادي
           Container(
             padding: EdgeInsets.symmetric(
               horizontal: AppSpacing.lg,

@@ -14,6 +14,7 @@ class LocalBookRepositoryImpl implements LocalBookRepository {
   final LocalBookDataSource bookLocalDataSource;
 
   LocalBookRepositoryImpl({required this.bookLocalDataSource});
+  
   @override
   Future<Either<Failure, LocalBook>> fetchBook(int bookId) async {
     try {
