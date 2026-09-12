@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hugeicons/hugeicons.dart';
+import 'package:quill/core/states/ErrorStates/app_error.dart';
+import 'package:quill/core/theme/app_assets.dart';
+import 'package:quill/core/theme/app_duration.dart';
+import 'package:quill/core/theme/app_icons.dart';
 import 'package:quill/core/theme/app_spacing.dart';
-import 'package:quill/core/widgets/app_toast.dart';
-import 'package:quill/core/widgets/toast_animation.dart';
+import 'package:quill/core/theme/app_toast.dart';
 import 'package:quill/features/home/domain/entities/book_entity.dart';
 import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
 import 'package:quill/features/home/presentation/bloc/home_event.dart';
@@ -31,17 +36,20 @@ class BookDetailsScreen extends StatefulWidget {
 
 class _BookDetailsScreenState extends State<BookDetailsScreen> {
   final ScrollController _scrollController = ScrollController();
-  final toastAnimationKey = GlobalKey<ToastAnimationState>();
   bool isInWishlist = false;
+  bool _bookError = false;
   @override
   void initState() {
     super.initState();
     if (widget.book == null) {
+      /// if came to display server book dispatch the request
       context.read<HomeBloc>().add(GetBookByIdEvent(bookId: widget.bookId!));
     }
     final wishliststate = context.read<LibraryBloc>().state;
     if (wishliststate is FetchSuccessState) {
       setState(() {
+        /// check this book of the all library books to know is it exist or not
+        /// to handle the remove & add to library button
         isInWishlist = wishliststate.books.any((book) {
           if (widget.book == null) {
             return book.bookId == widget.bookId;
@@ -61,83 +69,87 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context).colorScheme;
     return BlocListener<LibraryBloc, LibraryState>(
       listener: (context, state) async {
         if (state is AddSuccessState) {
-          final overlayEntry = OverlayEntry(
-            builder: (context) {
-              return Align(
-                alignment: Alignment.topCenter,
-                child: Material(
-                  color: Colors.transparent,
-                  child: ToastAnimation(
-                    key: toastAnimationKey,
-                    child: AppToast(
-                      label: 'Added to your library',
-                      subLabel: 'Ready whenever you are.',
-                      type: ToastType.success,
-                    ),
-                  ),
-                ),
-              );
-            },
-          );
-          Overlay.of(context).insert(overlayEntry);
           setState(() => isInWishlist = true);
-
-          await Future.delayed(Duration(seconds: 2));
-          await toastAnimationKey.currentState?.dismiss();
-          overlayEntry.remove();
+          appToast(
+            context: context,
+            label: 'Added to your library.',
+            description: 'Ready whenever you are.',
+            theme: theme,
+            isBlur: false,
+            icon: HugeIcons.strokeRoundedFavourite,
+          );
         }
         if (state is RemoveSuccessState) {
-          final overlayEntry = OverlayEntry(
-            builder: (context) {
-              return Align(
-                alignment: Alignment.topCenter,
-                child: Material(
-                  color: Colors.transparent,
-                  child: ToastAnimation(
-                    key: toastAnimationKey,
-                    child: AppToast(
-                      label: 'Removed From your library',
-                      subLabel: 'You can always add it back.',
-                      type: ToastType.success,
-                    ),
-                  ),
-                ),
-              );
-            },
-          );
-          Overlay.of(context).insert(overlayEntry);
           setState(() => isInWishlist = false);
-
-          await Future.delayed(Duration(seconds: 2));
-          await toastAnimationKey.currentState?.dismiss();
-          overlayEntry.remove();
+          appToast(
+            context: context,
+            label: 'Removed from your library.',
+            description: 'You can always add it back.',
+            theme: theme,
+            isBlur: false,
+            icon: HugeIcons.strokeRoundedArchive01,
+          );
         }
       },
       child: Scaffold(
         extendBody: true,
         body: widget.book == null
-            ? BlocBuilder<HomeBloc, HomeState>(
+            ? BlocConsumer<HomeBloc, HomeState>(
                 builder: (context, state) {
                   if (state is GetBookByIdSuccess) {
                     final book = state.book;
-                    return _buildScreen(book, false);
+                    return _buildScreen(
+                      key: const ValueKey('success_state'),
+                      book: book,
+                      isLoading: false,
+                      isError: _bookError,
+                      theme: theme,
+                      isLoadingForAddAndRemove: state is HomeLoading,
+                      context: context,
+                    );
                   }
-                  if (state is HomeError) {}
-                  if (state is HomeLoading) {
-                    return _buildScreen(BookEntity.dummy(), true);
-                  }
-                  return SizedBox();
+                  return AnimatedSwitcher(
+                    duration: AppDuration.slow,
+                    child: state is HomeError
+                        ? _buildErrorState(context: context, theme: theme)
+                        : _buildScreen(
+                            key: ValueKey('loading'),
+                            book: BookEntity.dummy(),
+                            isLoading: true,
+                            isError: _bookError,
+                            theme: theme,
+                            context: context,
+                          ),
+                  );
+                },
+                listener: (BuildContext context, HomeState state) {
+                  if (state is HomeError) setState(() => _bookError = true);
                 },
               )
-            : _buildScreen(widget.book!, false),
+            : _buildScreen(
+                book: widget.book!,
+                isLoading: false,
+                isError: _bookError,
+                theme: theme,
+                context: context,
+              ),
       ),
     );
   }
 
-  Widget _buildScreen(BookEntity book, bool isLoading) {
+  Widget _buildScreen({
+    Key? key,
+    required BuildContext context,
+    required BookEntity book,
+    required bool isLoading,
+    required bool isError,
+    required ColorScheme theme,
+    bool? isLoadingForAddAndRemove,
+  }) {
     return Stack(
       children: [
         Skeletonizer(
@@ -173,7 +185,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
           ),
         ),
 
-        buildTopBar(context),
+        buildTopBar(context: context, book: book),
 
         Positioned(
           left: 5.w,
@@ -188,3 +200,48 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     );
   }
 }
+
+Widget _errorBackButton({
+  required BuildContext context,
+  required ColorScheme theme,
+}) => Material(
+  color: Colors.transparent,
+  child: InkWell(
+    onTap: () => context.pop(),
+    customBorder: CircleBorder(),
+    child: Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: theme.secondary.withValues(alpha: 0.1),
+      ),
+      padding: EdgeInsets.all(AppSpacing.sm),
+      child: HugeIcon(
+        icon: AppIcons.back,
+        color: theme.secondary.withValues(alpha: 0.7),
+        // getIconsFgColor(state: state, context: context, theme: theme),
+      ),
+    ),
+  ),
+);
+
+Widget _buildErrorState({
+  required BuildContext context,
+  required ColorScheme theme,
+}) => SafeArea(
+  key: ValueKey('error'),
+  child: Stack(
+    children: [
+      AppError(
+        title: 'The story slipped away.',
+        subtitle:
+            'Something went wrong while dusting off this book. Let\'s bring it back.',
+        image: AppAssets.errorBookDetails,
+      ),
+      Positioned(
+        top: 10.h,
+        left: 20.w,
+        child: _errorBackButton(context: context, theme: theme),
+      ),
+    ],
+  ),
+);

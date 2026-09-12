@@ -22,4 +22,5 @@ abstract final class AppAssets {
   static const readingInTablet = '${images}reading_tablet.svg';
   static const window = '${images}reading_window.svg';
   static const womanReading = '${images}woman_reading.svg';
+  static const errorBookDetails = '${images}error_book_details.svg';
 }

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:quill/core/router/app_router.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/widgets/book_list_tile.dart';
 import 'package:quill/core/widgets/premium_background.dart';
@@ -23,10 +24,20 @@ import 'package:quill/features/library/domain/entities/wishlist_entity.dart';
 import 'package:quill/features/library/presentation/bloc/library_bloc.dart';
 import 'package:quill/features/library/presentation/bloc/library_state.dart';
 import 'package:quill/features/library/presentation/widgets/staggerd_animation.dart';
+import 'package:quill/features/reader/domain/usecases/params/reader_book_params.dart';
+import 'package:quill/features/reader/presentation/bloc/reader_bloc.dart';
+import 'package:quill/features/reader/presentation/bloc/reader_event.dart';
+import 'package:quill/features/reader/presentation/bloc/reader_state.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-class HomeScreen extends StatelessWidget {
-  HomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   final dummyUser = UserEntity(
     id: '',
     name: '',
@@ -34,12 +45,19 @@ class HomeScreen extends StatelessWidget {
     currentStreak: 0,
     longestStreak: 0,
   );
+  bool _isLocalBooksExist = false;
   // ضيف اللستة دي جوه الـ StatelessWidget قبل الـ build أو خليها في ملف منفصل للـ Mock Data
   Future<void> _onRefresh(BuildContext context) async {
     context.read<HomeBloc>().add(RefreshBookEvent());
     await context.read<HomeBloc>().stream.firstWhere(
       (state) => state is FetchBooksSuccess || state is HomeError,
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<ReaderBloc>().add(FetchLocalBooksEvent());
   }
 
   @override
@@ -53,6 +71,16 @@ class HomeScreen extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
               children: [
+                BlocListener<ReaderBloc, ReaderState>(
+                  listener: (context, state) {
+                    if (state is FetchLocalBooksSuccess &&
+                        state.localBooks.isNotEmpty) {
+                      setState(() => _isLocalBooksExist = true);
+                    }
+                  },
+                  child: SizedBox.shrink(),
+                ),
+
                 /// Header
                 BlocConsumer<AuthBloc, AuthState>(
                   builder: (context, state) {
@@ -91,7 +119,14 @@ class HomeScreen extends StatelessWidget {
                 /// Continue reading
                 BlocBuilder<LibraryBloc, LibraryState>(
                   builder: (context, state) {
-                    if (state is FetchSuccessState) {
+                    if (!_isLocalBooksExist) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.xl,
+                        ),
+                        child: ContinueReadingEmpty(onImport: () {}),
+                      );
+                    } else if (state is FetchSuccessState) {
                       final books = state.books;
                       if (books.isEmpty) {
                         return Padding(
@@ -100,16 +135,23 @@ class HomeScreen extends StatelessWidget {
                           ),
                           child: ContinueReadingEmpty(onImport: () {}),
                         );
+                      } else {
+                        final book = books.take(1).toList()[0];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.xl,
+                          ),
+                          child: ContinueReading(
+                            onTap: () => context.push(
+                              AppRoutes.reader,
+                              extra: ReaderBookParams(serverId: book.bookId),
+                            ),
+                            book: book,
+                          ),
+                        );
                       }
-                      final book = books.take(1).toList()[0];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.xl,
-                        ),
-                        child: ContinueReading(onTap: () {}, book: book),
-                      );
                     }
-                    return SizedBox();
+                    return SizedBox.shrink();
                   },
                 ),
 
@@ -165,7 +207,8 @@ class HomeScreen extends StatelessWidget {
                       showSnackBar(
                         context,
                         message: 'Your shelf couldn\'t be reached.',
-                        messageDisc: 'Check your connection and try again.', icon: HugeIcons.strokeRoundedWifiError01,
+                        messageDisc: 'Check your connection and try again.',
+                        icon: HugeIcons.strokeRoundedWifiError01,
                       );
                     }
                   },

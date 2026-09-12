@@ -6,6 +6,7 @@ import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_shadows.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
+import 'package:quill/core/widgets/build_cover_placeholder.dart';
 import 'package:quill/features/library/domain/entities/wishlist_entity.dart';
 
 class ContinueReading extends StatelessWidget {
@@ -49,14 +50,7 @@ class ContinueReading extends StatelessWidget {
                         book.coverImage,
                         fit: BoxFit.cover,
                         errorBuilder: (_, _, _) {
-                          return Container(
-                            color: colors.surfaceContainerHighest,
-                            alignment: Alignment.center,
-                            child: HugeIcon(
-                              icon: HugeIcons.strokeRoundedBook01,
-                              color: colors.onSurface.withValues(alpha: 0.35),
-                            ),
-                          );
+                          return buildCoverPlaceholder(context);
                         },
                       ),
                     ),
@@ -105,6 +99,7 @@ class ContinueReading extends StatelessWidget {
                           child: ClipRRect(
                             borderRadius: AppRadius.xl,
                             child: LinearProgressIndicator(
+                              /// will be handled to adapt the current progress
                               value: 0.7,
                               minHeight: 5,
                               backgroundColor: colors.onSurface.withValues(
@@ -119,8 +114,8 @@ class ContinueReading extends StatelessWidget {
 
                         SizedBox(width: AppSpacing.sm),
 
-                        //////
                         Text(
+                          /// will be handled to adapt the current progress
                           '70%',
                           style: AppTextStyles.caption(context).copyWith(
                             color: colors.onSurface.withValues(alpha: 0.55),
