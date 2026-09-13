@@ -17,7 +17,8 @@ import 'package:quill/features/home/presentation/bloc/home_event.dart';
 import 'package:quill/features/home/presentation/bloc/home_state.dart';
 import 'package:quill/features/home/presentation/widgets/Home/book_grid_card.dart';
 import 'package:quill/features/home/presentation/widgets/Home/continue_reading.dart';
-import 'package:quill/features/home/presentation/widgets/Home/continue_reading_empty.dart';
+import 'package:quill/features/home/presentation/widgets/Home/empty_local_book_import.dart';
+import 'package:quill/features/home/presentation/widgets/Home/empty_server_book.dart';
 import 'package:quill/features/home/presentation/widgets/Home/home_header.dart';
 import 'package:quill/features/home/presentation/widgets/Home/section_header.dart';
 import 'package:quill/features/library/domain/entities/wishlist_entity.dart';
@@ -124,7 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: const EdgeInsets.symmetric(
                           horizontal: AppSpacing.xl,
                         ),
-                        child: ContinueReadingEmpty(onImport: () {}),
+                        child: EmptyLocalBookImport(onImport: () {}),
                       );
                     } else if (state is FetchSuccessState) {
                       final books = state.books;
@@ -133,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           padding: const EdgeInsets.symmetric(
                             horizontal: AppSpacing.xl,
                           ),
-                          child: ContinueReadingEmpty(onImport: () {}),
+                          child: EmptyServerBook(),
                         );
                       } else {
                         final book = books.take(1).toList()[0];

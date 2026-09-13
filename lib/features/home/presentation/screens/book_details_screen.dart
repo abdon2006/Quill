@@ -13,6 +13,7 @@ import 'package:quill/features/home/domain/entities/book_entity.dart';
 import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
 import 'package:quill/features/home/presentation/bloc/home_event.dart';
 import 'package:quill/features/home/presentation/bloc/home_state.dart';
+import 'package:quill/features/home/presentation/recommendations%20cubit/recommendation_cubit.dart';
 import 'package:quill/features/home/presentation/widgets/DetailsScreen/build_about_section.dart';
 import 'package:quill/features/home/presentation/widgets/DetailsScreen/build_book_identity.dart';
 import 'package:quill/features/home/presentation/widgets/DetailsScreen/build_book_cover.dart';
@@ -41,6 +42,8 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   @override
   void initState() {
     super.initState();
+    final currentId = widget.bookId ?? widget.book?.id;
+    context.read<RecommendationCubit>().getRecommendation(currentId!);
     if (widget.book == null) {
       /// if came to display server book dispatch the request
       context.read<HomeBloc>().add(GetBookByIdEvent(bookId: widget.bookId!));
@@ -179,7 +182,6 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
               const SizedBox(height: AppSpacing.xxxl),
 
               buildRecommendations(context),
-
               const SizedBox(height: 150),
             ],
           ),

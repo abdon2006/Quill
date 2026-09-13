@@ -20,6 +20,7 @@ import 'package:quill/features/home/domain/usecases/fetch_books_usecase.dart';
 import 'package:quill/features/home/domain/usecases/get_book_by_id_usecase.dart';
 import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
 import 'package:quill/features/home/presentation/bloc/home_event.dart';
+import 'package:quill/features/home/presentation/recommendations%20cubit/recommendation_cubit.dart';
 import 'package:quill/features/home/presentation/screens/book_details_screen.dart';
 import 'package:quill/features/home/presentation/screens/home_screen.dart';
 import 'package:quill/features/library/data/models/library_book_display_model.dart';
@@ -120,6 +121,11 @@ final appRouter = GoRouter(
                     bookRepository: sl<BookRepository>(),
                     getBookByIdUsecase: sl<GetBookByIdUsecase>(),
                   ),
+                ),
+                BlocProvider(
+                  create: ((context) => RecommendationCubit(
+                    fetchBooksUsecase: sl<FetchBooksUsecase>(),
+                  )),
                 ),
               ],
               child: BookDetailsScreen(book: book, bookId: bookId),

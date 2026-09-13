@@ -24,6 +24,7 @@ import 'package:quill/features/home/domain/repositories/book_repository.dart';
 import 'package:quill/features/home/domain/usecases/fetch_books_usecase.dart';
 import 'package:quill/features/home/domain/usecases/get_book_by_id_usecase.dart';
 import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
+import 'package:quill/features/home/presentation/recommendations%20cubit/recommendation_cubit.dart';
 import 'package:quill/features/library/data/datesources/library_local_data_source.dart';
 import 'package:quill/features/library/data/datesources/library_local_data_source_impl.dart';
 import 'package:quill/features/library/data/datesources/library_remote_data_source.dart';
@@ -125,6 +126,9 @@ Future<void> setupDI() async {
       bookRepository: sl(),
       getBookByIdUsecase: sl(),
     ),
+  );
+  sl.registerFactory<RecommendationCubit>(
+    () => RecommendationCubit(fetchBooksUsecase: sl()),
   );
 
   /// Auth

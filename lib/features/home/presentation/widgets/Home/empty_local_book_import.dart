@@ -6,9 +6,9 @@ import 'package:quill/core/theme/app_text_style.dart';
 import 'package:quill/core/widgets/app_button.dart';
 import 'package:quill/features/library/presentation/widgets/import_book_bottom_sheet.dart';
 
-class ContinueReadingEmpty extends StatelessWidget {
+class EmptyLocalBookImport extends StatelessWidget {
   final VoidCallback onImport;
-  const ContinueReadingEmpty({super.key, required this.onImport});
+  const EmptyLocalBookImport({super.key, required this.onImport});
 
   void _openImportSheet(BuildContext context) {
     showModalBottomSheet(
