@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart'; // ضفنا الروتر
 import 'package:quill/core/constants/app_constants.dart';
 import 'package:quill/core/router/app_router.dart'; // مسار الروتس بتاعك
@@ -123,9 +124,9 @@ class _OnboardingViewState extends State<_OnboardingView> {
               ),
 
               Positioned(
-                bottom: 48,
-                left: 0,
-                right: 0,
+                bottom: 30.h,
+                left: 25.w,
+                right: 25.w,
                 child: SafeArea(
                   child: Stack(
                     alignment: Alignment.center,

@@ -97,31 +97,27 @@ class LibraryBookCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                book.pages != null && book.progress != null
-                    ? Skeleton.ignore(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: LinearProgressIndicator(
-                                value: book.progress!.toDouble() / 100,
-                                borderRadius: AppRadius.xl,
-                                valueColor: AlwaysStoppedAnimation(
-                                  theme.primary,
-                                ),
-                                backgroundColor: theme.surface,
-                              ),
-                            ),
-                            const SizedBox(width: AppSpacing.sm),
-                            Text(
-                              progressLabel,
-                              style: AppTextStyles.caption(context).copyWith(
-                                color: theme.onSurface.withValues(alpha: 0.3),
-                              ),
-                            ),
-                          ],
+                Skeleton.ignore(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: LinearProgressIndicator(
+                          value: book.progress.toDouble() / 100,
+                          borderRadius: AppRadius.xl,
+                          valueColor: AlwaysStoppedAnimation(theme.primary),
+                          backgroundColor: theme.surface,
                         ),
-                      )
-                    : SizedBox(),
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Text(
+                        progressLabel,
+                        style: AppTextStyles.caption(context).copyWith(
+                          color: theme.onSurface.withValues(alpha: 0.3),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

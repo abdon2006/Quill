@@ -11,7 +11,7 @@ class LibraryBookDisplayModel {
   int? localId;
   final BookSource bookSource;
   int? pages;
-  int? progress;
+  int progress;
 
   LibraryBookDisplayModel({
     required this.title,
@@ -20,7 +20,7 @@ class LibraryBookDisplayModel {
     this.bookId,
     required this.bookSource,
     this.pages,
-    this.progress,
+    required this.progress,
     this.localId,
   });
   LibraryBookDisplayModel.dummy({
@@ -46,6 +46,7 @@ class LibraryMapper {
         coverImage: book.coverImage,
         bookSource: BookSource.server,
         bookId: book.bookId,
+        progress: book.progress,
       );
     }).toList();
   }

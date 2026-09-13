@@ -52,6 +52,8 @@ class _ChipsControlState extends State<ChipsControl> {
               children: List.generate(chipsData.length, (i) {
                 bool isSelected = selectedIndex == i;
                 return GestureDetector(
+                  /// not worked as i want i will handle it later
+                  behavior: HitTestBehavior.opaque,
                   onTap: () {
                     setState(() {
                       selectedIndex = i;

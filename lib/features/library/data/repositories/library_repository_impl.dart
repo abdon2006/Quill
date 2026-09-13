@@ -6,6 +6,7 @@ import 'package:quill/features/library/data/datesources/library_remote_data_sour
 import 'package:quill/features/library/data/models/wishlist_cache.dart';
 import 'package:quill/features/library/domain/entities/wishlist_entity.dart';
 import 'package:quill/features/library/domain/repositories/library_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LibraryRepositoryImpl implements LibraryRepository {
   final LibraryLocalDataSource libraryLocalDataSource;
@@ -35,19 +36,40 @@ class LibraryRepositoryImpl implements LibraryRepository {
     NoParams params,
   ) async {
     try {
+      List<WishlistEntity> finalBooks = [];
+
       final cachedBooks = await libraryLocalDataSource.fetchWishlist();
       if (cachedBooks.isEmpty) {
         print('Loaded The Wishlist From The SERVER');
+
         final response = await libraryRemoteDataSource.fetchWishlist(params);
+
         final cachedFromTheServer = WishlistMapper.mapToWishlistCacheBooks(
           response,
         );
         await libraryLocalDataSource.cacheWishlist(cachedFromTheServer);
-        return Right(response);
+        finalBooks = response;
+        // return Right(response);
       } else {
         print('Loaded The Wishlist From The CACHE');
-        return Right(WishlistMapper.mapToWishlistEntityBooks(cachedBooks));
+        finalBooks = WishlistMapper.mapToWishlistEntityBooks(cachedBooks);
       }
+
+      final prefs = await SharedPreferences.getInstance();
+      final mergedBooks = finalBooks.map((book) {
+        final savedProgress = prefs.getDouble(book.bookId) ?? 0.0;
+        return WishlistEntity(
+          wishlistId: book.wishlistId,
+          bookId: book.bookId,
+          userId: book.userId,
+          author: book.author,
+          title: book.title,
+          coverImage: book.coverImage,
+          ratingAvg: book.ratingAvg,
+          progress: savedProgress.toInt(),
+        );
+      }).toList();
+      return Right(mergedBooks);
     } on Failure catch (f) {
       return Left(f);
     } catch (e) {
@@ -79,6 +101,7 @@ class WishlistMapper {
       title: book.title,
       coverImage: book.coverImage,
       ratingAvg: book.ratingAvg,
+      progress: book.progress,
     );
   }
 
@@ -91,6 +114,7 @@ class WishlistMapper {
     cache.title = book.title;
     cache.coverImage = book.coverImage;
     cache.ratingAvg = book.ratingAvg;
+    cache.progress = book.progress;
     return cache;
   }
 

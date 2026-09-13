@@ -32,23 +32,28 @@ const WishlistCacheSchema = CollectionSchema(
       name: r'coverImage',
       type: IsarType.string,
     ),
-    r'ratingAvg': PropertySchema(
+    r'progress': PropertySchema(
       id: 3,
+      name: r'progress',
+      type: IsarType.long,
+    ),
+    r'ratingAvg': PropertySchema(
+      id: 4,
       name: r'ratingAvg',
       type: IsarType.double,
     ),
     r'title': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'title',
       type: IsarType.string,
     ),
     r'userId': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'userId',
       type: IsarType.string,
     ),
     r'wishlistId': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'wishlistId',
       type: IsarType.string,
     )
@@ -91,10 +96,11 @@ void _wishlistCacheSerialize(
   writer.writeString(offsets[0], object.author);
   writer.writeString(offsets[1], object.bookId);
   writer.writeString(offsets[2], object.coverImage);
-  writer.writeDouble(offsets[3], object.ratingAvg);
-  writer.writeString(offsets[4], object.title);
-  writer.writeString(offsets[5], object.userId);
-  writer.writeString(offsets[6], object.wishlistId);
+  writer.writeLong(offsets[3], object.progress);
+  writer.writeDouble(offsets[4], object.ratingAvg);
+  writer.writeString(offsets[5], object.title);
+  writer.writeString(offsets[6], object.userId);
+  writer.writeString(offsets[7], object.wishlistId);
 }
 
 WishlistCache _wishlistCacheDeserialize(
@@ -108,10 +114,11 @@ WishlistCache _wishlistCacheDeserialize(
   object.bookId = reader.readString(offsets[1]);
   object.coverImage = reader.readString(offsets[2]);
   object.isarID = id;
-  object.ratingAvg = reader.readDouble(offsets[3]);
-  object.title = reader.readString(offsets[4]);
-  object.userId = reader.readString(offsets[5]);
-  object.wishlistId = reader.readString(offsets[6]);
+  object.progress = reader.readLong(offsets[3]);
+  object.ratingAvg = reader.readDouble(offsets[4]);
+  object.title = reader.readString(offsets[5]);
+  object.userId = reader.readString(offsets[6]);
+  object.wishlistId = reader.readString(offsets[7]);
   return object;
 }
 
@@ -129,12 +136,14 @@ P _wishlistCacheDeserializeProp<P>(
     case 2:
       return (reader.readString(offset)) as P;
     case 3:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 4:
-      return (reader.readString(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 5:
       return (reader.readString(offset)) as P;
     case 6:
+      return (reader.readString(offset)) as P;
+    case 7:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -701,6 +710,62 @@ extension WishlistCacheQueryFilter
   }
 
   QueryBuilder<WishlistCache, WishlistCache, QAfterFilterCondition>
+      progressEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'progress',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<WishlistCache, WishlistCache, QAfterFilterCondition>
+      progressGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'progress',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<WishlistCache, WishlistCache, QAfterFilterCondition>
+      progressLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'progress',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<WishlistCache, WishlistCache, QAfterFilterCondition>
+      progressBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'progress',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<WishlistCache, WishlistCache, QAfterFilterCondition>
       ratingAvgEqualTo(
     double value, {
     double epsilon = Query.epsilon,
@@ -1220,6 +1285,19 @@ extension WishlistCacheQuerySortBy
     });
   }
 
+  QueryBuilder<WishlistCache, WishlistCache, QAfterSortBy> sortByProgress() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'progress', Sort.asc);
+    });
+  }
+
+  QueryBuilder<WishlistCache, WishlistCache, QAfterSortBy>
+      sortByProgressDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'progress', Sort.desc);
+    });
+  }
+
   QueryBuilder<WishlistCache, WishlistCache, QAfterSortBy> sortByRatingAvg() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'ratingAvg', Sort.asc);
@@ -1322,6 +1400,19 @@ extension WishlistCacheQuerySortThenBy
     });
   }
 
+  QueryBuilder<WishlistCache, WishlistCache, QAfterSortBy> thenByProgress() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'progress', Sort.asc);
+    });
+  }
+
+  QueryBuilder<WishlistCache, WishlistCache, QAfterSortBy>
+      thenByProgressDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'progress', Sort.desc);
+    });
+  }
+
   QueryBuilder<WishlistCache, WishlistCache, QAfterSortBy> thenByRatingAvg() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'ratingAvg', Sort.asc);
@@ -1396,6 +1487,12 @@ extension WishlistCacheQueryWhereDistinct
     });
   }
 
+  QueryBuilder<WishlistCache, WishlistCache, QDistinct> distinctByProgress() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'progress');
+    });
+  }
+
   QueryBuilder<WishlistCache, WishlistCache, QDistinct> distinctByRatingAvg() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'ratingAvg');
@@ -1447,6 +1544,12 @@ extension WishlistCacheQueryProperty
   QueryBuilder<WishlistCache, String, QQueryOperations> coverImageProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'coverImage');
+    });
+  }
+
+  QueryBuilder<WishlistCache, int, QQueryOperations> progressProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'progress');
     });
   }
 

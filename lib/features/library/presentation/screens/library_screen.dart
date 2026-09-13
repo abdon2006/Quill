@@ -32,6 +32,25 @@ class LibraryScreen extends StatefulWidget {
 class _LibraryScreenState extends State<LibraryScreen> {
   int selectedIndex = 0;
 
+  List<LibraryBookDisplayModel> _getFilter(
+    List<LibraryBookDisplayModel> allBooks,
+  ) {
+    return switch (selectedIndex) {
+      /// All
+      0 => allBooks,
+
+      /// in Progressx
+      1 =>
+        allBooks
+            .where((book) => book.progress > 0 && book.progress < 100)
+            .toList(),
+
+      /// completed
+      2 => allBooks.where((book) => book.progress >= 100).toList(),
+      _ => throw UnimplementedError(),
+    };
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -128,18 +147,34 @@ class _LibraryScreenState extends State<LibraryScreen> {
                               ...wishlistBooks,
                               ...localBooks,
                             ];
-                            if (libraryBooks.isEmpty) {
+                            final filterdBooks = _getFilter(libraryBooks);
+                            if (filterdBooks.isEmpty) {
                               return StaggerdAnimation(
                                 index: 0,
-                                child: AppEmpty(
-                                  title: "Your shelf is waiting.",
-                                  subtitle:
-                                      "Bring a book into your quiet space.",
-                                  image: AppAssets.emptyState,
-                                ),
+                                child: switch (selectedIndex) {
+                                  0 => AppEmpty(
+                                    title: "Your shelf is waiting.",
+                                    subtitle:
+                                        "Bring a book into your quiet space.",
+                                    image: AppAssets.emptyState,
+                                  ),
+                                  1 => AppEmpty(
+                                    title: "No books in progress.",
+                                    subtitle:
+                                        "Start reading a book to see it here.",
+                                    image: AppAssets.window,
+                                  ),
+                                  2 => AppEmpty(
+                                    title: "No completed books yet.",
+                                    subtitle:
+                                        "Finish a book to add it to your hall of fame.",
+                                    image: AppAssets.kidsReading,
+                                  ),
+                                  int() => throw UnimplementedError(),
+                                },
                               );
                             }
-                            return _buildBooks(libraryBooks);
+                            return _buildBooks(filterdBooks);
                           }
                           return _handleLocalErrors(state);
                         },

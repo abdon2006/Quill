@@ -11,4 +11,5 @@ class WishlistCache {
   late String title;
   late String coverImage;
   late double ratingAvg;
+  late int progress;
 }

@@ -32,35 +32,35 @@ const LocalBookSchema = CollectionSchema(
       name: r'coverImagePath',
       type: IsarType.string,
     ),
-    r'currentPage': PropertySchema(
-      id: 3,
-      name: r'currentPage',
-      type: IsarType.long,
-    ),
     r'filePath': PropertySchema(
-      id: 4,
+      id: 3,
       name: r'filePath',
       type: IsarType.string,
     ),
     r'fileType': PropertySchema(
-      id: 5,
+      id: 4,
       name: r'fileType',
       type: IsarType.string,
     ),
     r'importedAt': PropertySchema(
-      id: 6,
+      id: 5,
       name: r'importedAt',
       type: IsarType.dateTime,
     ),
     r'language': PropertySchema(
-      id: 7,
+      id: 6,
       name: r'language',
       type: IsarType.string,
     ),
     r'paragraphs': PropertySchema(
-      id: 8,
+      id: 7,
       name: r'paragraphs',
       type: IsarType.stringList,
+    ),
+    r'progress': PropertySchema(
+      id: 8,
+      name: r'progress',
+      type: IsarType.long,
     ),
     r'title': PropertySchema(
       id: 9,
@@ -130,12 +130,12 @@ void _localBookSerialize(
   writer.writeString(offsets[0], object.author);
   writer.writeStringList(offsets[1], object.categories);
   writer.writeString(offsets[2], object.coverImagePath);
-  writer.writeLong(offsets[3], object.progress);
-  writer.writeString(offsets[4], object.filePath);
-  writer.writeString(offsets[5], object.fileType);
-  writer.writeDateTime(offsets[6], object.importedAt);
-  writer.writeString(offsets[7], object.language);
-  writer.writeStringList(offsets[8], object.paragraphs);
+  writer.writeString(offsets[3], object.filePath);
+  writer.writeString(offsets[4], object.fileType);
+  writer.writeDateTime(offsets[5], object.importedAt);
+  writer.writeString(offsets[6], object.language);
+  writer.writeStringList(offsets[7], object.paragraphs);
+  writer.writeLong(offsets[8], object.progress);
   writer.writeString(offsets[9], object.title);
   writer.writeLong(offsets[10], object.totalPages);
 }
@@ -150,13 +150,13 @@ LocalBook _localBookDeserialize(
   object.author = reader.readString(offsets[0]);
   object.categories = reader.readStringList(offsets[1]) ?? [];
   object.coverImagePath = reader.readStringOrNull(offsets[2]);
-  object.progress = reader.readLong(offsets[3]);
-  object.filePath = reader.readString(offsets[4]);
-  object.fileType = reader.readString(offsets[5]);
-  object.importedAt = reader.readDateTime(offsets[6]);
+  object.filePath = reader.readString(offsets[3]);
+  object.fileType = reader.readString(offsets[4]);
+  object.importedAt = reader.readDateTime(offsets[5]);
   object.isarId = id;
-  object.language = reader.readString(offsets[7]);
-  object.paragraphs = reader.readStringList(offsets[8]) ?? [];
+  object.language = reader.readString(offsets[6]);
+  object.paragraphs = reader.readStringList(offsets[7]) ?? [];
+  object.progress = reader.readLong(offsets[8]);
   object.title = reader.readString(offsets[9]);
   object.totalPages = reader.readLong(offsets[10]);
   return object;
@@ -176,17 +176,17 @@ P _localBookDeserializeProp<P>(
     case 2:
       return (reader.readStringOrNull(offset)) as P;
     case 3:
-      return (reader.readLong(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 4:
       return (reader.readString(offset)) as P;
     case 5:
-      return (reader.readString(offset)) as P;
-    case 6:
       return (reader.readDateTime(offset)) as P;
-    case 7:
+    case 6:
       return (reader.readString(offset)) as P;
-    case 8:
+    case 7:
       return (reader.readStringList(offset) ?? []) as P;
+    case 8:
+      return (reader.readLong(offset)) as P;
     case 9:
       return (reader.readString(offset)) as P;
     case 10:
@@ -796,60 +796,6 @@ extension LocalBookQueryFilter
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'coverImagePath',
         value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<LocalBook, LocalBook, QAfterFilterCondition> currentPageEqualTo(
-      int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'currentPage',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<LocalBook, LocalBook, QAfterFilterCondition>
-      currentPageGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'currentPage',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<LocalBook, LocalBook, QAfterFilterCondition> currentPageLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'currentPage',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<LocalBook, LocalBook, QAfterFilterCondition> currentPageBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'currentPage',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
       ));
     });
   }
@@ -1579,6 +1525,59 @@ extension LocalBookQueryFilter
     });
   }
 
+  QueryBuilder<LocalBook, LocalBook, QAfterFilterCondition> progressEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'progress',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<LocalBook, LocalBook, QAfterFilterCondition> progressGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'progress',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<LocalBook, LocalBook, QAfterFilterCondition> progressLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'progress',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<LocalBook, LocalBook, QAfterFilterCondition> progressBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'progress',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<LocalBook, LocalBook, QAfterFilterCondition> titleEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -1795,18 +1794,6 @@ extension LocalBookQuerySortBy on QueryBuilder<LocalBook, LocalBook, QSortBy> {
     });
   }
 
-  QueryBuilder<LocalBook, LocalBook, QAfterSortBy> sortByCurrentPage() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'currentPage', Sort.asc);
-    });
-  }
-
-  QueryBuilder<LocalBook, LocalBook, QAfterSortBy> sortByCurrentPageDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'currentPage', Sort.desc);
-    });
-  }
-
   QueryBuilder<LocalBook, LocalBook, QAfterSortBy> sortByFilePath() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'filePath', Sort.asc);
@@ -1852,6 +1839,18 @@ extension LocalBookQuerySortBy on QueryBuilder<LocalBook, LocalBook, QSortBy> {
   QueryBuilder<LocalBook, LocalBook, QAfterSortBy> sortByLanguageDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'language', Sort.desc);
+    });
+  }
+
+  QueryBuilder<LocalBook, LocalBook, QAfterSortBy> sortByProgress() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'progress', Sort.asc);
+    });
+  }
+
+  QueryBuilder<LocalBook, LocalBook, QAfterSortBy> sortByProgressDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'progress', Sort.desc);
     });
   }
 
@@ -1903,18 +1902,6 @@ extension LocalBookQuerySortThenBy
   QueryBuilder<LocalBook, LocalBook, QAfterSortBy> thenByCoverImagePathDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'coverImagePath', Sort.desc);
-    });
-  }
-
-  QueryBuilder<LocalBook, LocalBook, QAfterSortBy> thenByCurrentPage() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'currentPage', Sort.asc);
-    });
-  }
-
-  QueryBuilder<LocalBook, LocalBook, QAfterSortBy> thenByCurrentPageDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'currentPage', Sort.desc);
     });
   }
 
@@ -1978,6 +1965,18 @@ extension LocalBookQuerySortThenBy
     });
   }
 
+  QueryBuilder<LocalBook, LocalBook, QAfterSortBy> thenByProgress() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'progress', Sort.asc);
+    });
+  }
+
+  QueryBuilder<LocalBook, LocalBook, QAfterSortBy> thenByProgressDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'progress', Sort.desc);
+    });
+  }
+
   QueryBuilder<LocalBook, LocalBook, QAfterSortBy> thenByTitle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.asc);
@@ -2026,12 +2025,6 @@ extension LocalBookQueryWhereDistinct
     });
   }
 
-  QueryBuilder<LocalBook, LocalBook, QDistinct> distinctByCurrentPage() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'currentPage');
-    });
-  }
-
   QueryBuilder<LocalBook, LocalBook, QDistinct> distinctByFilePath(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -2062,6 +2055,12 @@ extension LocalBookQueryWhereDistinct
   QueryBuilder<LocalBook, LocalBook, QDistinct> distinctByParagraphs() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'paragraphs');
+    });
+  }
+
+  QueryBuilder<LocalBook, LocalBook, QDistinct> distinctByProgress() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'progress');
     });
   }
 
@@ -2105,12 +2104,6 @@ extension LocalBookQueryProperty
     });
   }
 
-  QueryBuilder<LocalBook, int, QQueryOperations> currentPageProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'currentPage');
-    });
-  }
-
   QueryBuilder<LocalBook, String, QQueryOperations> filePathProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'filePath');
@@ -2138,6 +2131,12 @@ extension LocalBookQueryProperty
   QueryBuilder<LocalBook, List<String>, QQueryOperations> paragraphsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'paragraphs');
+    });
+  }
+
+  QueryBuilder<LocalBook, int, QQueryOperations> progressProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'progress');
     });
   }
 

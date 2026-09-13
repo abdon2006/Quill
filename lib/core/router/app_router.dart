@@ -9,7 +9,7 @@ import 'package:quill/features/auth/domain/usecases/fetch_user_data_usecase.dart
 import 'package:quill/features/auth/domain/usecases/login_usecase.dart';
 import 'package:quill/features/auth/domain/usecases/signup_usecase.dart';
 import 'package:quill/features/auth/presentation/bloc/auth_event.dart';
-import 'package:quill/features/discover/storage/app_storage.dart';
+import 'package:quill/core/storage/app_storage.dart';
 import 'package:quill/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:quill/features/auth/presentation/screens/auth_choose_screen.dart';
 import 'package:quill/features/auth/presentation/screens/login/login_screen.dart';

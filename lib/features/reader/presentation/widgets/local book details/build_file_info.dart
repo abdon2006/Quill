@@ -85,7 +85,7 @@ class _BuildFileInfoState extends State<BuildFileInfo> {
                         bookId: widget.book.localId!,
                         title: widget.book.title,
                         author: widget.book.author,
-                        currentPage: widget.book.progress!,
+                        currentPage: widget.book.progress,
                         coverImagePath: newImage.path,
                         isCoverImageChange: true,
                       );
@@ -104,7 +104,7 @@ class _BuildFileInfoState extends State<BuildFileInfo> {
               ],
             ),
 
-            if (widget.book.pages != null && widget.book.progress != null) ...[
+            if (widget.book.pages != null ) ...[
               const SizedBox(height: AppSpacing.lg),
               Divider(color: theme.onSurface.withValues(alpha: 0.06)),
               const SizedBox(height: AppSpacing.lg),
@@ -141,7 +141,7 @@ class _BuildFileInfoState extends State<BuildFileInfo> {
                           children: [
                             Expanded(
                               child: LinearProgressIndicator(
-                                value: widget.book.progress!.toDouble() / 100,
+                                value: widget.book.progress.toDouble() / 100,
                                 borderRadius: AppRadius.xl,
                                 valueColor: AlwaysStoppedAnimation(
                                   theme.primary,

@@ -182,7 +182,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
               const SizedBox(height: AppSpacing.xxxl),
 
               buildRecommendations(context),
-              const SizedBox(height: 150),
+              SizedBox(height: 100.h),
             ],
           ),
         ),

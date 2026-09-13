@@ -65,7 +65,9 @@ class ContinueReading extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'CONTINUE READING',
+                      book.progress == 0
+                          ? "Turn The First Page"
+                          : 'Continue Reading',
                       style: AppTextStyles.label(
                         context,
                       ).copyWith(color: colors.primary, letterSpacing: 1.1),
@@ -100,7 +102,7 @@ class ContinueReading extends StatelessWidget {
                             borderRadius: AppRadius.xl,
                             child: LinearProgressIndicator(
                               /// will be handled to adapt the current progress
-                              value: 0.7,
+                              value: book.progress / 100,
                               minHeight: 5,
                               backgroundColor: colors.onSurface.withValues(
                                 alpha: 0.08,
@@ -116,7 +118,7 @@ class ContinueReading extends StatelessWidget {
 
                         Text(
                           /// will be handled to adapt the current progress
-                          '70%',
+                          '${book.progress}%',
                           style: AppTextStyles.caption(context).copyWith(
                             color: colors.onSurface.withValues(alpha: 0.55),
                             fontWeight: FontWeight.w600,
@@ -128,7 +130,9 @@ class ContinueReading extends StatelessWidget {
                     SizedBox(height: AppSpacing.xs),
 
                     Text(
-                      'A little more to go.',
+                      book.progress == 0
+                          ? 'Begin Your Own Story'
+                          : 'A little more to go.',
                       style: AppTextStyles.caption(context).copyWith(
                         color: colors.onSurface.withValues(alpha: 0.45),
                       ),

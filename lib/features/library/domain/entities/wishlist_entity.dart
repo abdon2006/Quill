@@ -8,7 +8,7 @@ class WishlistEntity extends Equatable {
   final String title;
   final String coverImage;
   final double ratingAvg;
-
+  final int progress;
 
   const WishlistEntity({
     required this.wishlistId,
@@ -18,6 +18,7 @@ class WishlistEntity extends Equatable {
     required this.title,
     required this.coverImage,
     required this.ratingAvg,
+    required this.progress,
   });
 
   const WishlistEntity.dummy({
@@ -28,6 +29,7 @@ class WishlistEntity extends Equatable {
     this.title = "Atomic Habits",
     this.coverImage = "askfjkla",
     this.ratingAvg = 4.5,
+    this.progress = 0,
   });
   @override
   List<Object?> get props => [
@@ -38,5 +40,6 @@ class WishlistEntity extends Equatable {
     title,
     coverImage,
     ratingAvg,
+    progress,
   ];
 }

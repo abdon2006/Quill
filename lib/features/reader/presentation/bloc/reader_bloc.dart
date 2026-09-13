@@ -129,7 +129,6 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
         emit(ReaderFailure(failure: ServerFailure(message: e.toString())));
       }
     });
-    
 
     on<UpdateServerProgressEvent>((event, emit) async {
       try {
@@ -150,6 +149,7 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
           {},
         );
         emit(UpdateServerProgressSuccess());
+        add(FetchLocalBooksEvent());
       } catch (e) {
         emit(ReaderFailure(failure: ServerFailure(message: e.toString())));
       }

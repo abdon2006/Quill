@@ -9,6 +9,7 @@ class WishlistModel extends WishlistEntity {
     required super.title,
     required super.coverImage,
     required super.ratingAvg,
+    required super.progress,
   });
 
   factory WishlistModel.fromJson(Map<String, dynamic> json) {
@@ -21,6 +22,7 @@ class WishlistModel extends WishlistEntity {
       title: bookData['title'],
       coverImage: bookData['coverImage'],
       ratingAvg: (bookData['ratingsAverage'] as num).toDouble(),
+      progress: 0,
     );
   }
 }
