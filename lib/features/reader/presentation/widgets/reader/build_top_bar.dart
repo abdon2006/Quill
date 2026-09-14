@@ -7,6 +7,7 @@ import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 import 'package:quill/features/reader/presentation/cubit/reader_preferences_state.dart';
+import 'package:quill/features/reader/presentation/widgets/reader/ai_coming_soon_dialog.dart';
 
 class BuildTopBar extends StatelessWidget {
   final ReaderPreferencesState state;
@@ -82,7 +83,7 @@ class BuildTopBar extends StatelessWidget {
           ),
           _buildTopBarButton(
             icon: HugeIcons.strokeRoundedSparkles,
-            onTap: () {},
+            onTap: () => showAiComingSoonDialog(context),
             state: state,
             theme: theme,
             context: context,
