@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:epubx/epubx.dart';
+import 'package:html/parser.dart' as html_parser;
 import 'package:flutter/foundation.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:dartz/dartz.dart';
@@ -14,7 +16,7 @@ class LocalBookRepositoryImpl implements LocalBookRepository {
   final LocalBookDataSource bookLocalDataSource;
 
   LocalBookRepositoryImpl({required this.bookLocalDataSource});
-  
+
   @override
   Future<Either<Failure, LocalBook>> fetchBook(int bookId) async {
     try {
@@ -114,7 +116,7 @@ LocalBook _initLocalBook(UploadBookParams params, String newPath) {
   book.filePath = newPath;
   book.fileType = params.fileExtension;
   book.author = 'Unknown Author';
-  book.language = 'Unknown';
+  book.language = 'en';
   book.categories = [];
   book.coverImagePath = null;
   book.progress = 0;
@@ -124,26 +126,56 @@ LocalBook _initLocalBook(UploadBookParams params, String newPath) {
 }
 
 Future<List<String>> _extractParagraphs(String path) async {
-  final bytes = await File(path).readAsBytes();
-  final doc = PdfDocument(inputBytes: bytes);
-  final extractor = PdfTextExtractor(doc);
+  if (path.endsWith('.pdf')) {
+    final bytes = await File(path).readAsBytes();
+    final doc = PdfDocument(inputBytes: bytes);
+    final extractor = PdfTextExtractor(doc);
 
-  final List<String> pages = [];
+    final List<String> pages = [];
 
-  print('----------- num of pages : ${doc.pages.count} -------------');
-  for (int i = 0; i < doc.pages.count; i++) {
-    final raw = extractor
-        .extractText(startPageIndex: i, endPageIndex: i)
-        .trim();
-    final text = _cleanPageText(raw);
-    print('Page $i cleaned: ${text.substring(0, text.length.clamp(0, 100))}');
+    print('----------- num of pages : ${doc.pages.count} -------------');
+    for (int i = 0; i < doc.pages.count; i++) {
+      final raw = extractor
+          .extractText(startPageIndex: i, endPageIndex: i)
+          .trim();
+      final text = _cleanPageText(raw);
+      print('Page $i cleaned: ${text.substring(0, text.length.clamp(0, 100))}');
 
-    if (_isUsefulPage(text)) pages.add(text);
+      if (_isUsefulPage(text)) pages.add(text);
+    }
+    print('----------------- Pages : $pages ---------------');
+
+    doc.dispose();
+    return pages;
+  } else {
+    final epubFile = File(path);
+    final contents = await epubFile.readAsBytes();
+    EpubBookRef epub = await EpubReader.openBook(contents.toList());
+    Map<String, EpubTextContentFile> cont =
+        await EpubReader.readTextContentFiles(epub.Content!.Html!);
+    List<String> htmlList = [];
+    for (var i in cont.values) {
+      print(' ----------------- EPUB page : $i -------------- ');
+      print(
+        ' ----------------- EPUB PAGE CONTENT  : ${i.Content} -------------- ',
+      );
+      htmlList.add(i.Content!);
+    }
+    final doc = html_parser.parse(htmlList.join());
+    final paragraphs =
+        doc.body?.text
+            .split(RegExp(r'\n+'))
+            .map((paragraph) => paragraph.trim())
+            .where(
+              (paragraph) =>
+                  paragraph.isNotEmpty &&
+                  _isUsefulPage(paragraph, isEpub: true),
+            )
+            .toList() ??
+        <String>[];
+    print('----------------- Pages EPUB : $paragraphs ---------------');
+    return paragraphs;
   }
-  print('----------------- Pages : $pages ---------------');
-
-  doc.dispose();
-  return pages;
 }
 
 String _cleanPageText(String text) {
@@ -172,9 +204,9 @@ String _cleanPageText(String text) {
       .trim();
 }
 
-bool _isUsefulPage(String text) {
+bool _isUsefulPage(String text, {bool isEpub = false}) {
   final words = text.split(' ').where((w) => w.isNotEmpty).toList();
-  if (words.length < 20) return false;
+  if (words.length < (isEpub ? 5 : 20)) return false;
   if (text.contains('http') || text.contains('www.')) return false;
   if (text.contains('ISBN')) return false;
   return true;

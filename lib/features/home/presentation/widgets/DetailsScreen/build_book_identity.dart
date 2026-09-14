@@ -26,7 +26,7 @@ Widget buildBookIdentity(BuildContext context, BookEntity book) {
         Text(
           book.author,
           style: AppTextStyles.heading2(context).copyWith(color: theme.primary),
-        ),
+        ), 
 
         const SizedBox(height: AppSpacing.xl),
 
