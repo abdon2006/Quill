@@ -134,12 +134,19 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
       try {
         emit(ReaderLoading());
         final prefs = await SharedPreferences.getInstance();
-        prefs.setDouble(event.bookId, event.progress);
+        final oldProgress = prefs.getDouble(event.bookId);
+        if (oldProgress != null && oldProgress >= event.progress) {
+          print(
+            ' IGNORED THE NEW PROGRESS :new :  ${event.progress}% , old : $oldProgress}%',
+          );
+        } else {
+          prefs.setDouble(event.bookId, event.progress);
+          print('✅ Saved Locally: ${event.progress}%');
+        }
         int chunkIndex = ((event.progress / 100) * event.totalChunks).floor();
         if (chunkIndex >= event.totalChunks) {
           chunkIndex = event.totalChunks - 1;
         }
-        print('✅ Saved Locally: ${event.progress}%');
         print(
           '👻 Sending Ghost Request to Chunk: $chunkIndex to trigger backend logic...',
         );

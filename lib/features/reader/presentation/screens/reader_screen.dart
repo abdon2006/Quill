@@ -67,7 +67,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
   LocalBook? _book;
 
   /// variable for local progress
-  double? _currentProgress;
+  int? _currentProgress;
 
   /// ReaderBloc Instance To Update The Local Progress on Dispose
   late final ReaderBloc _bloc;
@@ -96,7 +96,9 @@ class _ReaderScreenState extends State<ReaderScreen> {
 
   @override
   void dispose() {
-    if (_book != null && _currentProgress != null) {
+    if (_book != null &&
+        _currentProgress != null &&
+        _book!.progress < _currentProgress!) {
       _bloc.add(
         UpdateBookEvent(
           params: UpdateBookParams(
@@ -113,7 +115,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
     if (_serverBook != null && _currentProgress != null) {
       _bloc.add(
         UpdateServerProgressEvent(
-          progress: _currentProgress!,
+          progress: (_currentProgress!).toDouble(),
           bookId: widget.bookId.serverId!,
           totalChunks: _serverBook!.totalChunks,
         ),
@@ -283,7 +285,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                           setState(() {
                             _paragraphs = state.book.paragraphs;
                             _book = state.book;
-                            _currentProgress = state.book.progress.toDouble();
+                            _currentProgress = state.book.progress;
                           });
                         }
                       }
@@ -302,7 +304,9 @@ class _ReaderScreenState extends State<ReaderScreen> {
                         );
                       }
                       if (state is FetchProgressSuccess) {
-                        setState(() => _currentProgress = state.progress);
+                        setState(
+                          () => _currentProgress = state.progress.toInt(),
+                        );
                       }
                       if (state is ReaderFailure) {
                         setState(() {
@@ -339,12 +343,12 @@ class _ReaderScreenState extends State<ReaderScreen> {
                             coverImage:
                                 _book?.coverImagePath ??
                                 _serverBook?.coverImage,
-                            initialProgress: _currentProgress!,
+                            initialProgress: _currentProgress!.toDouble(),
                             bgColor: _getReaderBgColor(state),
                             uiState: _uiState,
                             isBionicNotifier: _isBionicEnabled,
                             state: state,
-                            updateProgress: (double progress) {
+                            updateProgress: (int progress) {
                               _currentProgress = progress;
                               print(' Progress : ${progress.round()}');
                             },
@@ -364,7 +368,8 @@ class _ReaderScreenState extends State<ReaderScreen> {
                                   setState(() => _totalPages = totalPages);
                                 }
                               });
-                            }, jumpToPageNotifier: _jumpToPageNotifier,
+                            },
+                            jumpToPageNotifier: _jumpToPageNotifier,
                           ),
                   ),
 

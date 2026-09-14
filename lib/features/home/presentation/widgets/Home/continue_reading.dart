@@ -67,6 +67,8 @@ class ContinueReading extends StatelessWidget {
                     Text(
                       book.progress == 0
                           ? "Turn The First Page"
+                          : book.progress == 100
+                          ? "Journey Completed"
                           : 'Continue Reading',
                       style: AppTextStyles.label(
                         context,
@@ -132,6 +134,8 @@ class ContinueReading extends StatelessWidget {
                     Text(
                       book.progress == 0
                           ? 'Begin Your Own Story'
+                          : book.progress == 100
+                          ? 'Great stories never truly end.'
                           : 'A little more to go.',
                       style: AppTextStyles.caption(context).copyWith(
                         color: colors.onSurface.withValues(alpha: 0.45),
@@ -149,7 +153,9 @@ class ContinueReading extends StatelessWidget {
                   color: colors.primary.withValues(alpha: 0.08),
                 ),
                 child: HugeIcon(
-                  icon: HugeIcons.strokeRoundedArrowRight01,
+                  icon: book.progress == 100
+                      ? HugeIcons.strokeRoundedSparkles
+                      : HugeIcons.strokeRoundedArrowRight01,
                   size: 20,
                   color: colors.primary,
                 ),

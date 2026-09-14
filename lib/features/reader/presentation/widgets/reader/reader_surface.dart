@@ -27,7 +27,7 @@ class ReaderSurface extends StatefulWidget {
   final double initialProgress;
   final String? coverImage;
 
-  final void Function(double) updateProgress;
+  final void Function(int) updateProgress;
   final bool isFocusMode;
   final Color bgColor;
   final ReaderUiStates uiState;
@@ -116,7 +116,7 @@ class _ReaderSurfaceState extends State<ReaderSurface>
     super.didUpdateWidget(oldWidget);
     if (oldWidget.state.scrollMode != widget.state.scrollMode &&
         widget.state.scrollMode == ReaderScrollMode.scroll) {
-      widget.updateProgress(initialCell! / _cache!.cellCount * 100);
+      widget.updateProgress((initialCell! / _cache!.cellCount * 100).ceil());
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           scrollController.scrollTo(
@@ -180,7 +180,7 @@ class _ReaderSurfaceState extends State<ReaderSurface>
       print('📍 Scroll mode — current cell: $currentCell');
 
       initialCell = currentCell;
-      final progress = currentCell / _cache!.cellCount * 100;
+      final progress = (currentCell / _cache!.cellCount * 100).ceil();
 
       for (var i in _milestones.entries) {
         final target = i.key;
@@ -398,7 +398,7 @@ class _ReaderSurfaceState extends State<ReaderSurface>
                           bionicCache: _cache!,
                           isBionicNotifier: widget.isBionicNotifier,
                           totalCells: cellCount,
-                          updateOnSwipe: (double progress) =>
+                          updateOnSwipe: (int progress) =>
                               widget.updateProgress(progress),
                           initialCellIndex: initialCell!,
                           onPageChanged: (int newCell) => initialCell = newCell,
@@ -538,7 +538,7 @@ class CellPageView extends StatefulWidget {
   final ReaderPreferencesState? state;
   final ValueNotifier<bool> isBionicNotifier;
   final int totalCells;
-  final void Function(double) updateOnSwipe;
+  final void Function(int) updateOnSwipe;
   final int initialCellIndex;
   final void Function(int) onPageChanged;
   final bool isFocusMode;
@@ -612,12 +612,12 @@ class _CellPageViewState extends State<CellPageView>
     widget.sendTotalPages(widget.cache.pages.length);
   }
 
-  double _calculateProgress(int pageIndex) {
+  int _calculateProgress(int pageIndex) {
     if (pageIndex == widget.cache.pages.length - 1) {
-      return 100.0;
+      return 100;
     }
     final firstCell = widget.cache.pages[pageIndex].first;
-    return (firstCell / widget.totalCells) * 100;
+    return ((firstCell / widget.totalCells) * 100).ceil();
   }
 
   void _initDockCalculations() {
@@ -723,7 +723,7 @@ class _CellPageViewState extends State<CellPageView>
       });
 
       final firstCell = widget.cache.pages[currentIndex].first;
-      final progress = (firstCell / widget.totalCells) * 100;
+      final progress = _calculateProgress(currentIndex);
 
       widget.updateOnSwipe(progress);
       widget.onPageChanged(firstCell);
