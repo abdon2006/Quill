@@ -280,10 +280,6 @@ class _ReaderSurfaceState extends State<ReaderSurface>
   @override
   Widget build(BuildContext context) {
     final cellCount = _cache?.cellCount ?? 0;
-    final wordCount = cellCount * 140;
-    final minutes = (wordCount / 200).toInt();
-    final hours = minutes ~/ 60;
-    final mins = minutes % 60;
     final theme = Theme.of(context).colorScheme;
     return Stack(
       children: [
@@ -316,8 +312,6 @@ class _ReaderSurfaceState extends State<ReaderSurface>
                                         children: [
                                           SizedBox(height: 70.h),
                                           ReaderHeader(
-                                            hours: hours,
-                                            mins: mins,
                                             state: widget.state,
                                             title: widget.bookTitle,
                                             author: widget.bookAuthor,

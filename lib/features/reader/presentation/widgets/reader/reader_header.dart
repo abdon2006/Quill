@@ -11,16 +11,12 @@ import 'package:quill/features/reader/presentation/cubit/reader_preferences_stat
 
 class ReaderHeader extends StatelessWidget {
   final ReaderPreferencesState state;
-  final int hours;
-  final int mins;
   final String title;
   final String author;
-  final String? coverImage; 
+  final String? coverImage;
 
   const ReaderHeader({
     super.key,
-    required this.hours,
-    required this.mins,
     required this.state,
     required this.title,
     required this.author,
@@ -56,15 +52,9 @@ class ReaderHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final textColor = _getTextColor(state, context);
     final mutedColor = _getMutedColor(state, context);
-    final readingTime = hours > 0
-        ? '$hours hr $mins min read'
-        : '$mins min read';
 
     return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: AppSpacing.xxl,
-        vertical: AppSpacing.xl,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -75,10 +65,7 @@ class ReaderHeader extends StatelessWidget {
               borderRadius: AppRadius.lg,
               boxShadow: AppShadows.bookCover,
             ),
-            child: ClipRRect(
-              borderRadius: AppRadius.lg,
-              child: _buildCover(), 
-            ),
+            child: ClipRRect(borderRadius: AppRadius.lg, child: _buildCover()),
           ),
 
           SizedBox(height: AppSpacing.xl),
@@ -92,7 +79,7 @@ class ReaderHeader extends StatelessWidget {
           SizedBox(height: AppSpacing.lg),
 
           Text(
-            title, 
+            title,
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -106,7 +93,7 @@ class ReaderHeader extends StatelessWidget {
           SizedBox(height: AppSpacing.sm),
 
           Text(
-            author, 
+            author,
             textAlign: TextAlign.center,
             style: AppTextStyles.bodyMedium(context).copyWith(
               color: mutedColor,
@@ -116,27 +103,6 @@ class ReaderHeader extends StatelessWidget {
           ),
 
           SizedBox(height: AppSpacing.lg),
-
-          Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: AppSpacing.lg,
-              vertical: AppSpacing.xs,
-            ),
-            decoration: BoxDecoration(
-              borderRadius: AppRadius.xxl,
-              color: textColor.withValues(alpha: 0.06),
-            ),
-            child: Text(
-              readingTime,
-              style: AppTextStyles.caption(context).copyWith(
-                color: mutedColor,
-                fontSize: 11.sp,
-                letterSpacing: 0.5,
-              ),
-            ),
-          ),
-
-          SizedBox(height: AppSpacing.xxxl),
         ],
       ),
     );

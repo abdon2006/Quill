@@ -8,12 +8,12 @@ import 'package:quill/core/theme/app_text_style.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class BookStatsRow extends StatelessWidget {
-  final int pages;
+  final String readingTime;
   final String lang;
   final double rating;
   const BookStatsRow({
     super.key,
-    required this.pages,
+    required this.readingTime,
     required this.lang,
     required this.rating,
   });
@@ -24,8 +24,8 @@ class BookStatsRow extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         _buildColumn(
-          'Pages',
-          Text("$pages", style: AppTextStyles.heading2(context)),
+          'Time Reading',
+          Text(readingTime, style: AppTextStyles.heading2(context)),
           context,
         ),
         _buildDevider(),
