@@ -22,6 +22,7 @@ import 'package:quill/features/reader/presentation/bloc/reader_event.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_state.dart';
 import 'package:quill/features/reader/presentation/cubit/reader_preferences_cubit.dart';
 import 'package:quill/features/reader/presentation/cubit/reader_preferences_state.dart';
+import 'package:quill/features/reader/presentation/widgets/reader/pages_slider_sheet.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/prefernces/build_bottom_actions.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/build_top_bar.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/prefernces/reader_preferences_sheet.dart';
@@ -55,6 +56,11 @@ class _ReaderScreenState extends State<ReaderScreen> {
   final ValueNotifier<bool> _isBionicEnabled = ValueNotifier(false);
   ReaderUiStates _uiState = ReaderUiStates.controlsVisible;
   Timer? _uiHideTimer;
+
+  /// Page Slider
+  int _currentPage = 0;
+  int _totalPages = 0;
+  final ValueNotifier<int> _jumpToPageNotifier = ValueNotifier(-1);
 
   /// Books
   BookEntity? _serverBook;
@@ -115,6 +121,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
     }
     _isBionicEnabled.dispose();
     _uiHideTimer?.cancel();
+    _jumpToPageNotifier.dispose();
     super.dispose();
   }
 
@@ -220,6 +227,17 @@ class _ReaderScreenState extends State<ReaderScreen> {
       builder: (_) => BlocProvider.value(
         value: context.read<ReaderPreferencesCubit>(),
         child: ReaderPreferencesSheet(onApply: () => _startEditAnimation()),
+      ),
+    );
+  }
+
+  void _openPagesSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => PagesSliderSheet(
+        currentPage: _currentPage,
+        totalPages: _totalPages,
+        onGoToPage: (int page) => _jumpToPageNotifier.value = page - 1,
       ),
     );
   }
@@ -333,6 +351,20 @@ class _ReaderScreenState extends State<ReaderScreen> {
                             isFocusMode:
                                 _uiState == ReaderUiStates.focusExitReveal ||
                                 _uiState == ReaderUiStates.focusMode,
+                            sendCurrentPage: (int page) {
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                if (mounted && _currentPage != page) {
+                                  setState(() => _currentPage = page);
+                                }
+                              });
+                            },
+                            sendTotalPages: (int totalPages) {
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                if (mounted && _totalPages != totalPages) {
+                                  setState(() => _totalPages = totalPages);
+                                }
+                              });
+                            }, jumpToPageNotifier: _jumpToPageNotifier,
                           ),
                   ),
 
@@ -379,6 +411,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                             callBack: (int i) {
                               if (i == 0) _openPreferencesSheet();
                               if (i == 1) _startFocusTransition();
+                              if (i == 2) _openPagesSheet();
                               if (i == 3) _handleBionicMode();
                             },
                             state: state,

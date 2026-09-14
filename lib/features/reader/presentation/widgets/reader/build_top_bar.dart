@@ -80,9 +80,8 @@ class BuildTopBar extends StatelessWidget {
               ),
             ),
           ),
-
           _buildTopBarButton(
-            icon: AppIcons.bookmark,
+            icon: HugeIcons.strokeRoundedSparkles,
             onTap: () {},
             state: state,
             theme: theme,

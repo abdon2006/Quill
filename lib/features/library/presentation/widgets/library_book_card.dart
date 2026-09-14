@@ -22,7 +22,7 @@ class LibraryBookCard extends StatelessWidget {
     final theme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final progressLabel = '${book.progress}%';
+    final progressLabel = '${book.progress.ceil()}%';
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -102,7 +102,7 @@ class LibraryBookCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: LinearProgressIndicator(
-                          value: book.progress.toDouble() / 100,
+                          value:  (book.progress / 100),
                           borderRadius: AppRadius.xl,
                           valueColor: AlwaysStoppedAnimation(theme.primary),
                           backgroundColor: theme.surface,

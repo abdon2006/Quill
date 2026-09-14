@@ -44,7 +44,7 @@ class _BuildBottomActionsState extends State<BuildBottomActions> {
   final List controlsData = [
     {'label': 'Font', 'icon': HugeIcons.strokeRoundedTextFont},
     {'label': 'Focus', 'icon': HugeIcons.strokeRoundedMoon02},
-    {'label': 'Explain', 'icon': HugeIcons.strokeRoundedSparkles},
+    {'label': 'Pages', 'icon': HugeIcons.strokeRoundedBookOpen02},
     {'label': 'Bionic', 'icon': HugeIcons.strokeRoundedTextFont},
   ];
   @override
@@ -70,7 +70,7 @@ class _BuildBottomActionsState extends State<BuildBottomActions> {
               onTap: switch (i) {
                 0 => () => widget.callBack(0),
                 1 => () => widget.callBack(1),
-                2 => () {},
+                2 => () => widget.callBack(2),
                 3 => () => widget.callBack(3),
                 int() => throw UnimplementedError(),
               },

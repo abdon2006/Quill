@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart' as foundation show compute;
 import 'package:flutter/material.dart';
@@ -11,7 +13,6 @@ import 'package:quill/features/reader/presentation/screens/reader_screen.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/bottom_dock.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/milestone_notch.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/overlay_gradient.dart';
-import 'package:quill/features/reader/presentation/widgets/reader/page_flip_transition.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/reader_header.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/text_animation.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -31,6 +32,10 @@ class ReaderSurface extends StatefulWidget {
   final Color bgColor;
   final ReaderUiStates uiState;
 
+  final void Function(int) sendCurrentPage;
+  final void Function(int) sendTotalPages;
+  final ValueNotifier<int> jumpToPageNotifier;
+
   const ReaderSurface({
     super.key,
     required this.paragraphs,
@@ -44,6 +49,9 @@ class ReaderSurface extends StatefulWidget {
     required this.bookTitle,
     required this.bookAuthor,
     this.coverImage,
+    required this.sendCurrentPage,
+    required this.sendTotalPages,
+    required this.jumpToPageNotifier,
   });
 
   @override
@@ -104,12 +112,6 @@ class _ReaderSurfaceState extends State<ReaderSurface>
   }
 
   @override
-  void dispose() {
-    super.dispose();
-    _animationController.dispose();
-  }
-
-  @override
   void didUpdateWidget(covariant ReaderSurface oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.state.scrollMode != widget.state.scrollMode &&
@@ -162,6 +164,9 @@ class _ReaderSurfaceState extends State<ReaderSurface>
 
     _initMilestones();
 
+    /// link the nitifier to the listener which will call that mthid on change
+    widget.jumpToPageNotifier.addListener(_handleScrollJump);
+
     listener.itemPositions.addListener(() {
       final positions = listener.itemPositions.value;
       if (positions.isEmpty || _cache == null) return;
@@ -186,10 +191,35 @@ class _ReaderSurfaceState extends State<ReaderSurface>
         }
       }
 
+      /// عشان الليسنر كمان يبعت هو كمان رقم الصفحة زي مزامنة يعني
+      if (_pages != null) {
+        final pageIndex = _pages!.pages.indexWhere(
+          (p) => p.contains(currentCell),
+        );
+        if (pageIndex != -1) widget.sendCurrentPage(pageIndex);
+      }
+
       widget.updateProgress(progress);
     });
 
     _loadCache();
+  }
+
+  /// that is the mithod which called when the slider call us
+  void _handleScrollJump() {
+    if (widget.state.scrollMode == ReaderScrollMode.scroll) {
+      final targetPage = widget.jumpToPageNotifier.value;
+      if (targetPage != -1 &&
+          _pages != null &&
+          targetPage < _pages!.pages.length) {
+        final targetCell = _pages!.pages[targetPage].first;
+        scrollController.scrollTo(
+          index: targetCell + 1, // +1 عشان الـ Header اللي فوق
+          duration: AppDuration.readerGlow,
+          curve: Curves.easeInOutCubic,
+        );
+      }
+    }
   }
 
   Future<void> _loadCache() async {
@@ -272,6 +302,9 @@ class _ReaderSurfaceState extends State<ReaderSurface>
     }
 
     setState(() => _pages = result.cache);
+
+    /// السطر ده مهمته يعرف الصفحة باجمالي عدد الصفحات عشان لو في وضع السكرول
+    widget.sendTotalPages(result.cache.pages.length);
     print('✅ Pages built — total pages: ${result.cache.pages.length}');
 
     await Future.delayed(const Duration(milliseconds: 50));
@@ -370,6 +403,11 @@ class _ReaderSurfaceState extends State<ReaderSurface>
                           initialCellIndex: initialCell!,
                           onPageChanged: (int newCell) => initialCell = newCell,
                           isFocusMode: widget.isFocusMode,
+                          sendCurrentPage: (int page) =>
+                              widget.sendCurrentPage(page),
+                          sendTotalPages: (int totalPages) =>
+                              widget.sendTotalPages(totalPages),
+                          jumpToPageNotifier: widget.jumpToPageNotifier,
                         ),
                 ),
         ),
@@ -493,6 +531,7 @@ class _BionicCell extends StatelessWidget {
   }
 }
 
+// النط بيكون فوري من غير Animation عشان منقلجلش الشاشة
 class CellPageView extends StatefulWidget {
   final CellCache cache;
   final BionicCache bionicCache;
@@ -503,6 +542,9 @@ class CellPageView extends StatefulWidget {
   final int initialCellIndex;
   final void Function(int) onPageChanged;
   final bool isFocusMode;
+  final void Function(int) sendCurrentPage;
+  final void Function(int) sendTotalPages;
+  final ValueNotifier<int> jumpToPageNotifier;
 
   const CellPageView({
     super.key,
@@ -515,6 +557,9 @@ class CellPageView extends StatefulWidget {
     required this.initialCellIndex,
     required this.onPageChanged,
     required this.isFocusMode,
+    required this.sendCurrentPage,
+    required this.sendTotalPages,
+    required this.jumpToPageNotifier,
   });
 
   @override
@@ -558,9 +603,21 @@ class _CellPageViewState extends State<CellPageView>
     );
     print('📖 CellPageView init — starting at page: $currentIndex');
     print('📊 Total pages: ${widget.cache.pages.length}');
-
+    widget.jumpToPageNotifier.addListener(_handlePageJump);
     _initDockCalculations();
     _handleMilestoneOnSwipe(_currentPart);
+    print(' sending the currentPage: $currentIndex');
+    print(' sending the totalPages: ${widget.cache.pages.length}');
+    widget.sendCurrentPage(currentIndex);
+    widget.sendTotalPages(widget.cache.pages.length);
+  }
+
+  double _calculateProgress(int pageIndex) {
+    if (pageIndex == widget.cache.pages.length - 1) {
+      return 100.0;
+    }
+    final firstCell = widget.cache.pages[pageIndex].first;
+    return (firstCell / widget.totalCells) * 100;
   }
 
   void _initDockCalculations() {
@@ -616,9 +673,10 @@ class _CellPageViewState extends State<CellPageView>
     });
 
     final firstCell = widget.cache.pages[currentIndex].first;
-    final progress = (firstCell / widget.totalCells) * 100;
+    final progress = _calculateProgress(currentIndex);
     widget.updateOnSwipe(progress);
     widget.onPageChanged(firstCell);
+    widget.sendCurrentPage(currentIndex);
 
     final int newPart = _calculatePart();
     if (newPart != _currentPart) {
@@ -646,6 +704,36 @@ class _CellPageViewState extends State<CellPageView>
           )
           .toList(),
     );
+  }
+
+  @override
+  void dispose() {
+    widget.jumpToPageNotifier.removeListener(_handlePageJump);
+    super.dispose();
+  }
+
+  void _handlePageJump() {
+    final targetPage = widget.jumpToPageNotifier.value;
+    if (targetPage == -1 || targetPage == currentIndex) return;
+
+    if (targetPage >= 0 && targetPage < widget.cache.pages.length) {
+      setState(() {
+        currentIndex = targetPage;
+        _outgoingIndex = null;
+      });
+
+      final firstCell = widget.cache.pages[currentIndex].first;
+      final progress = (firstCell / widget.totalCells) * 100;
+
+      widget.updateOnSwipe(progress);
+      widget.onPageChanged(firstCell);
+      widget.sendCurrentPage(currentIndex);
+
+      final int newPart = _calculatePart();
+      if (newPart != _currentPart) {
+        _currentPart = newPart;
+      }
+    }
   }
 
   @override
