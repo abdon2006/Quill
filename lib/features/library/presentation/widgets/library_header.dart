@@ -13,7 +13,6 @@ class LibraryHeader extends StatelessWidget {
       useRootNavigator: true,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      // ─────────────────────────────
       builder: (_) => const ImportBookBottomSheet(),
     );
   }

@@ -39,7 +39,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
       /// All
       0 => allBooks,
 
-      /// in Progressx
+      /// in Progress
       1 =>
         allBooks
             .where((book) => book.progress > 0 && book.progress < 100)
