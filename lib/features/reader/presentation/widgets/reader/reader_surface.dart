@@ -521,25 +521,44 @@ class CellPageView extends StatefulWidget {
   State<CellPageView> createState() => _CellPageViewState();
 }
 
-class _CellPageViewState extends State<CellPageView> {
+class _CellPageViewState extends State<CellPageView>
+    with SingleTickerProviderStateMixin {
   int currentIndex = 0;
-  bool _isDockExpanded = false;
+  int? _outgoingIndex;
+  bool _nextIsForward = true;
   String _dockMessage = '';
-  int _totalParts = 0;
+  int _totalParts = 5;
   int _currentPart = 1;
+  bool _isDockExpanded = false;
+  late AnimationController _controller;
+  late Animation<Offset> _inAnimation;
+  late Animation<Offset> _outAnimation;
 
   @override
   void initState() {
     super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 350),
+    );
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        setState(() => _outgoingIndex = null);
+        _controller.reset();
+      }
+    });
+
     currentIndex = widget.cache.pages.indexWhere(
       (page) => page.contains(widget.initialCellIndex),
     );
     if (currentIndex < 0) currentIndex = 0;
+
     print(
       '📖 CellPageView init — starting at Cell: ${widget.initialCellIndex}',
     );
     print('📖 CellPageView init — starting at page: $currentIndex');
     print('📊 Total pages: ${widget.cache.pages.length}');
+
     _initDockCalculations();
     _handleMilestoneOnSwipe(_currentPart);
   }
@@ -561,10 +580,72 @@ class _CellPageViewState extends State<CellPageView> {
   void _handleMilestoneOnSwipe(int part) async {
     setState(() {
       _dockMessage = 'Part $part of $_totalParts';
+      _isDockExpanded = true;
     });
-    setState(() => _isDockExpanded = true);
     await Future.delayed(Duration(seconds: 3));
     if (mounted) setState(() => _isDockExpanded = false);
+  }
+
+  void _goToPage(bool isNext) {
+    if (_outgoingIndex != null) return;
+    if (isNext && currentIndex >= widget.cache.pages.length - 1) return;
+    if (!isNext && currentIndex <= 0) return;
+
+    final nextIndex = isNext ? currentIndex + 1 : currentIndex - 1;
+
+    setState(() {
+      _nextIsForward = isNext;
+      _outgoingIndex = currentIndex;
+      currentIndex = nextIndex;
+
+      _inAnimation =
+          Tween<Offset>(
+            begin: isNext ? const Offset(1, 0) : const Offset(-1, 0),
+            end: Offset.zero,
+          ).animate(
+            CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic),
+          );
+
+      _outAnimation =
+          Tween<Offset>(
+            begin: Offset.zero,
+            end: isNext ? const Offset(-0.3, 0) : const Offset(0.3, 0),
+          ).animate(
+            CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic),
+          );
+    });
+
+    final firstCell = widget.cache.pages[currentIndex].first;
+    final progress = (firstCell / widget.totalCells) * 100;
+    widget.updateOnSwipe(progress);
+    widget.onPageChanged(firstCell);
+
+    final int newPart = _calculatePart();
+    if (newPart != _currentPart) {
+      _currentPart = newPart;
+      _handleMilestoneOnSwipe(newPart);
+    }
+
+    _controller.forward();
+  }
+
+  Widget _buildPageContent(int index) {
+    return ListView(
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.zero,
+      children: widget.cache.pages[index]
+          .map(
+            (i) => _BionicCell(
+              text: widget.bionicCache.cellText(i),
+              isBionicNotifier: widget.isBionicNotifier,
+              cache: widget.bionicCache,
+              index: i,
+              ready: true,
+              state: widget.state!,
+            ),
+          )
+          .toList(),
+    );
   }
 
   @override
@@ -576,64 +657,37 @@ class _CellPageViewState extends State<CellPageView> {
           behavior: HitTestBehavior.opaque,
           onHorizontalDragEnd: (details) {
             if (details.primaryVelocity! < 0) {
-              if (currentIndex < widget.cache.pages.length - 1) {
-                setState(() => currentIndex++);
-                final firstCell = widget.cache.pages[currentIndex].first;
-                final progress = (firstCell / widget.totalCells) * 100;
-                print(
-                  '➡️ Next page: $currentIndex — first cell: $firstCell — progress: $progress%  , CurrentPart : $_currentPart , Total Parts : $_totalParts',
-                );
-                final int newPart = _calculatePart();
-                if (newPart != _currentPart) {
-                  _currentPart = newPart;
-                  _handleMilestoneOnSwipe(newPart);
-                }
-                widget.updateOnSwipe(progress);
-                widget.onPageChanged(firstCell);
-              }
+              _goToPage(true);
             } else {
-              if (currentIndex > 0) {
-                setState(() => currentIndex--);
-
-                final firstCell = widget.cache.pages[currentIndex].first;
-
-                print(
-                  '⬅️ Prev page: $currentIndex — first cell: $firstCell  , CurrentPart : $_currentPart , Total Parts : $_totalParts',
-                );
-
-                final int newPart = _calculatePart();
-                if (newPart != _currentPart) {
-                  _currentPart = newPart;
-                  _handleMilestoneOnSwipe(newPart);
-                }
-                widget.onPageChanged(firstCell);
-              }
+              _goToPage(false);
             }
           },
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
-            child: AnimatedSwitcher(
-              duration: AppDuration.slow,
-              transitionBuilder: (child, animation) {
-                return PageFlipTransition(animation: animation, child: child);
-              },
-              child: ListView(
-                physics: NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.zero,
-                key: ValueKey(currentIndex),
-                children: widget.cache.pages[currentIndex]
-                    .map(
-                      (i) => _BionicCell(
-                        text: widget.bionicCache.cellText(i),
-                        isBionicNotifier: widget.isBionicNotifier,
-                        cache: widget.bionicCache,
-                        index: i,
-                        ready: true,
-                        state: widget.state!,
+            child: Stack(
+              children: [
+                // الصفحة القديمة بتتحرك للخلف
+                if (_outgoingIndex != null)
+                  SlideTransition(
+                    position: _outAnimation,
+                    child: FadeTransition(
+                      opacity: Tween<double>(begin: 1, end: 0).animate(
+                        CurvedAnimation(
+                          parent: _controller,
+                          curve: const Interval(0, 0.5),
+                        ),
                       ),
-                    )
-                    .toList(),
-              ),
+                      child: _buildPageContent(_outgoingIndex!),
+                    ),
+                  ),
+                // الصفحة الجديدة بتيجي من الجنب
+                SlideTransition(
+                  position: _outgoingIndex != null
+                      ? _inAnimation
+                      : AlwaysStoppedAnimation(Offset.zero),
+                  child: _buildPageContent(currentIndex),
+                ),
+              ],
             ),
           ),
         ),

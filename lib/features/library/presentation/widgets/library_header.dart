@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 import 'package:quill/features/library/presentation/widgets/import_book_bottom_sheet.dart';
+import 'package:quill/features/reader/presentation/bloc/reader_bloc.dart';
 
 class LibraryHeader extends StatelessWidget {
   const LibraryHeader({super.key});
@@ -13,7 +15,10 @@ class LibraryHeader extends StatelessWidget {
       useRootNavigator: true,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => const ImportBookBottomSheet(),
+      builder: (_) => BlocProvider.value(
+        value: context.read<ReaderBloc>(),
+        child: const ImportBookBottomSheet(),
+      ),
     );
   }
 
