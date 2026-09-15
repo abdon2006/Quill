@@ -85,7 +85,7 @@ class _BuildFileInfoState extends State<BuildFileInfo> {
                         bookId: widget.book.localId!,
                         title: widget.book.title,
                         author: widget.book.author,
-                        currentPage: widget.book.progress,
+                        progress: widget.book.progress,
                         coverImagePath: newImage.path,
                         isCoverImageChange: true,
                       );

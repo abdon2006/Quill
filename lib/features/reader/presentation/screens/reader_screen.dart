@@ -105,7 +105,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
             bookId: _book!.isarId,
             title: _book!.title,
             author: _book!.author,
-            currentPage: _currentProgress!.toInt(),
+            progress: _currentProgress!.toInt(),
             coverImagePath: _book!.coverImagePath ?? '',
             isCoverImageChange: false,
           ),

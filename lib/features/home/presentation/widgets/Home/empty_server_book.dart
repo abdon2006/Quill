@@ -14,7 +14,6 @@ class EmptyServerBook extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     return Container(
-      width: double.infinity,
       padding: AppSpacing.cardPadding,
       decoration: BoxDecoration(
         color: colors.surface,
@@ -35,7 +34,7 @@ class EmptyServerBook extends StatelessWidget {
           SizedBox(height: AppSpacing.sm),
 
           Text(
-            'You Havn\'t add any book to your Wishlist ',
+            'You haven\'t added any books to your Wishlist.',
             style: AppTextStyles.heading2(context),
             textAlign: TextAlign.center,
           ),
@@ -49,7 +48,7 @@ class EmptyServerBook extends StatelessWidget {
           ),
           SizedBox(height: AppSpacing.md),
           AppButton.secondary(
-            text: 'Browe Books',
+            text: 'Browse Books',
             onPressed: () => context.go(AppRoutes.discover),
           ),
         ],

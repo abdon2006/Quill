@@ -4,12 +4,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:quill/core/router/app_router.dart';
+import 'package:quill/core/theme/app_duration.dart';
 import 'package:quill/core/theme/app_spacing.dart';
+import 'package:quill/core/theme/app_toast.dart';
+import 'package:quill/core/usecases/base_usecase.dart';
 import 'package:quill/core/widgets/book_list_tile.dart';
 import 'package:quill/core/widgets/premium_background.dart';
-import 'package:quill/core/widgets/show_app_snack_bar.dart';
 import 'package:quill/features/auth/domain/entities/user_entity.dart';
 import 'package:quill/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:quill/features/auth/presentation/bloc/auth_event.dart';
 import 'package:quill/features/auth/presentation/bloc/auth_state.dart';
 import 'package:quill/features/home/domain/entities/book_entity.dart';
 import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
@@ -20,6 +23,7 @@ import 'package:quill/features/home/presentation/widgets/Home/continue_reading.d
 import 'package:quill/features/home/presentation/widgets/Home/empty_local_book_import.dart';
 import 'package:quill/features/home/presentation/widgets/Home/empty_server_book.dart';
 import 'package:quill/features/home/presentation/widgets/Home/home_header.dart';
+import 'package:quill/features/home/presentation/widgets/Home/quote_of_the_day.dart';
 import 'package:quill/features/home/presentation/widgets/Home/section_header.dart';
 import 'package:quill/features/library/domain/entities/wishlist_entity.dart';
 import 'package:quill/features/library/presentation/bloc/library_bloc.dart';
@@ -39,20 +43,18 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final dummyUser = UserEntity(
-    id: '',
-    name: '',
-    email: '',
-    currentStreak: 0,
-    longestStreak: 0,
-  );
   bool _isLocalBooksExist = false;
-  // ضيف اللستة دي جوه الـ StatelessWidget قبل الـ build أو خليها في ملف منفصل للـ Mock Data
+
   Future<void> _onRefresh(BuildContext context) async {
-    context.read<HomeBloc>().add(RefreshBookEvent());
-    await context.read<HomeBloc>().stream.firstWhere(
+    final homeFuture = context.read<HomeBloc>().stream.firstWhere(
       (state) => state is FetchBooksSuccess || state is HomeError,
     );
+    final authFuture = context.read<AuthBloc>().stream.firstWhere(
+      (state) => state is FetchUserDataSuccess || state is AuthError,
+    );
+    context.read<AuthBloc>().add(FetchUserDataEvent(params: NoParams()));
+    context.read<HomeBloc>().add(RefreshBookEvent());
+    await Future.wait([homeFuture, authFuture]);
   }
 
   @override
@@ -63,6 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context).colorScheme;
     return PremiumAuroraBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -79,84 +82,106 @@ class _HomeScreenState extends State<HomeScreen> {
                       setState(() => _isLocalBooksExist = true);
                     }
                   },
-                  child: SizedBox.shrink(),
+                  child: const SizedBox.shrink(),
                 ),
 
-                /// Header
-                BlocConsumer<AuthBloc, AuthState>(
-                  builder: (context, state) {
-                    if (state is AuthLoading) {
-                      return Skeletonizer(
-                        enabled: true,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.xl,
-                          ),
-                          child: HomeHeader(user: dummyUser),
-                        ),
-                      );
-                    }
-                    if (state is FetchUserDataSuccess) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.xl,
-                        ),
-                        child: HomeHeader(user: state.userEntity),
-                      );
-                    }
-
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.xl,
-                      ),
-                      child: HomeHeader(user: dummyUser),
-                    );
-                  },
-                  listener: (BuildContext context, AuthState state) {},
-                ),
-
-                SizedBox(height: AppSpacing.lg),
-
-                /// Continue reading
-                BlocBuilder<LibraryBloc, LibraryState>(
-                  builder: (context, state) {
-                    if (!_isLocalBooksExist) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.xl,
-                        ),
-                        child: EmptyLocalBookImport(onImport: () {}),
-                      );
-                    } else if (state is FetchSuccessState) {
-                      final books = state.books;
-                      if (books.isEmpty) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.xl,
-                          ),
-                          child: EmptyServerBook(),
+                /// 1. Header (Animated)
+                Align(
+                  alignment: AlignmentGeometry.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.xl,
+                    ),
+                    child: BlocBuilder<AuthBloc, AuthState>(
+                      builder: (context, state) {
+                        final dummyUser = UserEntity(
+                          id: '',
+                          name: '',
+                          email: '',
+                          currentStreak: 0,
+                          longestStreak: 0,
                         );
-                      } else {
-                        final book = books.take(1).toList()[0];
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.xl,
-                          ),
-                          child: ContinueReading(
+                        return AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 400),
+                          switchInCurve: Curves.easeOut,
+                          switchOutCurve: Curves.easeIn,
+                          child: state is AuthLoading
+                              ? Skeletonizer(
+                                  key: const ValueKey('header_loading'),
+                                  enabled: true,
+                                  child: HomeHeader(user: dummyUser),
+                                )
+                              : HomeHeader(
+                                  key: const ValueKey('header_loaded'),
+                                  user: state is FetchUserDataSuccess
+                                      ? state.userEntity
+                                      : dummyUser,
+                                ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: AppSpacing.xl),
+
+                /// 2. Continue Reading (Animated)
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xl,
+                  ),
+                  child: BlocBuilder<LibraryBloc, LibraryState>(
+                    builder: (context, state) {
+                      Widget childWidget = const SizedBox.shrink(
+                        key: ValueKey('empty'),
+                      );
+
+                      if (state is FetchSuccessState) {
+                        if (state.books.isEmpty) {
+                          childWidget = EmptyServerBook(
+                            key: const ValueKey('empty_server'),
+                          );
+                        } else {
+                          final book = state.books.first;
+                          childWidget = ContinueReading(
+                            key: ValueKey('continue_reading_${book.bookId}'),
                             onTap: () => context.push(
                               AppRoutes.reader,
                               extra: ReaderBookParams(serverId: book.bookId),
                             ),
                             book: book,
-                          ),
+                          );
+                        }
+                      } else if (!_isLocalBooksExist) {
+                        childWidget = EmptyLocalBookImport(
+                          key: const ValueKey('empty_local'),
+                          onImport: () {},
                         );
                       }
-                    }
-                    return SizedBox.shrink();
-                  },
+                      return AnimatedSize(
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeInOutCubic,
+                        alignment: Alignment.topCenter,
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 400),
+                          layoutBuilder: (currentChild, previousChildren) {
+                            // ده بيمنع الشاشة تنط بشكل حاد وقت التغيير
+                            return Stack(
+                              alignment: Alignment.topCenter,
+                              children: <Widget>[
+                                ...previousChildren,
+                                if (currentChild != null) currentChild,
+                              ],
+                            );
+                          },
+                          child: childWidget,
+                        ),
+                      );
+                    },
+                  ),
                 ),
 
-                SizedBox(height: AppSpacing.lg),
+                SizedBox(height: AppSpacing.xl),
 
                 /// Section Header - Recently Added
                 Padding(
@@ -165,17 +190,30 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   child: SectionHeader(
                     title: 'Recently Added',
-                    viewAllOnTap: () {},
+                    viewAllOnTap: () => context.go(AppRoutes.discover),
                   ),
                 ),
-
                 SizedBox(height: AppSpacing.lg),
 
-                /// Recently Added
+                /// 3. Recently Added (Animated)
                 BlocConsumer<HomeBloc, HomeState>(
+                  listener: (context, state) {
+                    if (state is HomeError) {
+                      appToast(
+                        context: context,
+                        label: 'Your shelf couldn\'t be reached.',
+                        description: 'Check your connection and try again.',
+                        theme: theme,
+                        icon: HugeIcons.strokeRoundedCloudOff,
+                      );
+                    }
+                  },
                   builder: (context, state) {
+                    Widget childWidget;
+
                     if (state is HomeLoading) {
-                      return Skeletonizer(
+                      childWidget = Skeletonizer(
+                        key: const ValueKey('recent_loading'),
                         enabled: true,
                         child: _buildRecentlyUsedDataLoadingState(
                           List.generate(
@@ -184,54 +222,87 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       );
-                    }
-                    if (state is FetchBooksSuccess) {
-                      final books = state.books;
-                      return _buildRecentlyUsedDataSuccessState(books);
-                    }
-                    if (state is HomeError) {
-                      final books = state.cachedBooks;
-                      if (books != null && books.isNotEmpty) {
-                        return _buildRecentlyUsedDataSuccessState(books);
-                      }
-                      return _buildRecentlyUsedDataLoadingState(
-                        List.generate(
-                          3,
-                          (i) => BookGridCard(book: BookEntity.dummy()),
-                        ),
+                    } else if (state is FetchBooksSuccess) {
+                      childWidget = _buildRecentlyUsedDataSuccessState(
+                        books: state.books,
+                        key: const ValueKey('recent_success'),
+                      );
+                    } else if (state is HomeError &&
+                        state.cachedBooks != null &&
+                        state.cachedBooks!.isNotEmpty) {
+                      childWidget = _buildRecentlyUsedDataSuccessState(
+                        books: state.cachedBooks!,
+                        key: const ValueKey('recent_cached'),
+                      );
+                    } else {
+                      childWidget = const SizedBox(
+                        key: ValueKey('recent_empty'),
                       );
                     }
-                    return SizedBox();
-                  },
-                  listener: (BuildContext context, HomeState state) {
-                    if (state is HomeError) {
-                      showSnackBar(
-                        context,
-                        message: 'Your shelf couldn\'t be reached.',
-                        messageDisc: 'Check your connection and try again.',
-                        icon: HugeIcons.strokeRoundedWifiError01,
-                      );
-                    }
+
+                    return AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 400),
+                      child: childWidget,
+                    );
                   },
                 ),
 
-                /// Section Header - From Library
+                SizedBox(height: AppSpacing.xl),
 
-                /// From Library
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xl,
+                  ),
+                  child: SectionHeader(title: 'Quote Of The Day'),
+                ),
+                SizedBox(height: AppSpacing.lg),
+
+                /// Quote
+                Padding(
+                  padding: EdgeInsetsGeometry.symmetric(
+                    horizontal: AppSpacing.xl,
+                  ),
+                  child: BlocBuilder<HomeBloc, HomeState>(
+                    builder: (context, state) {
+                      return AnimatedSwitcher(
+                        duration: AppDuration.normal,
+                        child: state is HomeLoading
+                            ? Skeletonizer(
+                                key: ValueKey('loading'),
+                                enabled: true,
+                                child: QuoteOfTheDay(),
+                              )
+                            : QuoteOfTheDay(key: ValueKey('quote')),
+                      );
+                    },
+                  ),
+                ),
+
+                /// 4. From Library (Animated)
                 BlocBuilder<LibraryBloc, LibraryState>(
                   builder: (context, state) {
+                    Widget childWidget = const SizedBox(
+                      key: ValueKey('lib_empty'),
+                    );
+
                     if (state is LibraryLoading) {
-                      return _buildFromLibraryLoadingState();
-                    }
-                    if (state is FetchSuccessState && state.books.isNotEmpty) {
-                      final books = state.books;
-                      return _buildFromLibrarySuccessState(
-                        books: books,
+                      childWidget = _buildFromLibraryLoadingState(
+                        key: const ValueKey('lib_loading'),
+                      );
+                    } else if (state is FetchSuccessState &&
+                        state.books.isNotEmpty) {
+                      childWidget = _buildFromLibrarySuccessState(
+                        key: const ValueKey('lib_success'),
+                        books: state.books,
                         context: context,
                       );
                     }
 
-                    return Text('');
+                    return AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 500),
+                      switchInCurve: Curves.easeOutCubic,
+                      child: childWidget,
+                    );
                   },
                 ),
               ],
@@ -241,91 +312,103 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-}
 
-Widget _buildRecentlyUsedDataLoadingState(List<Widget> data) {
-  return SizedBox(
-    height: 230.h,
-    child: ListView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-      children: [Row(children: data)],
-    ),
-  );
-}
-
-Widget _buildRecentlyUsedDataSuccessState(List<BookEntity> books) {
-  return SizedBox(
-    height: 230.h,
-    child: ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-      scrollDirection: Axis.horizontal,
-      itemCount: books.length,
-      itemBuilder: (context, i) {
-        final item = books[i];
-        return StaggerdAnimation(
-          index: i,
-          child: BookGridCard(
-            onTap: () => context.push('/bookDeatails', extra: books[i]),
-            book: item,
-          ),
-        );
-      },
-    ),
-  );
-}
-
-Widget _buildFromLibraryLoadingState() {
-  final books = List.generate(3, (i) => WishlistEntity.dummy());
-  return Skeletonizer(
-    enabled: true,
-    child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-      child: Column(
-        children: List.generate(books.length, (i) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-            child: BookListTile(book: books[i]),
-          );
-        }),
+  Widget _buildRecentlyUsedDataLoadingState(List<Widget> data) {
+    return SizedBox(
+      height: 230.h,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+        children: [Row(children: data)],
       ),
-    ),
-  );
-}
+    );
+  }
 
-Widget _buildFromLibrarySuccessState({
-  required List<WishlistEntity> books,
-  required BuildContext context,
-}) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(
-      horizontal: AppSpacing.xl,
-      vertical: AppSpacing.xl,
-    ),
-    child: Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-          child: SectionHeader(title: 'From Library', viewAllOnTap: () {}),
-        ),
-        ...List.generate(books.length, (i) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-            child: Column(
-              children: [
-                StaggerdAnimation(
-                  index: i,
-                  child: GestureDetector(
-                    onTap: () =>
-                        context.push('/bookDeatails', extra: books[i].bookId),
-                    child: BookListTile(book: books[i]),
-                  ),
-                ),
-              ],
+  Widget _buildRecentlyUsedDataSuccessState({
+    required List<BookEntity> books,
+    Key? key,
+  }) {
+    return SizedBox(
+      key: key,
+      height: 230.h,
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+        scrollDirection: Axis.horizontal,
+        itemCount: books.length,
+        itemBuilder: (context, i) {
+          final item = books[i];
+          return StaggerdAnimation(
+            index: i,
+            child: BookGridCard(
+              onTap: () => context.push('/bookDeatails', extra: books[i]),
+              book: item,
             ),
           );
-        }),
-      ],
-    ),
-  );
+        },
+      ),
+    );
+  }
+
+  Widget _buildFromLibraryLoadingState({Key? key}) {
+    final books = List.generate(3, (i) => WishlistEntity.dummy());
+    return Skeletonizer(
+      key: key,
+      enabled: true,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+              child: SectionHeader(title: 'From Library'),
+            ),
+            ...List.generate(books.length, (i) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                child: BookListTile(book: books[i]),
+              );
+            }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFromLibrarySuccessState({
+    required List<WishlistEntity> books,
+    required BuildContext context,
+    Key? key,
+  }) {
+    return Padding(
+      key: key,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.xl,
+        vertical: AppSpacing.xl,
+      ),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+            child: SectionHeader(
+              title: 'From Library',
+              viewAllOnTap: () => context.go(AppRoutes.library),
+            ),
+          ),
+          ...List.generate(books.length, (i) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+              child: StaggerdAnimation(
+                index: i,
+                child: GestureDetector(
+                  onTap: () =>
+                      context.push('/bookDeatails', extra: books[i].bookId),
+                  child: BookListTile(book: books[i]),
+                ),
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 
@@ -6,6 +7,7 @@ class SectionHeader extends StatelessWidget {
   final String title;
   final String? subTitle;
   final void Function()? viewAllOnTap;
+
   const SectionHeader({
     super.key,
     required this.title,
@@ -16,46 +18,59 @@ class SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              title,
-              style: AppTextStyles.heading1(
-                context,
-              ).copyWith(fontWeight: FontWeight.bold),
-            ),
-            if (subTitle != null)
-              Text(
-                subTitle!,
-                style: AppTextStyles.bodyMedium(
+            Expanded(
+              child: Text(
+                title,
+                style: AppTextStyles.heading1(
                   context,
-                ).copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.4)),
+                ).copyWith(fontWeight: FontWeight.bold),
               ),
-          ],
-        ),
-        Spacer(),
-        if (viewAllOnTap != null)
-          GestureDetector(
-            onTap: viewAllOnTap,
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.sm,
-              ),
-              child: Center(
-                child: Text(
-                  'View All',
-                  style: AppTextStyles.caption(
-                    context,
-                  ).copyWith(color: theme.colorScheme.primary),
+            ),
+
+            if (viewAllOnTap != null) ...[
+              SizedBox(width: AppSpacing.sm),
+              GestureDetector(
+                onTap: viewAllOnTap,
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.sm,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: AppRadius.xl,
+                    color: theme.colorScheme.secondary.withValues(alpha: 0.1),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'View All',
+                      style: AppTextStyles.caption(
+                        context,
+                      ).copyWith(color: theme.colorScheme.primary),
+                    ),
+                  ),
                 ),
               ),
+            ],
+          ],
+        ),
+
+        if (subTitle != null) ...[
+          SizedBox(height: 4),
+          Text(
+            subTitle!,
+            style: AppTextStyles.bodyMedium(context).copyWith(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
             ),
           ),
+        ],
       ],
     );
   }

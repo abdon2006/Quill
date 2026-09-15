@@ -59,6 +59,16 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
     });
 
     on<UpdateBookEvent>((event, emit) async {
+      final now = DateTime.now();
+      final todayKey = now.toIso8601String().split('T').first;
+      final prefs = await SharedPreferences.getInstance();
+      final bool hasReadToday = prefs.getBool(todayKey) ?? false;
+      if (!hasReadToday) {
+        await prefs.setBool(todayKey, true);
+        print(
+          '✅ Streak Updated: First read of the day recorded for $todayKey!',
+        );
+      }
       final response = await updateBookUsecase(event.params);
       response.fold((failure) => emit(ReaderFailure(failure: failure)), (
         success,
@@ -134,6 +144,15 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
       try {
         emit(ReaderLoading());
         final prefs = await SharedPreferences.getInstance();
+        final now = DateTime.now();
+        final todayKey = now.toIso8601String().split('T').first;
+        final bool hasReadToday = prefs.getBool(todayKey) ?? false;
+        if (!hasReadToday) {
+          await prefs.setBool(todayKey, true);
+          print(
+            '✅ Streak Updated: First read of the day recorded for $todayKey!',
+          );
+        }
         final oldProgress = prefs.getDouble(event.bookId);
         if (oldProgress != null && oldProgress >= event.progress) {
           print(

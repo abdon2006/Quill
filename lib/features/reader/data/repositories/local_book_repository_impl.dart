@@ -62,7 +62,7 @@ class LocalBookRepositoryImpl implements LocalBookRepository {
         bookId: params.bookId,
         title: params.title,
         author: params.author,
-        currentPage: params.currentPage,
+        progress: params.progress,
         coverImagePath: coverPath,
         isCoverImageChange: params.isCoverImageChange,
       );
