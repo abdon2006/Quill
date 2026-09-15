@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:quill/core/router/app_router.dart';
+import 'package:quill/core/theme/app_colors.dart';
 import 'package:quill/core/theme/app_duration.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_toast.dart';
@@ -66,250 +67,278 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
-    return PremiumAuroraBackground(
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: SafeArea(
-          child: RefreshIndicator(
-            onRefresh: () => _onRefresh(context),
-            child: ListView(
-              padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
-              children: [
-                BlocListener<ReaderBloc, ReaderState>(
-                  listener: (context, state) {
-                    if (state is FetchLocalBooksSuccess &&
-                        state.localBooks.isNotEmpty) {
-                      setState(() => _isLocalBooksExist = true);
-                    }
-                  },
-                  child: const SizedBox.shrink(),
-                ),
-
-                /// 1. Header (Animated)
-                Align(
-                  alignment: AlignmentGeometry.centerLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.xl,
+    final isDark = theme.brightness == Brightness.dark;
+    final bgColor = isDark ? AppColors.darkBgPrimary : AppColors.lightBgPrimary;
+    return Stack(
+      children: [
+        PremiumAuroraBackground(
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            body: SafeArea(
+              child: RefreshIndicator(
+                onRefresh: () => _onRefresh(context),
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
+                  children: [
+                    BlocListener<ReaderBloc, ReaderState>(
+                      listener: (context, state) {
+                        if (state is FetchLocalBooksSuccess &&
+                            state.localBooks.isNotEmpty) {
+                          setState(() => _isLocalBooksExist = true);
+                        }
+                      },
+                      child: const SizedBox.shrink(),
                     ),
-                    child: BlocBuilder<AuthBloc, AuthState>(
+
+                    /// 1. Header (Animated)
+                    Align(
+                      alignment: AlignmentGeometry.centerLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.xl,
+                        ),
+                        child: BlocBuilder<AuthBloc, AuthState>(
+                          builder: (context, state) {
+                            final dummyUser = UserEntity(
+                              id: '',
+                              name: 'abdallah',
+                              email: '',
+                              currentStreak: 0,
+                              longestStreak: 0,
+                            );
+                            return AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 400),
+                              switchInCurve: Curves.easeOut,
+                              switchOutCurve: Curves.easeIn,
+                              child: state is AuthLoading
+                                  ? Skeletonizer(
+                                      key: const ValueKey('header_loading'),
+                                      enabled: true,
+                                      child: HomeHeader(user: dummyUser),
+                                    )
+                                  : HomeHeader(
+                                      key: const ValueKey('header_loaded'),
+                                      user: state is FetchUserDataSuccess
+                                          ? state.userEntity
+                                          : dummyUser,
+                                    ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: AppSpacing.xl),
+
+                    /// 2. Continue Reading (Animated)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.xl,
+                      ),
+                      child: BlocBuilder<LibraryBloc, LibraryState>(
+                        builder: (context, state) {
+                          Widget childWidget = const SizedBox.shrink(
+                            key: ValueKey('empty'),
+                          );
+
+                          if (state is FetchSuccessState) {
+                            if (state.books.isEmpty) {
+                              childWidget = EmptyServerBook(
+                                key: const ValueKey('empty_server'),
+                              );
+                            } else {
+                              final book = state.books.first;
+                              childWidget = ContinueReading(
+                                key: ValueKey(
+                                  'continue_reading_${book.bookId}',
+                                ),
+                                onTap: () => context.push(
+                                  AppRoutes.reader,
+                                  extra: ReaderBookParams(
+                                    serverId: book.bookId,
+                                  ),
+                                ),
+                                book: book,
+                              );
+                            }
+                          } else if (!_isLocalBooksExist) {
+                            childWidget = EmptyLocalBookImport(
+                              key: const ValueKey('empty_local'),
+                              onImport: () {},
+                            );
+                          }
+                          return AnimatedSize(
+                            duration: const Duration(milliseconds: 400),
+                            curve: Curves.easeInOutCubic,
+                            alignment: Alignment.topCenter,
+                            child: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 400),
+                              layoutBuilder: (currentChild, previousChildren) {
+                                // ده بيمنع الشاشة تنط بشكل حاد وقت التغيير
+                                return Stack(
+                                  alignment: Alignment.topCenter,
+                                  children: <Widget>[
+                                    ...previousChildren,
+                                    if (currentChild != null) currentChild,
+                                  ],
+                                );
+                              },
+                              child: childWidget,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+
+                    SizedBox(height: AppSpacing.xl),
+
+                    /// Section Header - Recently Added
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.xl,
+                      ),
+                      child: SectionHeader(
+                        title: 'Recently Added',
+                        viewAllOnTap: () => context.go(AppRoutes.discover),
+                      ),
+                    ),
+                    SizedBox(height: AppSpacing.lg),
+
+                    /// 3. Recently Added (Animated)
+                    BlocConsumer<HomeBloc, HomeState>(
+                      listener: (context, state) {
+                        if (state is HomeError) {
+                          appToast(
+                            context: context,
+                            label: 'Your shelf couldn\'t be reached.',
+                            description: 'Check your connection and try again.',
+                            theme: theme,
+                            icon: HugeIcons.strokeRoundedCloudOff,
+                          );
+                        }
+                      },
                       builder: (context, state) {
-                        final dummyUser = UserEntity(
-                          id: '',
-                          name: '',
-                          email: '',
-                          currentStreak: 0,
-                          longestStreak: 0,
-                        );
+                        Widget childWidget;
+
+                        if (state is HomeLoading) {
+                          childWidget = Skeletonizer(
+                            key: const ValueKey('recent_loading'),
+                            enabled: true,
+                            child: _buildRecentlyUsedDataLoadingState(
+                              List.generate(
+                                3,
+                                (i) => BookGridCard(book: BookEntity.dummy()),
+                              ),
+                            ),
+                          );
+                        } else if (state is FetchBooksSuccess) {
+                          childWidget = _buildRecentlyUsedDataSuccessState(
+                            books: state.books,
+                            key: const ValueKey('recent_success'),
+                          );
+                        } else if (state is HomeError &&
+                            state.cachedBooks != null &&
+                            state.cachedBooks!.isNotEmpty) {
+                          childWidget = _buildRecentlyUsedDataSuccessState(
+                            books: state.cachedBooks!,
+                            key: const ValueKey('recent_cached'),
+                          );
+                        } else {
+                          childWidget = const SizedBox(
+                            key: ValueKey('recent_empty'),
+                          );
+                        }
+
                         return AnimatedSwitcher(
                           duration: const Duration(milliseconds: 400),
-                          switchInCurve: Curves.easeOut,
-                          switchOutCurve: Curves.easeIn,
-                          child: state is AuthLoading
-                              ? Skeletonizer(
-                                  key: const ValueKey('header_loading'),
-                                  enabled: true,
-                                  child: HomeHeader(user: dummyUser),
-                                )
-                              : HomeHeader(
-                                  key: const ValueKey('header_loaded'),
-                                  user: state is FetchUserDataSuccess
-                                      ? state.userEntity
-                                      : dummyUser,
-                                ),
+                          child: childWidget,
                         );
                       },
                     ),
-                  ),
-                ),
 
-                SizedBox(height: AppSpacing.xl),
+                    SizedBox(height: AppSpacing.xl),
 
-                /// 2. Continue Reading (Animated)
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.xl,
-                  ),
-                  child: BlocBuilder<LibraryBloc, LibraryState>(
-                    builder: (context, state) {
-                      Widget childWidget = const SizedBox.shrink(
-                        key: ValueKey('empty'),
-                      );
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.xl,
+                      ),
+                      child: SectionHeader(title: 'Quote Of The Day'),
+                    ),
+                    SizedBox(height: AppSpacing.lg),
 
-                      if (state is FetchSuccessState) {
-                        if (state.books.isEmpty) {
-                          childWidget = EmptyServerBook(
-                            key: const ValueKey('empty_server'),
+                    /// Quote
+                    Padding(
+                      padding: EdgeInsetsGeometry.symmetric(
+                        horizontal: AppSpacing.xl,
+                      ),
+                      child: BlocBuilder<HomeBloc, HomeState>(
+                        builder: (context, state) {
+                          return AnimatedSwitcher(
+                            duration: AppDuration.normal,
+                            child: state is HomeLoading
+                                ? Skeletonizer(
+                                    key: ValueKey('loading'),
+                                    enabled: true,
+                                    child: QuoteOfTheDay(),
+                                  )
+                                : QuoteOfTheDay(key: ValueKey('quote')),
                           );
-                        } else {
-                          final book = state.books.first;
-                          childWidget = ContinueReading(
-                            key: ValueKey('continue_reading_${book.bookId}'),
-                            onTap: () => context.push(
-                              AppRoutes.reader,
-                              extra: ReaderBookParams(serverId: book.bookId),
-                            ),
-                            book: book,
+                        },
+                      ),
+                    ),
+
+                    /// 4. From Library (Animated)
+                    BlocBuilder<LibraryBloc, LibraryState>(
+                      builder: (context, state) {
+                        Widget childWidget = const SizedBox(
+                          key: ValueKey('lib_empty'),
+                        );
+
+                        if (state is LibraryLoading) {
+                          childWidget = _buildFromLibraryLoadingState(
+                            key: const ValueKey('lib_loading'),
+                          );
+                        } else if (state is FetchSuccessState &&
+                            state.books.isNotEmpty) {
+                          childWidget = _buildFromLibrarySuccessState(
+                            key: const ValueKey('lib_success'),
+                            books: state.books,
+                            context: context,
                           );
                         }
-                      } else if (!_isLocalBooksExist) {
-                        childWidget = EmptyLocalBookImport(
-                          key: const ValueKey('empty_local'),
-                          onImport: () {},
-                        );
-                      }
-                      return AnimatedSize(
-                        duration: const Duration(milliseconds: 400),
-                        curve: Curves.easeInOutCubic,
-                        alignment: Alignment.topCenter,
-                        child: AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 400),
-                          layoutBuilder: (currentChild, previousChildren) {
-                            // ده بيمنع الشاشة تنط بشكل حاد وقت التغيير
-                            return Stack(
-                              alignment: Alignment.topCenter,
-                              children: <Widget>[
-                                ...previousChildren,
-                                if (currentChild != null) currentChild,
-                              ],
-                            );
-                          },
+
+                        return AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 500),
+                          switchInCurve: Curves.easeOutCubic,
                           child: childWidget,
-                        ),
-                      );
-                    },
-                  ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
-
-                SizedBox(height: AppSpacing.xl),
-
-                /// Section Header - Recently Added
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.xl,
-                  ),
-                  child: SectionHeader(
-                    title: 'Recently Added',
-                    viewAllOnTap: () => context.go(AppRoutes.discover),
-                  ),
-                ),
-                SizedBox(height: AppSpacing.lg),
-
-                /// 3. Recently Added (Animated)
-                BlocConsumer<HomeBloc, HomeState>(
-                  listener: (context, state) {
-                    if (state is HomeError) {
-                      appToast(
-                        context: context,
-                        label: 'Your shelf couldn\'t be reached.',
-                        description: 'Check your connection and try again.',
-                        theme: theme,
-                        icon: HugeIcons.strokeRoundedCloudOff,
-                      );
-                    }
-                  },
-                  builder: (context, state) {
-                    Widget childWidget;
-
-                    if (state is HomeLoading) {
-                      childWidget = Skeletonizer(
-                        key: const ValueKey('recent_loading'),
-                        enabled: true,
-                        child: _buildRecentlyUsedDataLoadingState(
-                          List.generate(
-                            3,
-                            (i) => BookGridCard(book: BookEntity.dummy()),
-                          ),
-                        ),
-                      );
-                    } else if (state is FetchBooksSuccess) {
-                      childWidget = _buildRecentlyUsedDataSuccessState(
-                        books: state.books,
-                        key: const ValueKey('recent_success'),
-                      );
-                    } else if (state is HomeError &&
-                        state.cachedBooks != null &&
-                        state.cachedBooks!.isNotEmpty) {
-                      childWidget = _buildRecentlyUsedDataSuccessState(
-                        books: state.cachedBooks!,
-                        key: const ValueKey('recent_cached'),
-                      );
-                    } else {
-                      childWidget = const SizedBox(
-                        key: ValueKey('recent_empty'),
-                      );
-                    }
-
-                    return AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 400),
-                      child: childWidget,
-                    );
-                  },
-                ),
-
-                SizedBox(height: AppSpacing.xl),
-
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.xl,
-                  ),
-                  child: SectionHeader(title: 'Quote Of The Day'),
-                ),
-                SizedBox(height: AppSpacing.lg),
-
-                /// Quote
-                Padding(
-                  padding: EdgeInsetsGeometry.symmetric(
-                    horizontal: AppSpacing.xl,
-                  ),
-                  child: BlocBuilder<HomeBloc, HomeState>(
-                    builder: (context, state) {
-                      return AnimatedSwitcher(
-                        duration: AppDuration.normal,
-                        child: state is HomeLoading
-                            ? Skeletonizer(
-                                key: ValueKey('loading'),
-                                enabled: true,
-                                child: QuoteOfTheDay(),
-                              )
-                            : QuoteOfTheDay(key: ValueKey('quote')),
-                      );
-                    },
-                  ),
-                ),
-
-                /// 4. From Library (Animated)
-                BlocBuilder<LibraryBloc, LibraryState>(
-                  builder: (context, state) {
-                    Widget childWidget = const SizedBox(
-                      key: ValueKey('lib_empty'),
-                    );
-
-                    if (state is LibraryLoading) {
-                      childWidget = _buildFromLibraryLoadingState(
-                        key: const ValueKey('lib_loading'),
-                      );
-                    } else if (state is FetchSuccessState &&
-                        state.books.isNotEmpty) {
-                      childWidget = _buildFromLibrarySuccessState(
-                        key: const ValueKey('lib_success'),
-                        books: state.books,
-                        context: context,
-                      );
-                    }
-
-                    return AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 500),
-                      switchInCurve: Curves.easeOutCubic,
-                      child: childWidget,
-                    );
-                  },
-                ),
-              ],
+              ),
             ),
           ),
         ),
-      ),
+
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: IgnorePointer(
+            child: Container(
+              height: 150.h,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [bgColor.withValues(alpha: 0), bgColor],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

@@ -14,6 +14,7 @@ import 'package:quill/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:quill/features/auth/presentation/screens/auth_choose_screen.dart';
 import 'package:quill/features/auth/presentation/screens/login/login_screen.dart';
 import 'package:quill/features/auth/presentation/screens/signup/signup_screen.dart';
+import 'package:quill/features/discover/presentation/screens/discover_screen.dart';
 import 'package:quill/features/home/domain/entities/book_entity.dart';
 import 'package:quill/features/home/domain/repositories/book_repository.dart';
 import 'package:quill/features/home/domain/usecases/fetch_books_usecase.dart';
@@ -91,8 +92,14 @@ final appRouter = GoRouter(
             GoRoute(
               path: AppRoutes.discover,
               name: AppRoutes.discover,
-              builder: (context, state) =>
-                  const Scaffold(body: Center(child: Text('Discover'))),
+              builder: (context, state) => BlocProvider(
+                create: (context) => HomeBloc(
+                  fetchBooksUsecase: sl<FetchBooksUsecase>(),
+                  bookRepository: sl<BookRepository>(),
+                  getBookByIdUsecase: sl<GetBookByIdUsecase>(),
+                )..add(FetchHomeBooksEvent()) ,
+                child: DiscoverScreen(),
+              ),
             ),
 
             /// Profile

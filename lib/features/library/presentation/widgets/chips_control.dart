@@ -38,7 +38,7 @@ class _ChipsControlState extends State<ChipsControl> {
               width: itemWidth,
               left: selectedIndex * itemWidth,
               duration: AppDuration.normal,
-              curve: AppAnimation.emphasizedCurve,
+              curve: Curves.easeInOutCubic,
               child: Container(
                 height: 50.h,
                 decoration: BoxDecoration(
@@ -61,6 +61,7 @@ class _ChipsControlState extends State<ChipsControl> {
                     });
                   },
                   child: SizedBox(
+                    height: 50.h,
                     width: itemWidth,
                     child: Center(
                       child: AnimatedDefaultTextStyle(

@@ -37,7 +37,6 @@ class _HomeHeaderState extends State<HomeHeader> {
     final now = DateTime.now();
     int streakCount = 0;
 
-    // بنجيب حالة النهاردة وامبارح
     final todayKey = now.toIso8601String().split('T').first;
     final yesterdayKey = now
         .subtract(const Duration(days: 1))
