@@ -9,12 +9,14 @@ import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 
 class DiscoverSearchBar extends StatefulWidget {
+  final TextEditingController controller;
   final void Function(String)? onChanged;
   final ValueChanged<bool> onFocus;
   const DiscoverSearchBar({
     super.key,
     required this.onChanged,
     required this.onFocus,
+    required this.controller,
   });
 
   @override
@@ -22,7 +24,6 @@ class DiscoverSearchBar extends StatefulWidget {
 }
 
 class _DiscoverSearchBarState extends State<DiscoverSearchBar> {
-  final controller = TextEditingController();
   final _focusNode = FocusNode();
   bool _isFocused = false;
 
@@ -74,14 +75,16 @@ class _DiscoverSearchBarState extends State<DiscoverSearchBar> {
           onChanged: widget.onChanged,
           focusNode: _focusNode,
           keyboardType: TextInputType.name,
-
-          controller: controller,
+          textAlignVertical: TextAlignVertical.center,
+          controller: widget.controller,
           validator: (v) => '',
           cursorOpacityAnimates: true,
           cursorColor: theme.colorScheme.secondary,
           cursorRadius: Radius.circular(20.r),
           style: AppTextStyles.bodyMedium(context),
+
           decoration: InputDecoration(
+            isDense: true,
             border: InputBorder.none,
             enabledBorder: InputBorder.none,
             focusedBorder: InputBorder.none,
@@ -105,8 +108,40 @@ class _DiscoverSearchBarState extends State<DiscoverSearchBar> {
                 size: 20,
               ),
             ),
+            suffixIcon: _isFocused && widget.controller.text.isNotEmpty
+                ? InkWell(
+                    onTap: () {
+                      widget.controller.clear();
+                      widget.onChanged?.call('');
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.sm,
+                      ),
+                      child: AnimatedContainer(
+                        duration: AppDuration.slow,
+                        curve: Curves.easeInOutCubic,
+                        height: 24.w,
+                        width: 24.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: theme.colorScheme.secondary.withValues(
+                            alpha: 0.1,
+                          ),
+                        ),
+                        child: Center(
+                          child: HugeIcon(
+                            icon: HugeIcons.strokeRoundedCancel01,
+                            color: theme.colorScheme.secondary,
+                            size: 16.sp,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                : null,
             prefixIconConstraints: const BoxConstraints(),
-            ////
+            suffixIconConstraints: const BoxConstraints(),
             hintText: 'Search classics, authors, philosophers...',
             hintStyle: AppTextStyles.bodyMedium(context).copyWith(
               color: isDark

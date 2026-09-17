@@ -7,8 +7,13 @@ import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 
 class DiscoverFilteredChips extends StatefulWidget {
+  final int selectedIndex;
   final ValueChanged<int> onSelectedCategory;
-  const DiscoverFilteredChips({super.key, required this.onSelectedCategory});
+  const DiscoverFilteredChips({
+    super.key,
+    required this.onSelectedCategory,
+    required this.selectedIndex,
+  });
 
   @override
   State<DiscoverFilteredChips> createState() => _DiscoverFilteredChipsState();
@@ -23,7 +28,6 @@ class _DiscoverFilteredChipsState extends State<DiscoverFilteredChips> {
     'Self-Improvement',
     'Poetry',
   ];
-  int selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
@@ -36,13 +40,10 @@ class _DiscoverFilteredChipsState extends State<DiscoverFilteredChips> {
         physics: const BouncingScrollPhysics(),
         itemBuilder: (context, i) {
           final item = _categories[i];
-          bool isSelected = selectedIndex == i;
+          bool isSelected = widget.selectedIndex == i;
           return InkWell(
             borderRadius: AppRadius.xxl,
-            onTap: () => setState(() {
-              selectedIndex = i;
-              widget.onSelectedCategory(i);
-            }),
+            onTap: () => widget.onSelectedCategory(i),
             child: Ink(
               child: AnimatedScale(
                 duration: AppDuration.slow,

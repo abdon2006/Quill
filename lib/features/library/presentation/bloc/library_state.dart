@@ -10,6 +10,9 @@ class LibraryInitial extends LibraryState {
 }
 
 class LibraryLoading extends LibraryState {
+  final String targetBookId;
+
+  LibraryLoading({required this.targetBookId});
   @override
   List<Object?> get props => [];
 }

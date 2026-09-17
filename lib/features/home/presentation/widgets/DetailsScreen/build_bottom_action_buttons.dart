@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:quill/core/router/app_router.dart';
 import 'package:quill/core/theme/app_duration.dart';
@@ -86,28 +87,24 @@ class _BuildBottomActionsState extends State<BuildBottomActions> {
                               padding: EdgeInsets.all(AppSpacing.lg),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: widget.isInWishlist
-                                    ? theme.secondary.withValues(alpha: 0.1)
-                                    : theme.surface,
+                                color: theme.secondary.withValues(alpha: 0.1),
                               ),
                               child: AnimatedSwitcher(
                                 duration: AppDuration.normal,
                                 child: isLoadingEvent
                                     ? LoadingAnimationWidget.flickr(
+                                        key: ValueKey('loading'),
                                         leftDotColor: theme.secondary,
                                         rightDotColor: theme.secondary
                                             .withValues(alpha: 0.5),
                                         size: 20.r,
                                       )
-                                    : widget.isInWishlist
-                                    ? HugeIcon(
-                                        key: ValueKey('added'),
-                                        icon: HugeIcons.strokeRoundedFavourite,
+                                    : Icon(
+                                        key: ValueKey('success'),
+                                        widget.isInWishlist
+                                            ? Iconsax.heart5
+                                            : Iconsax.heart,
                                         color: theme.secondary,
-                                      )
-                                    : HugeIcon(
-                                        key: ValueKey('removed'),
-                                        icon: HugeIcons.strokeRoundedHeartAdd,
                                       ),
                               ),
                             ),

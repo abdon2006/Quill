@@ -18,7 +18,11 @@ class AppEmpty extends StatelessWidget {
     return Column(
       children: [
         SvgPicture.asset(image),
-        Text(title, style: AppTextStyles.displayMedium(context)),
+        Text(
+          textAlign: TextAlign.center,
+          title,
+          style: AppTextStyles.displayMedium(context),
+        ),
         Text(subtitle ?? '', style: AppTextStyles.caption(context)),
       ],
     );

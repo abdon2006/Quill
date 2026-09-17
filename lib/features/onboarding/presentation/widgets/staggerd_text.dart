@@ -5,11 +5,12 @@ import 'package:quill/core/theme/app_text_style.dart';
 class StaggeredText extends StatefulWidget {
   final String text;
   final Duration delay;
-
+  final TextStyle? style;
   const StaggeredText({
     super.key,
     required this.text,
     this.delay = Duration.zero,
+    this.style,
   });
 
   @override
@@ -83,7 +84,7 @@ class _StaggeredTextState extends State<StaggeredText>
                 offset: Offset(0, 20 * (1 - _wordAnimations[i].value)),
                 child: Text(
                   _words[i],
-                  style: AppTextStyles.displayMedium(context),
+                  style: widget.style ?? AppTextStyles.displayMedium(context),
                 ),
               ),
             );

@@ -16,7 +16,7 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
     required this.fetchWishlistUsecase,
   }) : super(LibraryInitial()) {
     on<AddToWishlistEvent>((event, emit) async {
-      emit(LibraryLoading());
+      emit(LibraryLoading(targetBookId: event.bookId));
       final response = await addToWishlistUsecase(event.bookId);
       response.fold((failure) => emit(LibraryError(failure: failure)), (
         success,
@@ -26,7 +26,7 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
       });
     });
     on<RemoveFromWishlistEvent>((event, emit) async {
-      emit(LibraryLoading());
+      emit(LibraryLoading(targetBookId: event.bookId));
       final response = await removeFromWishlistUsecase(event.bookId);
       response.fold((failure) => emit(LibraryError(failure: failure)), (
         success,
@@ -36,7 +36,7 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
       });
     });
     on<FetchWishlistEvent>((event, emit) async {
-      emit(LibraryLoading());
+      emit(LibraryLoading(targetBookId: ''));
       final response = await fetchWishlistUsecase(NoParams());
       response.fold(
         (failure) => emit(LibraryError(failure: failure)),
