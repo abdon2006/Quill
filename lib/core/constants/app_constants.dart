@@ -6,4 +6,12 @@ abstract class AppConstants {
   static const String accessToken = "accessToken";
   static const String refreshToken = 'refreshToken';
   static const String seenOnboarding = 'seen_onboarding';
+  static const List<String> categories = [
+    'All',
+    'Fiction',
+    'Philosophy',
+    'Science',
+    'Self-Improvement',
+    'Poetry',
+  ];
 }

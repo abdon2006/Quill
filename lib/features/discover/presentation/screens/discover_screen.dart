@@ -41,6 +41,8 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   Timer? _timer;
   bool _isTyping = false;
   List<String> displayedHistory = [];
+  List<BookEntity> recommendedBooks = [];
+  List<BookEntity> bestSellerBooks = [];
   final controller = TextEditingController();
 
   @override
@@ -60,20 +62,41 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             physics: const BouncingScrollPhysics(),
             children: [
-              BlocListener<LibraryBloc, LibraryState>(
-                listener: (context, state) {
-                  if (state is FetchSuccessState) {
-                    setState(() => wishlist = state.books);
-                  }
-                },
-                child: SizedBox.shrink(),
-              ),
-              BlocListener<SearchHistoryCubit, SearchHistoryState>(
-                listener: (context, state) {
-                  if (state is SearchHistoryLoaded) {
-                    setState(() => displayedHistory = state.searchHistory);
-                  }
-                },
+              MultiBlocListener(
+                listeners: [
+                  BlocListener<SearchHistoryCubit, SearchHistoryState>(
+                    listener: (context, state) {
+                      if (state is SearchHistoryLoaded) {
+                        setState(() => displayedHistory = state.searchHistory);
+                      }
+                    },
+                  ),
+
+                  BlocListener<LibraryBloc, LibraryState>(
+                    listener: (context, state) {
+                      if (state is FetchSuccessState) {
+                        setState(() {
+                          wishlist = state.books;
+                        });
+                      }
+                    },
+                  ),
+
+                  BlocListener<HomeBloc, HomeState>(
+                    listener: (context, state) {
+                      if (state is FetchBooksSuccess) {
+                        setState(() {
+                          final shuffledBooks = state.books..shuffle();
+                          recommendedBooks = shuffledBooks.take(5).toList();
+                          bestSellerBooks = state.books
+                              .where((book) => book.ratingAverage >= 4.5)
+                              .take(5)
+                              .toList();
+                        });
+                      }
+                    },
+                  ),
+                ],
                 child: SizedBox(),
               ),
 
@@ -164,6 +187,8 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                             )
                           : DiscoverDefaultContent(
                               key: ValueKey('default'),
+                              recommendedBooks: recommendedBooks,
+                              bestSellerBooks: bestSellerBooks,
                               wishlist: wishlist,
                             ),
                     );
@@ -177,7 +202,11 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                   }
                   return Skeletonizer(
                     enabled: true,
-                    child: DiscoverDefaultContent(wishlist: wishlist),
+                    child: DiscoverDefaultContent(
+                      recommendedBooks: recommendedBooks,
+                      bestSellerBooks: bestSellerBooks,
+                      wishlist: wishlist,
+                    ),
                   );
                 },
               ),

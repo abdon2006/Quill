@@ -14,8 +14,10 @@ import 'package:quill/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:quill/features/auth/presentation/screens/auth_choose_screen.dart';
 import 'package:quill/features/auth/presentation/screens/login/login_screen.dart';
 import 'package:quill/features/auth/presentation/screens/signup/signup_screen.dart';
+import 'package:quill/features/discover/presentation/screens/category_screen.dart';
 import 'package:quill/features/discover/presentation/screens/discover_screen.dart';
 import 'package:quill/features/discover/presentation/search%20cubit/search_history_cubit.dart';
+import 'package:quill/features/discover/presentation/widgets/category_params.dart';
 import 'package:quill/features/home/domain/entities/book_entity.dart';
 import 'package:quill/features/home/domain/repositories/book_repository.dart';
 import 'package:quill/features/home/domain/usecases/fetch_books_usecase.dart';
@@ -153,6 +155,16 @@ final appRouter = GoRouter(
           builder: (context, state) => LocalBookDetailsScreen(
             book: state.extra as LibraryBookDisplayModel,
           ),
+        ),
+
+        GoRoute(
+          path: AppRoutes.category,
+          name: AppRoutes.category,
+          builder: (context, state) {
+            return CategoryScreen(
+              categoryParams: state.extra as CategoryParams,
+            );
+          },
         ),
 
         /// Reader

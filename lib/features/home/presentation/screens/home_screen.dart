@@ -233,7 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         } else if (state is FetchBooksSuccess) {
                           childWidget = _buildRecentlyUsedDataSuccessState(
-                            books: state.books,
+                            books: state.books.reversed.take(5).toList(),
                             key: const ValueKey('recent_success'),
                           );
                         } else if (state is HomeError &&

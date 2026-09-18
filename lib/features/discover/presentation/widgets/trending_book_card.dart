@@ -12,6 +12,7 @@ import 'package:quill/features/home/domain/entities/book_entity.dart';
 import 'package:quill/features/library/presentation/bloc/library_bloc.dart';
 import 'package:quill/features/library/presentation/bloc/library_event.dart';
 import 'package:quill/features/library/presentation/bloc/library_state.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class TrendingBookCard extends StatelessWidget {
   final bool isInWishlist;
@@ -109,8 +110,8 @@ class TrendingBookCard extends StatelessWidget {
                               ),
                             ],
                           ),
-
                           Expanded(
+
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
@@ -136,52 +137,60 @@ class TrendingBookCard extends StatelessWidget {
                                       splashColor: theme.secondary.withValues(
                                         alpha: 0.02,
                                       ),
-                                      child: AnimatedContainer(
-                                        height: 40.w,
-                                        width: 40.w,
-                                        curve: Curves.easeInOutCubic,
-                                        duration: AppDuration.normal,
-                                        padding: EdgeInsets.all(AppSpacing.sm),
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: theme.secondary.withValues(
-                                            alpha: 0.1,
+                                      child: Skeleton.ignore(
+                                        child: AnimatedContainer(
+                                          height: 40.w,
+                                          width: 40.w,
+                                          curve: Curves.easeInOutCubic,
+                                          duration: AppDuration.normal,
+                                          padding: EdgeInsets.all(
+                                            AppSpacing.sm,
                                           ),
-                                        ),
-                                        child: BlocBuilder<LibraryBloc, LibraryState>(
-                                          builder: (context, state) {
-                                            bool isLoading =
-                                                state is LibraryLoading &&
-                                                state.targetBookId == book.id;
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: theme.secondary.withValues(
+                                              alpha: 0.1,
+                                            ),
+                                          ),
+                                          child: BlocBuilder<LibraryBloc, LibraryState>(
+                                            builder: (context, state) {
+                                              bool isLoading =
+                                                  state is LibraryLoading &&
+                                                  state.targetBookId == book.id;
 
-                                            return AnimatedSwitcher(
-                                              duration: AppDuration.slow,
-                                              switchInCurve:
-                                                  Curves.easeInOutCubic,
-                                              switchOutCurve: Curves.easeIn,
+                                              return AnimatedSwitcher(
+                                                duration: AppDuration.slow,
+                                                switchInCurve:
+                                                    Curves.easeInOutCubic,
+                                                switchOutCurve: Curves.easeIn,
 
-                                              /// في مشكل هنا اني لما بدوس علي اي حاجة سواء اضافة او ازالة من المكتبة كل الكتب بتحمل
-                                              child: isLoading
-                                                  ? LoadingAnimationWidget.flickr(
-                                                      key: ValueKey('Loading'),
-                                                      leftDotColor:
-                                                          theme.secondary,
-                                                      rightDotColor: theme
-                                                          .secondary
-                                                          .withValues(
-                                                            alpha: 0.5,
-                                                          ),
-                                                      size: 20.r,
-                                                    )
-                                                  : Icon(
-                                                      key: ValueKey('success'),
-                                                      isInWishlist
-                                                          ? Iconsax.heart5
-                                                          : Iconsax.heart,
-                                                      color: theme.secondary,
-                                                    ),
-                                            );
-                                          },
+                                                /// في مشكل هنا اني لما بدوس علي اي حاجة سواء اضافة او ازالة من المكتبة كل الكتب بتحمل
+                                                child: isLoading
+                                                    ? LoadingAnimationWidget.flickr(
+                                                        key: ValueKey(
+                                                          'Loading',
+                                                        ),
+                                                        leftDotColor:
+                                                            theme.secondary,
+                                                        rightDotColor: theme
+                                                            .secondary
+                                                            .withValues(
+                                                              alpha: 0.5,
+                                                            ),
+                                                        size: 20.r,
+                                                      )
+                                                    : Icon(
+                                                        key: ValueKey(
+                                                          'success',
+                                                        ),
+                                                        isInWishlist
+                                                            ? Iconsax.heart5
+                                                            : Iconsax.heart,
+                                                        color: theme.secondary,
+                                                      ),
+                                              );
+                                            },
+                                          ),
                                         ),
                                       ),
                                     ),

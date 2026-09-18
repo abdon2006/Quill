@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:quill/core/constants/app_constants.dart';
+import 'package:quill/core/router/app_router.dart';
 import 'package:quill/core/states/EmptyStates/app_empty.dart';
 import 'package:quill/core/theme/app_assets.dart';
 import 'package:quill/core/theme/app_spacing.dart';
+import 'package:quill/features/discover/presentation/widgets/category_params.dart';
 import 'package:quill/features/discover/presentation/widgets/recommended_tile.dart';
 import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
 import 'package:quill/features/home/presentation/bloc/home_state.dart';
@@ -15,92 +19,80 @@ class DiscoverCategoryContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-          child: Column(
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        if (state is FetchBooksSuccess) {
+          final selectedCategory = AppConstants.categories[selectedChipIndex];
+
+          final filteredBooks = state.books.reversed.where(
+            (book) => book.categories.any(
+              (category) => category.toLowerCase().contains(
+                selectedCategory.toLowerCase(),
+              ),
+            ),
+          );
+
+          final books = filteredBooks.take(5).toList();
+
+          return Column(
             children: [
-              SizedBox(height: AppSpacing.lg),
-              Builder(
-                builder: (context) {
-                  final categories = [
-                    'All',
-                    'Fiction',
-                    'Philosophy',
-                    'Science',
-                    'Self-Improvement',
-                    'Poetry',
-                  ];
-                  return SectionHeader(
-                    title: '${categories[selectedChipIndex]} Books',
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+                child: Column(
+                  children: [
+                    SizedBox(height: AppSpacing.lg),
+                    Builder(
+                      builder: (context) {
+                        return SectionHeader(
+                          title:
+                              '${AppConstants.categories[selectedChipIndex]} Books',
+                          viewAllOnTap: () => context.push(
+                            AppRoutes.category,
+                            extra: CategoryParams(
+                              books: filteredBooks.toList(),
+                              category:
+                                  AppConstants.categories[selectedChipIndex],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    SizedBox(height: AppSpacing.xl),
+                  ],
+                ),
+              ),
+
+              if (filteredBooks.isEmpty)
+                StaggerdAnimation(
+                  index: 0,
+                  child: AppEmpty(
+                    title:
+                        "We are still curating our $selectedCategory collection.",
+                    image: AppAssets.noResults,
+                  ),
+                ),
+
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: books.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.only(bottom: AppSpacing.md),
+                    child: StaggerdAnimation(
+                      index: index * 2,
+                      child: RecommendedBookTile(book: books[index]),
+                    ),
                   );
                 },
               ),
-              SizedBox(height: AppSpacing.xl),
+
+              /// 2. عرض الكتب المتفلترة
             ],
-          ),
-        ),
-
-        /// 2. عرض الكتب المتفلترة
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-          child: BlocBuilder<HomeBloc, HomeState>(
-            builder: (context, state) {
-              if (state is FetchBooksSuccess) {
-                final categories = [
-                  'All',
-                  'Fiction',
-                  'Philosophy',
-                  'Science',
-                  'Self-Improvement',
-                  'Poetry',
-                ];
-                final selectedCategory = categories[selectedChipIndex];
-
-                // السحر هنا: بنفلتر الكتب اللي في الرام (Local Filtering)
-                final filteredBooks = state.books
-                    .where(
-                      (book) => book.categories.any(
-                        (category) => category.toLowerCase().contains(
-                          selectedCategory.toLowerCase(),
-                        ),
-                      ),
-                    )
-                    .toList();
-                // لو القسم ده مفيهوش كتب لسه (Empty State)
-                if (filteredBooks.isEmpty) {
-                  return StaggerdAnimation(
-                    index: 0,
-                    child: AppEmpty(
-                      title:
-                          "We are still curating our $selectedCategory collection.",
-                      image: AppAssets.noResults,
-                    ),
-                  );
-                }
-
-                // لو فيه كتب، بنعرضها بنفس شياكة الـ Recommended
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: filteredBooks.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: EdgeInsets.only(bottom: AppSpacing.md),
-                      child: StaggerdAnimation(
-                        index: index * 2,
-                        child: RecommendedBookTile(book: filteredBooks[index]),
-                      ),
-                    );
-                  },
-                );
-              }
-              return const SizedBox();
-            },
-          ),
-        ),
-      ],
+          );
+        }
+        return SizedBox.shrink();
+      },
     );
   }
 }

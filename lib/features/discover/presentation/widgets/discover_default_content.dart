@@ -6,6 +6,7 @@ import 'package:quill/core/router/app_router.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/features/discover/presentation/widgets/recommended_tile.dart';
 import 'package:quill/features/discover/presentation/widgets/trending_book_card.dart';
+import 'package:quill/features/home/domain/entities/book_entity.dart';
 import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
 import 'package:quill/features/home/presentation/bloc/home_state.dart';
 import 'package:quill/features/home/presentation/widgets/Home/section_header.dart';
@@ -14,7 +15,14 @@ import 'package:quill/features/library/presentation/widgets/staggerd_animation.d
 
 class DiscoverDefaultContent extends StatelessWidget {
   final List<WishlistEntity> wishlist;
-  const DiscoverDefaultContent({super.key, required this.wishlist});
+  final List<BookEntity> recommendedBooks;
+  final List<BookEntity> bestSellerBooks;
+  const DiscoverDefaultContent({
+    super.key,
+    required this.wishlist,
+    required this.recommendedBooks,
+    required this.bestSellerBooks,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,17 +35,16 @@ class DiscoverDefaultContent extends StatelessWidget {
           child: Column(
             children: [
               SizedBox(height: AppSpacing.xl),
-              SectionHeader(title: 'Trending Books'),
+              SectionHeader(title: 'Best Seller'),
               SizedBox(height: AppSpacing.xl),
             ],
           ),
         ),
 
         /// Trending Books
-        BlocConsumer<HomeBloc, HomeState>(
+        BlocBuilder<HomeBloc, HomeState>(
           builder: (context, state) {
             if (state is FetchBooksSuccess) {
-              final displayedBooks = state.books.reversed.take(5).toList();
               return SizedBox(
                 height: 350.h,
                 child: ListView.separated(
@@ -45,7 +52,7 @@ class DiscoverDefaultContent extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   physics: const BouncingScrollPhysics(),
                   itemBuilder: (context, i) {
-                    final item = displayedBooks[i];
+                    final item = bestSellerBooks[i];
                     return Padding(
                       padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                       child: StaggerdAnimation(
@@ -65,14 +72,11 @@ class DiscoverDefaultContent extends StatelessWidget {
                     );
                   },
                   separatorBuilder: (context, i) => SizedBox(width: 10.w),
-                  itemCount: displayedBooks.length,
+                  itemCount: bestSellerBooks.length,
                 ),
               );
             }
             return const SizedBox();
-          },
-          listener: (BuildContext context, HomeState state) {
-            if (state is FetchBooksSuccess) {}
           },
         ),
 
@@ -94,8 +98,6 @@ class DiscoverDefaultContent extends StatelessWidget {
           child: BlocBuilder<HomeBloc, HomeState>(
             builder: (context, state) {
               if (state is FetchBooksSuccess) {
-                final recommendedBooks = state.books.toList();
-                // استخدمنا ListView.builder مع shrinkWrap عشان تشتغل جوه الـ ListView الأب
                 return ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),

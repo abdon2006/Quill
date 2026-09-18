@@ -12,4 +12,5 @@ abstract class AppRoutes {
   static const signup = '/singup';
   static const login = '/login';
   static const localBookDetails = '/localBookDetails';
+  static const category = '/category';
 }
