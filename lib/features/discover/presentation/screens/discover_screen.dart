@@ -88,10 +88,13 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
 
                   BlocListener<HomeBloc, HomeState>(
                     listener: (context, state) {
-                      if (state is FetchBooksSuccess) {
+                      if (state is FetchBooksSuccess &&
+                          recommendedBooks.isEmpty &&
+                          bestSellerBooks.isEmpty) {
                         setState(() {
-                          final shuffledBooks = state.books..shuffle();
-                          recommendedBooks = shuffledBooks.take(5).toList();
+                          final shuffled = List<BookEntity>.from(state.books)
+                            ..shuffle();
+                          recommendedBooks = shuffled.take(5).toList();
                           bestSellerBooks = state.books
                               .where((book) => book.ratingAverage >= 4.5)
                               .take(5)
