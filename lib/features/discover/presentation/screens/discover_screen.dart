@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:quill/core/states/EmptyStates/app_empty.dart';
 import 'package:quill/core/states/ErrorStates/app_error.dart';
 import 'package:quill/core/theme/app_assets.dart';
 import 'package:quill/core/theme/app_duration.dart';
+import 'package:quill/core/theme/app_icons.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 import 'package:quill/core/widgets/premium_background.dart';
@@ -54,6 +57,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context).colorScheme;
     return PremiumAuroraBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -101,38 +105,71 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
               ),
 
               /// Header & Search Bar / ثابت
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: AppSpacing.xl),
+                    child: Text(
                       'Discover',
                       style: AppTextStyles.displayLarge(context),
                     ),
-                    SizedBox(height: AppSpacing.xl),
-                    DiscoverSearchBar(
-                      onChanged: (String p1) {
-                        final isDeleted = p1.length > _searchQuery.length;
-                        if (isDeleted) {
-                          setState(() => _isTyping = true);
-                        }
-                        _timer?.cancel();
-                        _timer = Timer(
-                          isDeleted ? Duration.zero : AppDuration.normal,
-                          () => setState(() {
-                            _isTyping = false;
-                            _searchQuery = p1;
-                          }),
-                        );
-                      },
-                      onFocus: (bool isFocused) =>
-                          setState(() => _isFocused = isFocused),
-                      controller: controller,
+                  ),
+                  SizedBox(height: AppSpacing.xl),
+                  AnimatedPadding(
+                    duration: AppDuration.slow,
+                    curve: Curves.easeInOutCubic,
+                    padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+                    child: Row(
+                      children: [
+                        AnimatedContainer(
+                          duration: AppDuration.slow,
+                          curve: Curves.easeInOutCubic,
+                          width: _isFocused ? 40.w + AppSpacing.lg : 0,
+                          child: _isFocused
+                              ? InkWell(
+                                  customBorder: CircleBorder(),
+                                  onTap: () {
+                                    controller.clear();
+                                    setState(() {
+                                      _searchQuery = '';
+                                      _isFocused = false;
+                                    });
+                                    FocusScope.of(context).unfocus();
+                                  },
+                                  child: HugeIcon(
+                                    icon: AppIcons.back,
+                                    color: theme.secondary,
+                                  ),
+                                )
+                              : null,
+                        ),
+                        Expanded(
+                          child: DiscoverSearchBar(
+                            onChanged: (String p1) {
+                              final isDeleted = p1.length > _searchQuery.length;
+                              if (isDeleted) {
+                                setState(() => _isTyping = true);
+                              }
+                              _timer?.cancel();
+                              _timer = Timer(
+                                isDeleted ? Duration.zero : AppDuration.normal,
+                                () => setState(() {
+                                  _isTyping = false;
+                                  _searchQuery = p1;
+                                }),
+                              );
+                            },
+                            onFocus: (bool isFocused) =>
+                                setState(() => _isFocused = isFocused),
+                            controller: controller,
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(height: AppSpacing.xl),
-                  ],
-                ),
+                  ),
+                  SizedBox(height: AppSpacing.xl),
+                ],
               ),
 
               /// Filter Chips / ثابتة

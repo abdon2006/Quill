@@ -85,14 +85,18 @@ class RecommendedBookTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 // 1. صورة الغلاف المصغرة
-                ClipRRect(
-                  borderRadius: AppRadius.sm,
-                  child: Image.network(
-                    book.coverImage,
-                    width: 70.w,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        buildCoverPlaceholder(context),
+                Container(
+                  decoration: BoxDecoration(
+                  ),
+                  child: ClipRRect(
+                    borderRadius: AppRadius.sm,
+                    child: Image.network(
+                      book.coverImage,
+                      width: 70.w,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          buildCoverPlaceholder(context),
+                    ),
                   ),
                 ),
 

@@ -302,7 +302,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             state.books.isNotEmpty) {
                           childWidget = _buildFromLibrarySuccessState(
                             key: const ValueKey('lib_success'),
-                            books: state.books,
+                            books: state.books.take(5).toList(),
                             context: context,
                           );
                         }
