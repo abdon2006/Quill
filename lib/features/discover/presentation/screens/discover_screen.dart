@@ -169,7 +169,6 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                           ? DiscoverSearchContent(
                               key: const ValueKey('search'),
                               isTyping: _isTyping,
-                              context: context,
                               searchQuery: _searchQuery,
                               displayedHistory: displayedHistory,
                               controller: controller,

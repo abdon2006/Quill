@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:quill/core/constants/app_constants.dart';
 import 'package:quill/core/theme/app_colors.dart';
 import 'package:quill/core/theme/app_duration.dart';
 import 'package:quill/core/theme/app_radius.dart';
@@ -20,14 +21,6 @@ class DiscoverFilteredChips extends StatefulWidget {
 }
 
 class _DiscoverFilteredChipsState extends State<DiscoverFilteredChips> {
-  final List<String> _categories = [
-    'All',
-    'Fiction',
-    'Philosophy',
-    'Science',
-    'Self-Improvement',
-    'Poetry',
-  ];
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
@@ -39,7 +32,7 @@ class _DiscoverFilteredChipsState extends State<DiscoverFilteredChips> {
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
         itemBuilder: (context, i) {
-          final item = _categories[i];
+          final item = AppConstants.categories[i];
           bool isSelected = widget.selectedIndex == i;
           return InkWell(
             borderRadius: AppRadius.xxl,
@@ -83,7 +76,7 @@ class _DiscoverFilteredChipsState extends State<DiscoverFilteredChips> {
         },
         separatorBuilder: (context, index) => SizedBox(width: AppSpacing.sm),
 
-        itemCount: _categories.length,
+        itemCount: AppConstants.categories.length,
       ),
     );
   }

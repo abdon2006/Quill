@@ -16,16 +16,14 @@ import 'package:skeletonizer/skeletonizer.dart';
 
 class DiscoverSearchContent extends StatelessWidget {
   final String searchQuery;
-  final BuildContext context;
   final bool isTyping;
   final List<String> displayedHistory;
   final TextEditingController controller;
-  final ValueChanged<String> onSearchItemTapped; // 👈 الـ Callback الجديد
+  final ValueChanged<String> onSearchItemTapped;
 
   const DiscoverSearchContent({
     super.key,
     required this.searchQuery,
-    required this.context,
     required this.isTyping,
     required this.displayedHistory,
     required this.controller,
@@ -79,32 +77,32 @@ class DiscoverSearchContent extends StatelessWidget {
                   switchOutCurve: Curves.easeIn,
                   child: searchQuery.isEmpty
                       ? displayedHistory.isEmpty
-                          ? Text(
-                              "Search for your next great read.",
-                              style: AppTextStyles.defaultReading(context),
-                            )
-                          : Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Recent',
-                                      style: AppTextStyles.displayMedium(
-                                        context,
+                            ? Text(
+                                "Search for your next great read.",
+                                style: AppTextStyles.defaultReading(context),
+                              )
+                            : Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Recent',
+                                        style: AppTextStyles.displayMedium(
+                                          context,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                Divider(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurface
-                                      .withValues(alpha: 0.1),
-                                ),
-                                const SizedBox(height: AppSpacing.lg),
-                                ...List.generate(
-                                  displayedHistory.length,
-                                  (i) {
+                                    ],
+                                  ),
+                                  Divider(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.1),
+                                  ),
+                                  const SizedBox(height: AppSpacing.lg),
+                                  ...List.generate(displayedHistory.length, (
+                                    i,
+                                  ) {
                                     return Padding(
                                       padding: const EdgeInsets.symmetric(
                                         vertical: AppSpacing.xs,
@@ -112,8 +110,9 @@ class DiscoverSearchContent extends StatelessWidget {
                                       child: Row(
                                         children: [
                                           InkWell(
-                                            // 👇 هنا بننادي الـ Callback ونبعتله الكلمة اللي اليوزر داس عليها
-                                            onTap: () => onSearchItemTapped(displayedHistory[i]), 
+                                            onTap: () => onSearchItemTapped(
+                                              displayedHistory[i],
+                                            ),
                                             child: Ink(
                                               child: Container(
                                                 padding: EdgeInsets.symmetric(
@@ -129,8 +128,10 @@ class DiscoverSearchContent extends StatelessWidget {
                                                 ),
                                                 child: Text(
                                                   displayedHistory[i],
-                                                  style: AppTextStyles
-                                                      .defaultReading(context),
+                                                  style:
+                                                      AppTextStyles.defaultReading(
+                                                        context,
+                                                      ),
                                                 ),
                                               ),
                                             ),
@@ -154,9 +155,9 @@ class DiscoverSearchContent extends StatelessWidget {
                                                 child: HugeIcon(
                                                   icon: HugeIcons
                                                       .strokeRoundedCancel01,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .onSurface,
+                                                  color: Theme.of(
+                                                    context,
+                                                  ).colorScheme.onSurface,
                                                   size: 16.sp,
                                                 ),
                                               ),
@@ -165,51 +166,47 @@ class DiscoverSearchContent extends StatelessWidget {
                                         ],
                                       ),
                                     );
-                                  },
-                                ),
-                              ],
-                            )
+                                  }),
+                                ],
+                              )
                       : searchResults.isEmpty
-                          ? AppEmpty(
-                              title:
-                                  "The archives are silent on '$searchQuery'.",
-                              image: AppAssets.emptyResults,
-                            )
-                          : isTyping
-                              ? Skeletonizer(
-                                  key: const ValueKey('loading'),
-                                  enabled: true,
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemCount: 5,
-                                    itemBuilder: (context, index) {
-                                      return Padding(
-                                        padding: EdgeInsets.only(
-                                            bottom: AppSpacing.md),
-                                        child: RecommendedBookTile(
-                                          book: state.books[index],
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                )
-                              : ListView.builder(
-                                  key: const ValueKey('results'),
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: searchResults.length,
-                                  itemBuilder: (context, index) {
-                                    return RecommendedBookTile(
-                                      book: searchResults[index],
-                                      searchText: searchQuery,
-                                      onSave: (String value) => context
-                                          .read<SearchHistoryCubit>()
-                                          .saveSearch(value),
-                                    );
-                                  },
+                      ? AppEmpty(
+                          title: "The archives are silent on '$searchQuery'.",
+                          image: AppAssets.emptyResults,
+                        )
+                      : isTyping
+                      ? Skeletonizer(
+                          key: const ValueKey('loading'),
+                          enabled: true,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: 5,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: EdgeInsets.only(bottom: AppSpacing.md),
+                                child: RecommendedBookTile(
+                                  book: state.books[index],
                                 ),
+                              );
+                            },
+                          ),
+                        )
+                      : ListView.builder(
+                          key: const ValueKey('results'),
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: searchResults.length,
+                          itemBuilder: (context, index) {
+                            return RecommendedBookTile(
+                              book: searchResults[index],
+                              searchText: searchQuery,
+                              onSave: (String value) => context
+                                  .read<SearchHistoryCubit>()
+                                  .saveSearch(value),
+                            );
+                          },
+                        ),
                 );
               }
               return const SizedBox();

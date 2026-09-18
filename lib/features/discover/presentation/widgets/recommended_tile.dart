@@ -64,7 +64,7 @@ class RecommendedBookTile extends StatelessWidget {
               child: InkWell(
                 borderRadius: AppRadius.md,
                 onTap: () {
-                  context.push(AppRoutes.bookDeatails, extra: book.id);
+                  context.push(AppRoutes.bookDeatails, extra: book);
                   onSave != null ? onSave!(searchText) : () {};
                 },
                 child: Ink(
