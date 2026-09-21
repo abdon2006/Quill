@@ -4,6 +4,7 @@ import 'package:quill/core/theme/app_colors.dart';
 import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
+import 'package:quill/features/profile/presentation/widgets/about_dialog.dart';
 import 'package:quill/features/profile/presentation/widgets/build_section.dart';
 
 class BuildAboutSection extends StatelessWidget {
@@ -40,7 +41,7 @@ class BuildAboutSection extends StatelessWidget {
                 title: 'About Quill',
                 subTitle: 'version 1.0.0',
                 icon: HugeIcons.strokeRoundedQuillWrite01,
-                onTap: () {},
+                onTap: () => showAboutQuillDialog(context),
               ),
             ],
           ),
