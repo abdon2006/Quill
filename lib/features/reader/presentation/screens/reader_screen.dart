@@ -320,7 +320,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
 
                   BlocBuilder<ReaderBloc, ReaderState>(
                     builder: (context, state) {
-                      bool isLoading = state is ReaderLoading;
+                      bool isLoading = state is ReaderLoading && _paragraphs.isEmpty;
                       return AnimatedSwitcher(
                         duration: AppDuration.slow,
                         child: isLoading

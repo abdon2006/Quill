@@ -88,15 +88,6 @@ class BuildTopBar extends StatelessWidget {
             theme: theme,
             context: context,
           ),
-
-          const SizedBox(width: AppSpacing.sm),
-          _buildTopBarButton(
-            icon: HugeIcons.strokeRoundedMoreVertical,
-            onTap: () {},
-            state: state,
-            theme: theme,
-            context: context,
-          ),
         ],
       ),
     );

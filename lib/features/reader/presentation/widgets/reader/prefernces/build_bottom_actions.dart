@@ -42,7 +42,7 @@ class _BuildBottomActionsState extends State<BuildBottomActions> {
   }
 
   final List controlsData = [
-    {'label': 'Font', 'icon': HugeIcons.strokeRoundedTextFont},
+    {'label': 'Font', 'icon': HugeIcons.strokeRoundedAiContentGenerator02},
     {'label': 'Focus', 'icon': HugeIcons.strokeRoundedMoon02},
     {'label': 'Pages', 'icon': HugeIcons.strokeRoundedBookOpen02},
     {'label': 'Bionic', 'icon': HugeIcons.strokeRoundedTextFont},
