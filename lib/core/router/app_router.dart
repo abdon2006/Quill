@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quill/core/constants/app_constants.dart';
 import 'package:quill/core/di/injection_container.dart';
+import 'package:quill/core/network/network_service.dart';
 import 'package:quill/core/router/main_shell.dart';
 import 'package:quill/core/usecases/base_usecase.dart';
 import 'package:quill/features/auth/domain/usecases/fetch_user_data_usecase.dart';
@@ -35,8 +36,15 @@ import 'package:quill/features/library/presentation/bloc/library_event.dart';
 import 'package:quill/features/library/presentation/screens/library_screen.dart';
 import 'package:quill/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:quill/features/profile/presentation/screens/dashboard_screen.dart';
+import 'package:quill/features/profile/presentation/screens/imports_screen.dart';
 import 'package:quill/features/profile/presentation/screens/profile_screen.dart';
+import 'package:quill/features/reader/domain/usecases/fetch_local_book_usecase.dart';
+import 'package:quill/features/reader/domain/usecases/fetch_local_books_usecase.dart';
 import 'package:quill/features/reader/domain/usecases/params/reader_book_params.dart';
+import 'package:quill/features/reader/domain/usecases/remove_book_usecase.dart';
+import 'package:quill/features/reader/domain/usecases/update_book_usecase.dart';
+import 'package:quill/features/reader/domain/usecases/upload_book_usecase.dart';
+import 'package:quill/features/reader/presentation/bloc/reader_bloc.dart';
 import 'package:quill/features/reader/presentation/screens/local_book_details_screen.dart';
 import 'package:quill/features/reader/presentation/screens/reader_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -180,6 +188,25 @@ final appRouter = GoRouter(
                 getBookByIdUsecase: sl<GetBookByIdUsecase>(),
               ),
               child: DashboardScreen(),
+            );
+          },
+        ),
+
+        /// imports screen
+        GoRoute(
+          path: AppRoutes.imports,
+          name: AppRoutes.imports,
+          builder: (context, state) {
+            return BlocProvider(
+              create: (context) => ReaderBloc(
+                uploadBookUsecase: sl<UploadBookUsecase>(),
+                removeBookUsecase: sl<RemoveBookUsecase>(),
+                fetchLocalBookUsecase: sl<FetchLocalBookUsecase>(),
+                updateBookUsecase: sl<UpdateBookUsecase>(),
+                fetchLocalBooksUsecase: sl<FetchLocalBooksUsecase>(),
+                networkService: sl<NetworkService>(),
+              ),
+              child: ImportsScreen(),
             );
           },
         ),

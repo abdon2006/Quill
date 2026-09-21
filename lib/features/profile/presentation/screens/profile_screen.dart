@@ -133,8 +133,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Divider(color: theme.onSurface.withValues(alpha: 0.1)),
                 ),
                 BuildReadingSection(
-                    onPreferencesOpened: () => _openPreferencesSheet(theme),
-                  ),
+                  onPreferencesOpened: () => _openPreferencesSheet(theme),
+                ),
                 SizedBox(height: AppSpacing.sm),
                 BuildImportSection(),
                 SizedBox(height: AppSpacing.sm),

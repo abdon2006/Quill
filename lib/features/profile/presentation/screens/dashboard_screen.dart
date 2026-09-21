@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:quill/core/constants/app_constants.dart';
 import 'package:quill/core/theme/app_colors.dart';
 import 'package:quill/core/theme/app_duration.dart';
-import 'package:quill/core/theme/app_icons.dart';
 import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_shadows.dart';
 import 'package:quill/core/theme/app_spacing.dart';
@@ -17,6 +15,7 @@ import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
 import 'package:quill/features/home/presentation/bloc/home_event.dart';
 import 'package:quill/features/home/presentation/bloc/home_state.dart';
 import 'package:quill/features/library/presentation/widgets/staggerd_animation.dart';
+import 'package:quill/features/profile/presentation/widgets/back_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -30,7 +29,7 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   int _currentStreak = 0;
   List<String> _finishedList = [];
-  List<BookEntity> _finishedBooks = [];
+  final List<BookEntity> _finishedBooks = [];
   int totalReadTime = 0;
   List<bool> weekdaysStreak = List.filled(8, false);
 
@@ -140,7 +139,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 },
                 child: SizedBox.shrink(),
               ),
-              _backButton(context, theme),
+              backButton(context, theme),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
                 child: Column(
@@ -204,23 +203,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 }
-
-Widget _backButton(BuildContext context, ColorScheme theme) => InkWell(
-  customBorder: const CircleBorder(),
-  onTap: () => context.pop(),
-  child: Container(
-    width: 36.w,
-    height: 36.w,
-    margin: EdgeInsets.symmetric(
-      horizontal: AppSpacing.lg,
-      vertical: AppSpacing.md,
-    ),
-    decoration: BoxDecoration(shape: BoxShape.circle),
-    child: Center(
-      child: HugeIcon(icon: AppIcons.back, size: 32.sp, color: theme.secondary),
-    ),
-  ),
-);
 
 Widget _streakCard({
   required ColorScheme theme,

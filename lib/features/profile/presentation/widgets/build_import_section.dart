@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:quill/core/router/app_router.dart';
 import 'package:quill/core/theme/app_colors.dart';
 import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_spacing.dart';
@@ -40,7 +42,7 @@ class BuildImportSection extends StatelessWidget {
                 title: 'Storage & Imports',
                 subTitle: 'Your uploaded books',
                 icon: HugeIcons.strokeRoundedDatabase,
-                onTap: () {},
+                onTap: () => context.push(AppRoutes.imports),
               ),
             ],
           ),

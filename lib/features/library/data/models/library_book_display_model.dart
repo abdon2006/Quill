@@ -36,6 +36,18 @@ class LibraryBookDisplayModel {
 }
 
 class LibraryMapper {
+  static LibraryBookDisplayModel mapLocalToModel(LocalBook book) {
+    return LibraryBookDisplayModel(
+      title: book.title,
+      author: book.author,
+      coverImage: book.coverImagePath ?? '',
+      bookSource: BookSource.local,
+      progress: book.progress,
+      pages: book.totalPages,
+      localId: book.isarId,
+    );
+  }
+
   static List<LibraryBookDisplayModel> mapWishlistEntityToDisplayModel(
     List<WishlistEntity> books,
   ) {

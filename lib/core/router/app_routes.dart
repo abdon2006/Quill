@@ -14,4 +14,6 @@ abstract class AppRoutes {
   static const localBookDetails = '/localBookDetails';
   static const category = '/category';
   static const dashboard = '/dashboard';
+  static const imports = '/imports';
+  
 }
