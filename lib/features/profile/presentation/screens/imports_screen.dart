@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quill/core/router/app_router.dart';
 import 'package:quill/core/states/EmptyStates/app_empty.dart';
+import 'package:quill/core/states/ErrorStates/app_error.dart';
 import 'package:quill/core/theme/app_assets.dart';
 import 'package:quill/core/theme/app_duration.dart';
 import 'package:quill/core/theme/app_radius.dart';
@@ -31,7 +32,7 @@ class _ImportsScreenState extends State<ImportsScreen> {
   List<LocalBook> books = [];
   int epub = 0;
   int pdf = 0;
-
+  bool _hasError = false;
   @override
   void initState() {
     super.initState();
@@ -73,6 +74,12 @@ class _ImportsScreenState extends State<ImportsScreen> {
                                   key: ValueKey('loading'),
                                   theme: theme,
                                 )
+                              : _hasError
+                              ? AppError(
+                                  title:
+                                      'Something went wrong loading your books.',
+                                  image: AppAssets.errorBookDetails,
+                                )
                               : books.isNotEmpty
                               ? _buildScreen(
                                   key: ValueKey('success'),
@@ -102,6 +109,9 @@ class _ImportsScreenState extends State<ImportsScreen> {
                             pdf = pdfCount;
                             epub = epubCount;
                           });
+                        }
+                        if (state is ReaderFailure) {
+                          setState(() => _hasError = true);
                         }
                       },
                     ),
