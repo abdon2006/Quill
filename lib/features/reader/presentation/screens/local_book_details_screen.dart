@@ -75,7 +75,7 @@ class _LocalBookDetailsScreenState extends State<LocalBookDetailsScreen> {
 
                 buildDeleteSection(context, widget.book),
 
-                const SizedBox(height: 150),
+                SizedBox(height: 150.h),
               ],
             ),
 
@@ -124,7 +124,7 @@ void showEditBottomSheet({
     context: context,
     backgroundColor: theme.surface,
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(28.r)),
+      borderRadius: AppRadius.sheet,
     ),
     builder: (context) {
       controller.text = content;

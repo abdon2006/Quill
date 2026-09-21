@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:quill/core/animations/app_page_transition.dart';
 import 'package:quill/core/theme/app_radius.dart';
 import 'app_colors.dart';
+import 'app_spacing.dart';
 
 abstract class AppTheme {
   // ── Light Theme ──────────────────────────────
@@ -103,7 +104,7 @@ abstract class AppTheme {
         borderSide: BorderSide.none,
       ),
       hintStyle: const TextStyle(color: AppColors.lightTextMuted),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
     ),
     dividerTheme: const DividerThemeData(
       color: AppColors.lightBgSurfaceAlt,
@@ -215,7 +216,7 @@ abstract class AppTheme {
         borderSide: BorderSide.none,
       ),
       hintStyle: const TextStyle(color: AppColors.darkTextMuted),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
     ),
     dividerTheme: const DividerThemeData(
       color: AppColors.darkBgSurfaceAlt,

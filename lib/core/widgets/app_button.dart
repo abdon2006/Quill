@@ -90,7 +90,7 @@ class AppButton extends StatelessWidget {
     );
 
     return AnimatedContainer(
-      duration: Duration(milliseconds: 2000),
+      duration: AppDuration.breathe,
       curve: Curves.easeInOut,
       width: width,
       height: 50.h,

@@ -176,6 +176,17 @@ class _LibraryScreenState extends State<LibraryScreen> {
                             }
                             return _buildBooks(filterdBooks);
                           }
+                          if (state is ReaderLoading) {
+                            return Skeletonizer(
+                              enabled: true,
+                              child: _buildBooks(
+                                List.generate(
+                                  4,
+                                  (i) => LibraryBookDisplayModel.dummy(),
+                                ),
+                              ),
+                            );
+                          }
                           return _handleLocalErrors(state);
                         },
                       );

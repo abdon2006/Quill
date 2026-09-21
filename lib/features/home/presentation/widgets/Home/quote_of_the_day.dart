@@ -47,7 +47,6 @@ class QuoteOfTheDay extends StatelessWidget {
 
     final now = DateTime.now();
     final daysSinceEpoch = now.difference(DateTime(1970, 1, 1)).inDays;
-    print('total days calculated : $daysSinceEpoch');
     final quoteIndex = daysSinceEpoch % _quotes.length;
     final todayQuote = _quotes[quoteIndex];
     return Container(
@@ -89,7 +88,7 @@ class QuoteOfTheDay extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: 24,
+                width: 24.w,
                 height: 1,
                 color: theme.primary.withValues(alpha: 0.3),
               ),
@@ -104,7 +103,7 @@ class QuoteOfTheDay extends StatelessWidget {
               ),
               SizedBox(width: AppSpacing.sm),
               Container(
-                width: 24,
+                width: 24.w,
                 height: 1,
                 color: theme.primary.withValues(alpha: 0.3),
               ),

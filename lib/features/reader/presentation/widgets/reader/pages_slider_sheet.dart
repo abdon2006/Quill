@@ -47,7 +47,7 @@ class _PagesSliderSheetState extends State<PagesSliderSheet> {
       ),
       decoration: BoxDecoration(
         color: theme.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+        borderRadius: AppRadius.sheetSm,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

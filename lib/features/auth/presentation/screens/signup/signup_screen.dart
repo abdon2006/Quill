@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:quill/core/router/app_router.dart';
 import 'package:quill/core/theme/app_icons.dart';
+import 'package:quill/core/theme/app_duration.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/widgets/app_button.dart';
 import 'package:quill/core/widgets/premium_background.dart';
@@ -110,7 +111,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                     });
                             },
                             child: AnimatedContainer(
-                              duration: Duration(milliseconds: 800),
+                              duration: AppDuration.stageEnter,
                               padding: EdgeInsets.all(AppSpacing.md),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
@@ -121,7 +122,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           ),
                           Expanded(
                             child: AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 1200),
+                              duration: AppDuration.longEntrance,
                               switchInCurve: Curves.easeOutCubic,
                               switchOutCurve: Curves.easeIn,
                               transitionBuilder:

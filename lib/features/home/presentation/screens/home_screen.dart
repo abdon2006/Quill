@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:quill/core/router/app_router.dart';
+import 'package:quill/core/states/ErrorStates/app_error.dart';
+import 'package:quill/core/theme/app_assets.dart';
 import 'package:quill/core/theme/app_colors.dart';
 import 'package:quill/core/theme/app_duration.dart';
 import 'package:quill/core/theme/app_spacing.dart';
@@ -82,9 +84,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     BlocListener<ReaderBloc, ReaderState>(
                       listener: (context, state) {
-                        if (state is FetchLocalBooksSuccess &&
-                            state.localBooks.isNotEmpty) {
-                          setState(() => _isLocalBooksExist = true);
+                        if (state is FetchLocalBooksSuccess) {
+                          setState(
+                            () => _isLocalBooksExist =
+                                state.localBooks.isNotEmpty,
+                          );
+                        } else if (state is ReaderLoading) {
+                          setState(() => _isLocalBooksExist = false);
                         }
                       },
                       child: const SizedBox.shrink(),
@@ -99,28 +105,23 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         child: BlocBuilder<AuthBloc, AuthState>(
                           builder: (context, state) {
-                            final dummyUser = UserEntity(
-                              id: '',
-                              name: 'abdallah',
-                              email: '',
-                              currentStreak: 0,
-                              longestStreak: 0,
-                            );
                             return AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 400),
+                              duration: AppDuration.switchOut,
                               switchInCurve: Curves.easeOut,
                               switchOutCurve: Curves.easeIn,
                               child: state is AuthLoading
                                   ? Skeletonizer(
                                       key: const ValueKey('header_loading'),
                                       enabled: true,
-                                      child: HomeHeader(user: dummyUser),
+                                      child: HomeHeader(
+                                        user: UserEntity.dummy(),
+                                      ),
                                     )
                                   : HomeHeader(
                                       key: const ValueKey('header_loaded'),
                                       user: state is FetchUserDataSuccess
                                           ? state.userEntity
-                                          : dummyUser,
+                                          : UserEntity.dummy(),
                                     ),
                             );
                           },
@@ -164,15 +165,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           } else if (!_isLocalBooksExist) {
                             childWidget = EmptyLocalBookImport(
                               key: const ValueKey('empty_local'),
-                              onImport: () {},
                             );
                           }
                           return AnimatedSize(
-                            duration: const Duration(milliseconds: 400),
+                            duration: AppDuration.switchOut,
                             curve: Curves.easeInOutCubic,
                             alignment: Alignment.topCenter,
                             child: AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 400),
+                              duration: AppDuration.switchOut,
                               layoutBuilder: (currentChild, previousChildren) {
                                 // ده بيمنع الشاشة تنط بشكل حاد وقت التغيير
                                 return Stack(
@@ -250,7 +250,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         }
 
                         return AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 400),
+                          duration: AppDuration.switchOut,
                           child: childWidget,
                         );
                       },
@@ -305,10 +305,17 @@ class _HomeScreenState extends State<HomeScreen> {
                             books: state.books.take(5).toList(),
                             context: context,
                           );
+                        } else if (state is LibraryError) {
+                          childWidget = AppError(
+                            key: const ValueKey('lib_error'),
+                            title:
+                                'Your library couldn\'t be reached right now.',
+                            image: AppAssets.errorBookDetails,
+                          );
                         }
 
                         return AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 500),
+                          duration: AppDuration.slow,
                           switchInCurve: Curves.easeOutCubic,
                           child: childWidget,
                         );

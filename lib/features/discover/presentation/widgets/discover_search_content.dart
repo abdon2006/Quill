@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:quill/core/states/EmptyStates/app_empty.dart';
+import 'package:quill/core/states/ErrorStates/app_error.dart';
 import 'package:quill/core/theme/app_assets.dart';
 import 'package:quill/core/theme/app_duration.dart';
 import 'package:quill/core/theme/app_radius.dart';
@@ -10,6 +11,7 @@ import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 import 'package:quill/features/discover/presentation/search%20cubit/search_history_cubit.dart';
 import 'package:quill/features/discover/presentation/widgets/recommended_tile.dart';
+import 'package:quill/features/home/domain/entities/book_entity.dart';
 import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
 import 'package:quill/features/home/presentation/bloc/home_state.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -209,7 +211,29 @@ class DiscoverSearchContent extends StatelessWidget {
                         ),
                 );
               }
-              return const SizedBox();
+              if (state is HomeError) {
+                return AppError(
+                  title:
+                      "Our library is currently taking a pause. Check back later.",
+                  image: AppAssets.errorBookDetails,
+                );
+              }
+              return Skeletonizer(
+                enabled: true,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: 5,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: AppSpacing.md),
+                      child: RecommendedBookTile(
+                        book: BookEntity.dummy(),
+                      ),
+                    );
+                  },
+                ),
+              );
             },
           ),
         ),

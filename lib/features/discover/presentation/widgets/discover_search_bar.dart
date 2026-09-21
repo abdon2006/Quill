@@ -105,7 +105,7 @@ class _DiscoverSearchBarState extends State<DiscoverSearchBar> {
                     : isDark
                     ? AppColors.darkTextMuted
                     : AppColors.lightTextMuted,
-                size: 20,
+                size: 20.sp,
               ),
             ),
             suffixIcon: _isFocused && widget.controller.text.isNotEmpty

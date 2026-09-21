@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quill/core/theme/app_duration.dart';
 
 class BreathingWidget extends StatefulWidget {
   final Widget child;
@@ -18,7 +19,7 @@ class _BreathingWidgetState extends State<BreathingWidget>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2), // نفس هادي
+      duration: AppDuration.breathe, // نفس هادي
     )..repeat(reverse: true);
 
     _scale = Tween<double>(

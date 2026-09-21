@@ -145,7 +145,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
 
   void _startHideTimer() {
     _uiHideTimer?.cancel();
-    _uiHideTimer = Timer(const Duration(seconds: 4), () {
+    _uiHideTimer = Timer(AppDuration.cue, () {
       if (!mounted) return;
 
       setState(() {

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:quill/core/theme/app_colors.dart';
+import 'package:quill/core/theme/app_duration.dart';
 
 class GoldenShimmer extends StatefulWidget {
   final Widget child;
@@ -17,11 +19,11 @@ class _GoldenShimmerState extends State<GoldenShimmer>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 3), // سرعة اللمعة (بطيئة عشان الهدوء)
+      duration: AppDuration.ambient, // سرعة اللمعة (بطيئة عشان الهدوء)
     );
 
     // بنستنى ثانية ونص عشان ندي فرصة للنص إنه يظهر الأول بـ StaggeredText
-    Future.delayed(const Duration(milliseconds: 1500), () {
+    Future.delayed(AppDuration.dialogPulse, () {
       if (mounted) _controller.repeat();
     });
   }
@@ -42,11 +44,9 @@ class _GoldenShimmerState extends State<GoldenShimmer>
           shaderCallback: (bounds) {
             return LinearGradient(
               colors: [
-                Colors.white.withValues(alpha: 0.0),
-                const Color(
-                  0xFFD98A6C,
-                ).withValues(alpha: 0.5), // لون اللمعة (Terracotta/Gold)
-                Colors.white.withValues(alpha: 0.0),
+                AppColors.white.withValues(alpha: 0.0),
+                AppColors.shimmerHighlight.withValues(alpha: 0.5),
+                AppColors.white.withValues(alpha: 0.0),
               ],
               stops: const [0.0, 0.5, 1.0],
               // تحريك النور من الشمال لليمين

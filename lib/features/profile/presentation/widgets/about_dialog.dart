@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:quill/core/theme/app_colors.dart';
 import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_shadows.dart';
 import 'package:quill/core/theme/app_spacing.dart';
@@ -26,7 +27,7 @@ void showAboutQuillDialog(BuildContext context) {
               width: double.infinity,
               padding: EdgeInsets.symmetric(vertical: AppSpacing.xxxl),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                borderRadius: AppRadius.sheetSm,
               ),
               child: Column(
                 children: [
@@ -41,7 +42,7 @@ void showAboutQuillDialog(BuildContext context) {
                     child: Center(
                       child: HugeIcon(
                         icon: HugeIcons.strokeRoundedQuillWrite01,
-                        color: Colors.white,
+                        color: AppColors.white,
                         size: 28.sp,
                       ),
                     ),

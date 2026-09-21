@@ -86,19 +86,19 @@ abstract class AppTextStyles {
         color: Theme.of(context).colorScheme.onSurface,
       );
 
-  // ── Arabic ───────────────────────────────────
-  static TextStyle arabicBody(BuildContext context) =>
-      GoogleFonts.notoSansArabic(
-        fontSize: 16,
-        fontWeight: FontWeight.w400,
-        height: 1.8,
-        color: Theme.of(context).colorScheme.onSurface,
-      );
+  /// رموز زخرفية (مثل ✦ في حالات الفارغة)
+  static TextStyle symbol(BuildContext context) => TextStyle(
+    fontSize: 32.sp,
+    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
+  );
 
-  static TextStyle arabicHeading(BuildContext context) =>
-      GoogleFonts.notoSansArabic(
-        fontSize: 20,
-        fontWeight: FontWeight.w700,
+  static TextStyle glyph(BuildContext context) => GoogleFonts.plusJakartaSans(
+    fontSize: 32.sp,
+    color: Theme.of(context).colorScheme.onSurface,
+  );
+  static TextStyle readerPrefernce(BuildContext context) =>
+      GoogleFonts.plusJakartaSans(
+        fontSize: 20.sp,
         color: Theme.of(context).colorScheme.onSurface,
       );
 }

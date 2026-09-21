@@ -476,7 +476,7 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
             DefaultTextStyle(
               style: AppTextStyles.caption(
                 context,
-              ).copyWith(fontSize: 20, color: theme.secondary),
+              ).copyWith(fontSize: 20.sp, color: theme.secondary),
               child: Text('${_tempState.fontSize.toInt()}px'),
             ),
           ],
@@ -533,7 +533,7 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
               '${_tempState.lineSpacing.toStringAsFixed(1)}px',
               style: AppTextStyles.caption(
                 context,
-              ).copyWith(fontSize: 20, color: theme.secondary),
+              ).copyWith(fontSize: 20.sp, color: theme.secondary),
             ),
           ],
         ),
@@ -723,7 +723,7 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
       ),
       decoration: BoxDecoration(
         color: theme.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: AppRadius.sheetSm,
       ),
       child: Stack(
         children: [

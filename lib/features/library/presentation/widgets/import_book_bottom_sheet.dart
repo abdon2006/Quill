@@ -121,9 +121,7 @@ class _ImportBookBottomSheetState extends State<ImportBookBottomSheet> {
                   ),
                   decoration: BoxDecoration(
                     color: theme.surface,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(28.r),
-                    ),
+                    borderRadius: AppRadius.sheet,
                   ),
                   child: Stack(
                     children: [
@@ -251,7 +249,7 @@ Widget _buildIdleContent({
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _FormatBadge(label: 'PDF', theme: theme),
-          SizedBox(width: 8.w),
+          SizedBox(width: AppSpacing.sm.w),
           _FormatBadge(label: 'ePub', theme: theme),
         ],
       ),

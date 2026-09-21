@@ -1,6 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:quill/core/theme/app_colors.dart';
+import 'package:quill/core/theme/app_duration.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 
 class AIHints extends StatelessWidget {
@@ -12,33 +14,33 @@ class AIHints extends StatelessWidget {
     // لو مش في المشهد التالت، بنخفي المساحة دي خالص
 
     return SizedBox(
-      height: 180, // مساحة كافية عشان الأفكار تتنطور فيها براحتها
+      height: 180.h, // مساحة كافية عشان الأفكار تتنطور فيها براحتها
       width: double.infinity,
       child: Stack(
         clipBehavior: Clip.none,
-        children: const [
+        children: [
           // توزيع الأفكار في أماكن عشوائية في الشاشة (بتنطور)
           Positioned(
             top: 0,
-            left: 20,
+            left: 20.w,
             child: _FloatingBlurredHint(text: 'Explain this...', delay: 0),
           ),
           Positioned(
-            top: 50,
-            right: 20,
+            top: 50.h,
+            right: 20.w,
             child: _FloatingBlurredHint(
               text: 'Who is...',
               delay: 800, // بتظهر بعدها بشوية
             ),
           ),
           Positioned(
-            bottom: 20,
-            left: 40,
+            bottom: 20.h,
+            left: 40.w,
             child: _FloatingBlurredHint(text: 'Summarize...', delay: 1600),
           ),
           Positioned(
-            bottom: -20,
-            right: 50,
+            bottom: -20.h,
+            right: 50.w,
             child: _FloatingBlurredHint(
               text: 'What does this mean?',
               delay: 2400,
@@ -72,7 +74,7 @@ class _FloatingBlurredHintState extends State<_FloatingBlurredHint>
     // الكلمة بتاخد 4 ثواني تظهر، تعوم لفوق، وتختفي
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 4),
+      duration: AppDuration.cue,
     );
 
     // Fade in -> hold -> Fade out

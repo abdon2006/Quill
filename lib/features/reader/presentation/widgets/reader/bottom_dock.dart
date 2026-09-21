@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:quill/core/theme/app_colors.dart';
+import 'package:quill/core/theme/app_duration.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 
@@ -14,12 +15,12 @@ Widget bottomDock({
   right: 50.w,
   bottom: 0,
   child: AnimatedOpacity(
-    duration: Duration(milliseconds: 650),
+    duration: AppDuration.dock,
     curve: Curves.easeInOutCubic,
     opacity: isDockExpanded ? 1 : 0.7,
     child: AnimatedContainer(
       height: isDockExpanded ? 42.h : 4.h,
-      duration: Duration(milliseconds: 650),
+      duration: AppDuration.dock,
       curve: Curves.easeInOutCubic,
       margin: EdgeInsets.symmetric(horizontal: AppSpacing.xxxl),
       padding: EdgeInsets.symmetric(
@@ -33,7 +34,7 @@ Widget bottomDock({
 
       child: Center(
         child: AnimatedDefaultTextStyle(
-          duration: Duration(milliseconds: 650),
+          duration: AppDuration.dock,
           curve: Curves.easeInOutCubic,
           style: AppTextStyles.heading2(
             context,

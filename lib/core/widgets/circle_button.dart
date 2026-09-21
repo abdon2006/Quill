@@ -1,6 +1,7 @@
   import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:quill/core/theme/app_shadows.dart';
 
 Widget circleButton(
     BuildContext context, {
@@ -18,12 +19,7 @@ Widget circleButton(
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: background,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
-              blurRadius: 12,
-            ),
-          ],
+          boxShadow: AppShadows.circleButton,
         ),
         child: Center(
           child: HugeIcon(icon: icon, size: 20.sp, color: foreground),

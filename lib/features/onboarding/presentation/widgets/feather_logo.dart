@@ -1,6 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:quill/core/theme/app_assets.dart';
+import 'package:quill/core/theme/app_colors.dart';
+import 'package:quill/core/theme/app_duration.dart';
 
 class FeatherLogo extends StatefulWidget {
   final bool hasStarted;
@@ -44,7 +47,7 @@ class _FeatherLogoState extends State<FeatherLogo>
     // 1. إعدادات الدخول
     _moveController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1800),
+      duration: AppDuration.logo,
     );
     _moveUp = Tween<double>(begin: 0, end: -120).animate(
       CurvedAnimation(parent: _moveController, curve: Curves.easeInOutCubic),
@@ -79,7 +82,7 @@ class _FeatherLogoState extends State<FeatherLogo>
     // 2. إعدادات الخروج (بتكمل من مكان ما الدخول وقف)
     _exitController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1500),
+      duration: AppDuration.dialogPulse,
     );
     // بتطير مسافة -400 عشان تخرج بره الشاشة بنعومة
     _exitMoveUp = Tween<double>(
@@ -116,7 +119,7 @@ class _FeatherLogoState extends State<FeatherLogo>
     // 3. إعدادات الظهور الأولي
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2), // نفس الوقت اللي الكوبيت بيستناه
+      duration: AppDuration.breathe, // نفس الوقت اللي الكوبيت بيستناه
     );
 
     _opacity = Tween<double>(
@@ -209,7 +212,7 @@ class _FeatherLogoState extends State<FeatherLogo>
               child: ScaleTransition(
                 scale: _scale,
                 child: Image.asset(
-                  'assets/images/logo.png',
+                  AppAssets.logo,
                   width: 180.w,
                   fit: BoxFit.contain,
                 ),
@@ -257,9 +260,8 @@ class InkTrailPainter extends CustomPainter {
           final driftedX = particle.dx + (particle.driftSpeed * (1.0 - fade));
 
           final paint = Paint()
-            ..color = const Color(
-              0xFFD98A6C,
-            ).withValues(alpha: particle.maxOpacity * fade)
+            ..color = AppColors.shimmerHighlight
+              .withValues(alpha: particle.maxOpacity * fade)
             ..style = PaintingStyle.fill;
 
           canvas.drawCircle(

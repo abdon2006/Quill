@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:quill/core/theme/app_colors.dart';
+import 'package:quill/core/theme/app_duration.dart';
 import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
@@ -55,7 +56,7 @@ class _AppTextFieldState extends State<AppTextField> {
     final isDark = theme.brightness == Brightness.dark;
 
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
+      duration: AppDuration.focus,
       decoration: BoxDecoration(
         borderRadius: AppRadius.xl,
         color: theme.colorScheme.surface,
@@ -111,7 +112,7 @@ class _AppTextFieldState extends State<AppTextField> {
                     : isDark
                     ? AppColors.darkTextMuted
                     : AppColors.lightTextMuted,
-                size: 20,
+                size: 20.sp,
               ),
             ),
             prefixIconConstraints: const BoxConstraints(),
@@ -133,7 +134,7 @@ class _AppTextFieldState extends State<AppTextField> {
                         color: isDark
                             ? AppColors.darkTextMuted
                             : AppColors.lightTextMuted,
-                        size: 20,
+                        size: 20.sp,
                       ),
                     ),
                   )

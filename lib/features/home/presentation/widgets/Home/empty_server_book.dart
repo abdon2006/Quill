@@ -26,10 +26,7 @@ class EmptyServerBook extends StatelessWidget {
           SizedBox(height: AppSpacing.sm),
           Text(
             '✦',
-            style: TextStyle(
-              fontSize: 32,
-              color: colors.primary.withValues(alpha: 0.4),
-            ),
+            style: AppTextStyles.symbol(context),
           ),
           SizedBox(height: AppSpacing.sm),
 

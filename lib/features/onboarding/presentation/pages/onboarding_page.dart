@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart'; // ضفنا الروتر
 import 'package:quill/core/constants/app_constants.dart';
 import 'package:quill/core/router/app_router.dart'; // مسار الروتس بتاعك
+import 'package:quill/core/theme/app_duration.dart';
+import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_theme.dart';
 import 'package:quill/core/widgets/premium_background.dart';
 import 'package:quill/features/onboarding/cubit/onboarding_cubit.dart';
@@ -53,7 +55,7 @@ class _OnboardingViewState extends State<_OnboardingView> {
       listener: (context, state) {
         if (state == OnboardingStage.leavingFeather) {
           // لما الريشة تبدأ تطير، نستنى ثانية ونص وبعدين نقلب الصفحة
-          Future.delayed(const Duration(milliseconds: 1500), () {
+          Future.delayed(AppDuration.dialogPulse, () {
             if (context.mounted) {
               context.go(AppRoutes.choose); // النقلة للـ Signup
             }
@@ -71,7 +73,7 @@ class _OnboardingViewState extends State<_OnboardingView> {
               Center(
                 child: IgnorePointer(
                   child: AnimatedOpacity(
-                    duration: const Duration(milliseconds: 800),
+                    duration: AppDuration.stageEnter,
                     curve: Curves.easeInOut,
                     opacity: stage == OnboardingStage.scene3 ? 1.0 : 0.0,
                     child: AIHints(active: stage == OnboardingStage.scene3),
@@ -86,7 +88,7 @@ class _OnboardingViewState extends State<_OnboardingView> {
 
                     // سحب الريشة لفوق بره الشاشة لما الحالة تكون leavingFeather
                     AnimatedSlide(
-                      duration: const Duration(milliseconds: 1500),
+                      duration: AppDuration.dialogPulse,
                       curve: Curves.easeInOutCubic,
                       offset: stage == OnboardingStage.leavingFeather
                           ? const Offset(0, -3.5)
@@ -100,11 +102,11 @@ class _OnboardingViewState extends State<_OnboardingView> {
                       ),
                     ),
 
-                    const SizedBox(height: 48),
+                    SizedBox(height: AppSpacing.xxxxl.h),
 
                     // إخفاء النص
                     AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 700),
+                      duration: AppDuration.reveal,
                       transitionBuilder: (child, animation) => FadeTransition(
                         opacity: animation,
                         child: SlideTransition(
@@ -132,7 +134,7 @@ class _OnboardingViewState extends State<_OnboardingView> {
                     alignment: Alignment.center,
                     children: [
                       AnimatedOpacity(
-                        duration: const Duration(milliseconds: 500),
+                        duration: AppDuration.slow,
                         opacity: stage == OnboardingStage.initial ? 1.0 : 0.0,
                         child: IgnorePointer(
                           ignoring: stage != OnboardingStage.initial,
@@ -146,7 +148,7 @@ class _OnboardingViewState extends State<_OnboardingView> {
 
                       // الزرار النهائي
                       AnimatedOpacity(
-                        duration: const Duration(milliseconds: 500),
+                        duration: AppDuration.slow,
                         // الزرار ظاهر في الـ finale بس، وبيختفي أول ما نـ endJourney
                         opacity: stage == OnboardingStage.finale ? 1.0 : 0.0,
                         child: IgnorePointer(

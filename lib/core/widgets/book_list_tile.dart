@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:quill/core/theme/app_colors.dart';
 import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
@@ -22,6 +23,7 @@ class BookListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Container(
       padding: EdgeInsets.symmetric(
         vertical: AppSpacing.md,
@@ -46,7 +48,9 @@ class BookListTile extends StatelessWidget {
                       width: 50.w,
 
                       decoration: BoxDecoration(
-                        color: Colors.grey[200],
+                        color: isDark
+                            ? AppColors.darkImagePlaceholder
+                            : AppColors.lightImagePlaceholder,
                         borderRadius: AppRadius.xs,
                       ),
                     );

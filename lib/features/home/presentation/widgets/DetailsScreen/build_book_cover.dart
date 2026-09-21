@@ -2,7 +2,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:quill/core/theme/app_colors.dart';
 import 'package:quill/core/theme/app_radius.dart';
+import 'package:quill/core/theme/app_shadows.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/features/library/presentation/widgets/staggerd_animation.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -35,13 +37,7 @@ Widget builBookCover(BuildContext context, String coverImage) {
               width: 190.w,
               decoration: BoxDecoration(
                 borderRadius: AppRadius.lg,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.22),
-                    blurRadius: 35,
-                    offset: const Offset(0, 18),
-                  ),
-                ],
+                boxShadow: AppShadows.bookCoverHeavy,
               ),
               child: Skeleton.leaf(
                 child: ClipRRect(
@@ -54,7 +50,11 @@ Widget builBookCover(BuildContext context, String coverImage) {
                         width: 190.w,
                         height: 260.h,
                         decoration: BoxDecoration(
-                          color: Colors.grey[200],
+                          color: Theme.of(
+                            context,
+                          ).brightness == Brightness.dark
+                              ? AppColors.darkImagePlaceholder
+                              : AppColors.lightImagePlaceholder,
                           borderRadius: AppRadius.lg,
                         ),
                       );

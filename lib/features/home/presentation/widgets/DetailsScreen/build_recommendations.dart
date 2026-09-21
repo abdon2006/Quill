@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quill/core/router/app_router.dart';
+import 'package:quill/core/states/ErrorStates/app_error.dart';
+import 'package:quill/core/theme/app_assets.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/features/home/domain/entities/book_entity.dart';
 import 'package:quill/features/home/presentation/recommendations%20cubit/recommendation_cubit.dart';
@@ -58,7 +60,10 @@ Widget buildRecommendations(BuildContext context) {
       if (state is RecommendationLoading || state is RecommendationInitial) {
         return _buildLoadingState(context);
       }
-      return SizedBox();
+      return AppError(
+        title: 'Could not load recommendations.',
+        image: AppAssets.errorBookDetails,
+      );
     },
   );
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quill/core/theme/app_colors.dart';
+import 'package:quill/core/theme/app_duration.dart';
 
 class AmbientGlow extends StatefulWidget {
   final bool active;
@@ -25,7 +26,7 @@ class _AmbientGlowState extends State<AmbientGlow>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 3),
+      duration: AppDuration.ambient,
     );
   }
 
@@ -56,7 +57,7 @@ class _AmbientGlowState extends State<AmbientGlow>
         final t = (_controller.value * _colors.length) - index.toDouble();
 
         return AnimatedContainer(
-          duration: const Duration(milliseconds: 800),
+          duration: AppDuration.readerGlow,
           decoration: BoxDecoration(
             gradient: RadialGradient(
               center: Alignment.center,

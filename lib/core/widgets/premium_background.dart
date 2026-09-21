@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:quill/core/theme/app_duration.dart';
 
 class PremiumAuroraBackground extends StatefulWidget {
   final Widget child;
@@ -25,8 +27,8 @@ class _PremiumAuroraBackgroundState extends State<PremiumAuroraBackground> {
   @override
   void initState() {
     super.initState();
-    // Change positions every 3 seconds to create a slow, breathing movement
-    _timer = Timer.periodic(const Duration(seconds: 4), (timer) {
+    // Change positions every 4 seconds to create a slow, breathing movement
+    _timer = Timer.periodic(AppDuration.cue, (timer) {
       setState(() {
         _alignment1 = _getRandomAlignment();
         _alignment2 = _getRandomAlignment();
@@ -59,12 +61,12 @@ class _PremiumAuroraBackgroundState extends State<PremiumAuroraBackground> {
 
         // ─── Animated Orb 1 (Primary Color) ───
         AnimatedAlign(
-          duration: const Duration(seconds: 5),
+          duration: AppDuration.aurora,
           curve: Curves.easeInOutSine, // Smooth natural movement
           alignment: _alignment1,
           child: Container(
-            width: 250,
-            height: 250,
+            width: 250.w,
+            height: 250.w,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: theme.colorScheme.primary.withValues(alpha: 0.15),
@@ -74,12 +76,12 @@ class _PremiumAuroraBackgroundState extends State<PremiumAuroraBackground> {
 
         // ─── Animated Orb 2 (Accent/Secondary Color) ───
         AnimatedAlign(
-          duration: const Duration(seconds: 7),
+          duration: AppDuration.auroraFade,
           curve: Curves.easeInOutSine,
           alignment: _alignment2,
           child: Container(
-            width: 300,
-            height: 300,
+            width: 300.w,
+            height: 300.w,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               // You can use another color here to make it mix nicely
@@ -90,12 +92,12 @@ class _PremiumAuroraBackgroundState extends State<PremiumAuroraBackground> {
 
         // ─── Animated Orb 3 (Optional extra pop) ───
         AnimatedAlign(
-          duration: const Duration(seconds: 6),
+          duration: AppDuration.auroraGold,
           curve: Curves.easeInOutSine,
           alignment: _alignment3,
           child: Container(
-            width: 200,
-            height: 200,
+            width: 200.w,
+            height: 200.w,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: theme.colorScheme.primaryContainer.withValues(alpha: 0.2),

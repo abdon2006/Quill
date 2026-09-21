@@ -3,6 +3,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quill/core/theme/app_colors.dart';
+import 'package:quill/core/theme/app_duration.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 import 'package:quill/features/reader/presentation/cubit/reader_preferences_cubit.dart';
 import 'package:quill/features/reader/presentation/cubit/reader_preferences_state.dart';
@@ -44,12 +45,14 @@ class TextAnimation extends StatelessWidget {
                   final isLast = m == messages[messages.length - 1];
                   return FadeAnimatedText(
                     m,
-                    duration: Duration(milliseconds: isLast ? 2500 : 1500),
+                    duration: isLast
+                        ? AppDuration.longPause
+                        : AppDuration.dialogPulse,
                   );
                 }),
               ],
               totalRepeatCount: repeat,
-              pause: Duration(milliseconds: 300),
+              pause: AppDuration.normal,
               onFinished: callBack,
             ),
           ),

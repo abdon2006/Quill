@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quill/core/router/app_router.dart';
+import 'package:quill/core/theme/app_duration.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/widgets/app_button.dart';
 import 'package:quill/core/widgets/premium_background.dart';
@@ -31,7 +32,7 @@ class _AuthChooseScreenState extends State<AuthChooseScreen>
 
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1000), // وقت دخول الزرارين مع بعض
+      duration: AppDuration.entrance, // وقت دخول الزرارين مع بعض
     );
 
     // الزرار الأول بيبدأ من الصفر لـ 60% من وقت الأنيميشن
@@ -65,7 +66,7 @@ class _AuthChooseScreenState extends State<AuthChooseScreen>
         );
 
     // بنستنى 800 ملي ثانية عشان ندي فرصة للـ StaggeredText يظهر الأول، وبعدين نشغل الزراير
-    Future.delayed(const Duration(milliseconds: 2500), () {
+    Future.delayed(AppDuration.longPause, () {
       if (mounted) _controller.forward();
     });
   }

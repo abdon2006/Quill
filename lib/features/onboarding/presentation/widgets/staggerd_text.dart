@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // ضفنا المكتبة دي عشان الـ Haptics
+import 'package:quill/core/theme/app_duration.dart';
+import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 
 class StaggeredText extends StatefulWidget {
@@ -30,12 +32,20 @@ class _StaggeredTextState extends State<StaggeredText>
 
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 400 + (_words.length - 1) * 200),
+      duration: Duration(
+        milliseconds: AppDuration.switchOut.inMilliseconds +
+            (_words.length - 1) * AppDuration.focus.inMilliseconds,
+      ),
     );
 
     _wordAnimations = List.generate(_words.length, (i) {
-      final start = (i * 200) / _controller.duration!.inMilliseconds;
-      final end = (i * 200 + 400) / _controller.duration!.inMilliseconds;
+      final start =
+          (i * AppDuration.focus.inMilliseconds) /
+              _controller.duration!.inMilliseconds;
+      final end =
+          (i * AppDuration.focus.inMilliseconds +
+              AppDuration.switchOut.inMilliseconds) /
+          _controller.duration!.inMilliseconds;
       return CurvedAnimation(
         parent: _controller,
         curve: Interval(start, end.clamp(0.0, 1.0), curve: Curves.easeOut),
@@ -54,7 +64,7 @@ class _StaggeredTextState extends State<StaggeredText>
 
     // هنا الصياعة: لوب بيحسب وقت ظهور كل كلمة ويضرب نبضة خفيفة مع كل كلمة
     for (int i = 0; i < _words.length; i++) {
-      Future.delayed(Duration(milliseconds: i * 200), () {
+      Future.delayed(Duration(milliseconds: i * AppDuration.focus.inMilliseconds), () {
         if (mounted) {
           // selectionClick بتدي إحساس "التكة" السريعة والناعمة جداً
           HapticFeedback.selectionClick();
@@ -73,7 +83,7 @@ class _StaggeredTextState extends State<StaggeredText>
   Widget build(BuildContext context) {
     return Wrap(
       alignment: WrapAlignment.center,
-      spacing: 8,
+      spacing: AppSpacing.sm,
       children: List.generate(_words.length, (i) {
         return AnimatedBuilder(
           animation: _wordAnimations[i],

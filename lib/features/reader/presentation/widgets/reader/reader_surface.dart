@@ -1,6 +1,5 @@
 // ignore_for_file: unused_field
 
-import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart' as foundation show compute;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -96,19 +95,15 @@ class _ReaderSurfaceState extends State<ReaderSurface>
       _currentMilestonePercentage = progress;
     });
     _animationController.forward();
-    await Future.delayed(Duration(seconds: 4));
+    await Future.delayed(AppDuration.cue);
     if (mounted) _animationController.reverse();
-    print('🎯 Started MileStone Animation , message : $message  ');
   }
 
   void _initMilestones() {
-    print('🎯 milestone method called --------- ');
-
     final savedPrgress = widget.initialProgress;
     for (final i in _milestones.keys) {
       if (savedPrgress >= i) _achievedMilestones[i] = _milestones[i]!;
     }
-    print('🎯 Pre-loaded milestones: $_achievedMilestones');
   }
 
   @override
@@ -131,7 +126,6 @@ class _ReaderSurfaceState extends State<ReaderSurface>
     if (oldWidget.state.fontSize != widget.state.fontSize ||
         oldWidget.state.lineSpacing != widget.state.lineSpacing) {
       if (widget.state.scrollMode == ReaderScrollMode.pages) {
-        print('🔄 Font size or line spacing changed — rebuilding pages...');
         _loadPages(widget.state.fontSize);
       }
     }
@@ -140,9 +134,6 @@ class _ReaderSurfaceState extends State<ReaderSurface>
   @override
   void initState() {
     super.initState();
-    print(
-      ' ------------------- cover Image : ${widget.coverImage}  ------------------ ',
-    );
     _animationController = AnimationController(
       vsync: this,
       duration: AppDuration.readerGlow,
@@ -177,7 +168,6 @@ class _ReaderSurfaceState extends State<ReaderSurface>
           .reduce((a, b) => a < b ? a : b);
 
       final currentCell = (minIndex - 1).clamp(0, _cache!.cellCount - 1);
-      print('📍 Scroll mode — current cell: $currentCell');
 
       initialCell = currentCell;
       final progress = (currentCell / _cache!.cellCount * 100).ceil();
@@ -227,7 +217,6 @@ class _ReaderSurfaceState extends State<ReaderSurface>
       setState(() => _cacheError = true);
       return;
     }
-    print('📚 Loading BionicCache...');
     final cache = await BionicCache.compute(widget.paragraphs);
 
     if (!mounted) return;
@@ -236,16 +225,13 @@ class _ReaderSurfaceState extends State<ReaderSurface>
       _cacheReady = true;
     });
 
-    print('✅ BionicCache loaded — total cells: ${_cache!.cellCount}');
-
     final savedIndex = (widget.initialProgress / 100 * _cache!.cellCount)
         .toInt();
     setState(() => initialCell = savedIndex);
-    print('📍 Restored initial cell from progress: $initialCell');
 
     await _loadPages();
 
-    await Future.delayed(const Duration(milliseconds: 50));
+    await Future.delayed(AppDuration.micro);
     if (!mounted) return;
 
     if (widget.state.scrollMode == ReaderScrollMode.scroll) {
@@ -263,8 +249,7 @@ class _ReaderSurfaceState extends State<ReaderSurface>
       return;
     }
     setState(() => _pages = null);
-    await Future.delayed(const Duration(milliseconds: 20));
-    print('📄 Building pages layout...');
+    await Future.delayed(AppDuration.frame);
 
     final textScalar = MediaQuery.textScalerOf(context).scale(1.0);
     final safeArea = MediaQuery.of(context).padding;
@@ -275,9 +260,6 @@ class _ReaderSurfaceState extends State<ReaderSurface>
         (AppSpacing.lg * 2);
 
     final pageWidth = MediaQuery.of(context).size.width - (AppSpacing.xxl * 2);
-
-    print('📐 Page dimensions — height: $pageHeight, width: $pageWidth');
-    print('🔤 textScaleFactor: $textScalar');
 
     final params = PageLayoutParams(
       cellText: _cache!._cellTexts,
@@ -297,7 +279,6 @@ class _ReaderSurfaceState extends State<ReaderSurface>
     if (!mounted) return;
 
     if (result.extraCells.isNotEmpty) {
-      print('✂️ Adding ${result.extraCells.length} split cells to BionicCache');
       _cache!._addExtraCells(result.extraCells);
     }
 
@@ -305,9 +286,8 @@ class _ReaderSurfaceState extends State<ReaderSurface>
 
     /// السطر ده مهمته يعرف الصفحة باجمالي عدد الصفحات عشان لو في وضع السكرول
     widget.sendTotalPages(result.cache.pages.length);
-    print('✅ Pages built — total pages: ${result.cache.pages.length}');
 
-    await Future.delayed(const Duration(milliseconds: 50));
+    await Future.delayed(AppDuration.micro);
   }
 
   @override
@@ -584,7 +564,7 @@ class _CellPageViewState extends State<CellPageView>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 350),
+      duration: AppDuration.quickShift,
     );
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
@@ -598,16 +578,9 @@ class _CellPageViewState extends State<CellPageView>
     );
     if (currentIndex < 0) currentIndex = 0;
 
-    print(
-      '📖 CellPageView init — starting at Cell: ${widget.initialCellIndex}',
-    );
-    print('📖 CellPageView init — starting at page: $currentIndex');
-    print('📊 Total pages: ${widget.cache.pages.length}');
     widget.jumpToPageNotifier.addListener(_handlePageJump);
     _initDockCalculations();
     _handleMilestoneOnSwipe(_currentPart);
-    print(' sending the currentPage: $currentIndex');
-    print(' sending the totalPages: ${widget.cache.pages.length}');
     widget.sendCurrentPage(currentIndex);
     widget.sendTotalPages(widget.cache.pages.length);
   }
@@ -639,7 +612,7 @@ class _CellPageViewState extends State<CellPageView>
       _dockMessage = 'Part $part of $_totalParts';
       _isDockExpanded = true;
     });
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(AppDuration.ambient);
     if (mounted) setState(() => _isDockExpanded = false);
   }
 
@@ -861,11 +834,7 @@ class BionicCache {
     for (final text in extras) {
       _cellTexts.add(text);
       _fragments.add(_processChunk(text));
-      print(
-        '➕ Extra split cell added: "${text.substring(0, text.length.clamp(0, 40))}..."',
-      );
     }
-    print('📦 BionicCache now has ${_cellTexts.length} cells');
   }
 
   List<TextSpan>? spansFor(int index, TextStyle normal, TextStyle bold) {
@@ -886,9 +855,6 @@ class PageLayoutResult {
 }
 
 Future<List<Object>> _buildPageView(PageLayoutParams params) async {
-  print('🏗️ _buildPageView started — total cells: ${params.cellText.length}');
-  print('📐 pageHeight: ${params.pageHeight}, pageWidth: ${params.pageWidth}');
-
   final List<List<int>> pages = [];
   final List<String> extraCells = [];
   List<int> currentPage = [];
@@ -923,42 +889,22 @@ Future<List<Object>> _buildPageView(PageLayoutParams params) async {
     painter.layout(maxWidth: params.pageWidth);
     final cellHeight = painter.height;
 
-    print(
-      '📏 Cell $i — height: $cellHeight — "${allCells[i].substring(0, allCells[i].length.clamp(0, 40))}..."',
-    );
-
     if (cellHeight > params.pageHeight) {
-      print(
-        '✂️ Cell $i is too tall ($cellHeight > ${params.pageHeight}) — splitting...',
-      );
-
       final words = allCells[i].split(' ');
       final half = words.length ~/ 2;
       final firstHalf = words.sublist(0, half).join(' ');
       final secondHalf = words.sublist(half).join(' ');
-
-      print(
-        '✂️ First half: "${firstHalf.substring(0, firstHalf.length.clamp(0, 40))}..."',
-      );
-      print(
-        '✂️ Second half: "${secondHalf.substring(0, secondHalf.length.clamp(0, 40))}..."',
-      );
 
       allCells[i] = firstHalf;
 
       allCells.insert(i + 1, secondHalf);
       extraCells.add(secondHalf);
 
-      print('📦 Total cells after split: ${allCells.length}');
-
       continue;
     }
 
     if (currentPage.isNotEmpty &&
         currentHeight + cellHeight > params.pageHeight) {
-      print(
-        '📄 Page ${pages.length} complete — cells: $currentPage — height: $currentHeight',
-      );
       pages.add(currentPage);
       currentPage = [];
       currentHeight = 0;
@@ -970,13 +916,9 @@ Future<List<Object>> _buildPageView(PageLayoutParams params) async {
   }
 
   if (currentPage.isNotEmpty) {
-    print('📄 Last page — cells: $currentPage — height: $currentHeight');
     pages.add(currentPage);
   }
 
-  print(
-    '✅ _buildPageView done — ${pages.length} pages, ${extraCells.length} extra cells',
-  );
   return [pages, extraCells];
 }
 
@@ -985,13 +927,9 @@ class CellCache {
   const CellCache({required this.pages});
 
   static Future<PageLayoutResult> compute(PageLayoutParams params) async {
-    print('⚙️ CellCache.compute called');
     final result = await _buildPageView(params);
     final pages = result[0] as List<List<int>>;
     final extraCells = result[1] as List<String>;
-    print(
-      '✅ CellCache.compute done — ${pages.length} pages, ${extraCells.length} extra cells',
-    );
     return PageLayoutResult(
       cache: CellCache(pages: pages),
       extraCells: extraCells,
@@ -1023,19 +961,4 @@ class PageLayoutParams {
     required this.isItalic,
     required this.isJustified,
   });
-}
-
-class KeyParamsForCellView extends Equatable {
-  final double fontSize;
-  final double lineSpacing;
-  final ReaderScrollMode scrollMode;
-
-  const KeyParamsForCellView({
-    required this.fontSize,
-    required this.lineSpacing,
-    required this.scrollMode,
-  });
-
-  @override
-  List<Object?> get props => [fontSize, lineSpacing, scrollMode];
 }

@@ -63,7 +63,7 @@ class SectionHeader extends StatelessWidget {
         ),
 
         if (subTitle != null) ...[
-          SizedBox(height: 4),
+          SizedBox(height: AppSpacing.xs),
           Text(
             subTitle!,
             style: AppTextStyles.bodyMedium(context).copyWith(

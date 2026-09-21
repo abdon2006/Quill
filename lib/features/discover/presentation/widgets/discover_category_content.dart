@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quill/core/constants/app_constants.dart';
 import 'package:quill/core/router/app_router.dart';
 import 'package:quill/core/states/EmptyStates/app_empty.dart';
+import 'package:quill/core/states/ErrorStates/app_error.dart';
 import 'package:quill/core/theme/app_assets.dart';
+import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/features/discover/presentation/widgets/category_params.dart';
 import 'package:quill/features/discover/presentation/widgets/recommended_tile.dart';
@@ -12,6 +15,7 @@ import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
 import 'package:quill/features/home/presentation/bloc/home_state.dart';
 import 'package:quill/features/home/presentation/widgets/Home/section_header.dart';
 import 'package:quill/features/library/presentation/widgets/staggerd_animation.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class DiscoverCategoryContent extends StatelessWidget {
   final int selectedChipIndex;
@@ -46,14 +50,16 @@ class DiscoverCategoryContent extends StatelessWidget {
                         return SectionHeader(
                           title:
                               '${AppConstants.categories[selectedChipIndex]} Books',
-                          viewAllOnTap: () => context.push(
-                            AppRoutes.category,
-                            extra: CategoryParams(
-                              books: filteredBooks.toList(),
-                              category:
-                                  AppConstants.categories[selectedChipIndex],
-                            ),
-                          ),
+                          viewAllOnTap: filteredBooks.isEmpty
+                              ? null
+                              : () => context.push(
+                                  AppRoutes.category,
+                                  extra: CategoryParams(
+                                    books: filteredBooks.toList(),
+                                    category: AppConstants
+                                        .categories[selectedChipIndex],
+                                  ),
+                                ),
                         );
                       },
                     ),
@@ -91,7 +97,57 @@ class DiscoverCategoryContent extends StatelessWidget {
             ],
           );
         }
-        return SizedBox.shrink();
+        if (state is HomeError) {
+          return AppError(
+            title:
+                "Our library is currently taking a pause. Check back later.",
+            image: AppAssets.errorBookDetails,
+          );
+        }
+        return Skeletonizer(
+          enabled: true,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: AppSpacing.lg),
+                    Skeleton.leaf(
+                      child: Container(
+                        height: 24,
+                        width: 180.w,
+                        decoration: BoxDecoration(
+                          borderRadius: AppRadius.lg,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: AppSpacing.xl),
+                  ],
+                ),
+              ),
+              ...List.generate(
+                4,
+                (i) => Padding(
+                  padding: EdgeInsets.only(bottom: AppSpacing.md),
+                  child: Skeleton.leaf(
+                    child: Container(
+                      height: 84.h,
+                      margin: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+                      decoration: BoxDecoration(
+                        borderRadius: AppRadius.xl,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
       },
     );
   }

@@ -115,7 +115,6 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
 
     on<FetchProgressEvent>((event, emit) async {
       try {
-        emit(ReaderLoading());
         final prefs = await SharedPreferences.getInstance();
         final storedPercentage = prefs.getDouble(event.bookId);
         if (storedPercentage == null) {
@@ -142,7 +141,6 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
 
     on<UpdateServerProgressEvent>((event, emit) async {
       try {
-        emit(ReaderLoading());
         final finishedKey = 'finished';
         final prefs = await SharedPreferences.getInstance();
         final now = DateTime.now();

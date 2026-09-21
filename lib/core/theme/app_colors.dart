@@ -38,6 +38,13 @@ abstract class AppColors {
   static const Color darkGold = Color(0xFFE0B84A);
   static const Color darkError = Color(0xFFEF5350);
 
+  // ── Placeholder (image loading boxes) ───────
+  static const Color lightImagePlaceholder = Color(0xFFEDE8DF);
+  static const Color darkImagePlaceholder = Color(0xFF30292B);
+
+  // ── Shimmer highlight (onboarding golden text) ──
+  static const Color shimmerHighlight = Color(0xFFD98A6C);
+
   // ── Sentiment Glow ───────────────────────────
   static const Color glowJoy = Color(0xFFFFD166);
   static const Color glowSadness = Color(0xFF4A90D9);

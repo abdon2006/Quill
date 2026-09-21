@@ -7,8 +7,7 @@ import 'package:quill/core/widgets/app_button.dart';
 import 'package:quill/features/library/presentation/widgets/import_book_bottom_sheet.dart';
 
 class EmptyLocalBookImport extends StatelessWidget {
-  final VoidCallback onImport;
-  const EmptyLocalBookImport({super.key, required this.onImport});
+  const EmptyLocalBookImport({super.key});
 
   void _openImportSheet(BuildContext context) {
     showModalBottomSheet(
@@ -38,10 +37,7 @@ class EmptyLocalBookImport extends StatelessWidget {
           SizedBox(height: AppSpacing.sm),
           Text(
             '✦',
-            style: TextStyle(
-              fontSize: 32,
-              color: colors.primary.withValues(alpha: 0.4),
-            ),
+            style: AppTextStyles.symbol(context),
           ),
           SizedBox(height: AppSpacing.sm),
 

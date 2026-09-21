@@ -54,7 +54,7 @@ class _AiComingSoonDialogState extends State<_AiComingSoonDialog>
     super.initState();
     _breathingController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1500),
+      duration: AppDuration.dialogPulse,
     )..repeat(reverse: true);
 
     _glowAnimation = Tween<double>(begin: 4.0, end: 15.0).animate(

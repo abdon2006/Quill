@@ -3,12 +3,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:quill/core/router/app_router.dart';
+import 'package:quill/core/states/EmptyStates/app_empty.dart';
+import 'package:quill/core/theme/app_assets.dart';
 import 'package:quill/core/theme/app_icons.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 import 'package:quill/core/widgets/premium_background.dart';
 import 'package:quill/features/discover/presentation/widgets/category_params.dart';
 import 'package:quill/features/home/presentation/widgets/Home/book_grid_card.dart';
+import 'package:quill/features/library/presentation/widgets/staggerd_animation.dart';
 
 class CategoryScreen extends StatefulWidget {
   final CategoryParams categoryParams;
@@ -63,30 +66,42 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         ),
                       ),
                       SizedBox(height: AppSpacing.xs),
-
                       Expanded(
-                        child: GridView.builder(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: AppSpacing.sm,
-                          ),
-                          itemCount: widget.categoryParams.books.length,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3,
-                                mainAxisSpacing: 16.h,
-                                childAspectRatio: 0.6,
+                        child: widget.categoryParams.books.isEmpty
+                            ? AppEmpty(
+                                title:
+                                    'No books in this category yet. Check back soon.',
+                                image: AppAssets.noResults,
+                              )
+                            : GridView.builder(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.sm,
+                                ),
+                                itemCount: widget.categoryParams.books.length,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 3,
+                                      mainAxisSpacing: 16.h,
+                                      childAspectRatio: 0.6,
+                                    ),
+                                itemBuilder: (context, i) {
+                                  final item =
+                                      widget.categoryParams.books[i];
+                                  return StaggerdAnimation(
+                                    index: i * 2,
+                                    child: GestureDetector(
+                                      onTap: () => context.push(
+                                        AppRoutes.bookDeatails,
+                                        extra: item,
+                                      ),
+                                      child: BookGridCard(
+                                        book: item,
+                                        width: double.infinity,
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
-                          itemBuilder: (context, i) {
-                            final item = widget.categoryParams.books[i];
-                            return GestureDetector(
-                              onTap: () => context.push(
-                                AppRoutes.bookDeatails,
-                                extra: item,
-                              ),
-                              child: BookGridCard(book: item),
-                            );
-                          },
-                        ),
                       ),
                     ],
                   ),

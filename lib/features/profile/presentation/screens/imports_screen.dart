@@ -144,24 +144,28 @@ Widget _importsHeader({
         int() => throw UnimplementedError(),
       };
 
-      return StaggerdAnimation(
-        index: i * 2,
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: AppSpacing.xs),
-          padding: EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm,
-          ),
-          decoration: BoxDecoration(
-            borderRadius: AppRadius.xl,
-            color: theme.secondary.withValues(alpha: 0.1),
-          ),
-          child: Center(
-            child: Text(
-              '$currentCount  ${data[i]}',
-              style: AppTextStyles.bodyLarge(
-                context,
-              ).copyWith(color: theme.secondary),
+      return Expanded(
+        child: StaggerdAnimation(
+          index: i * 2,
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+            padding: EdgeInsets.symmetric(
+              horizontal: AppSpacing.sm,
+              vertical: AppSpacing.sm,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: AppRadius.xl,
+              color: theme.secondary.withValues(alpha: 0.1),
+            ),
+            child: Center(
+              child: Text(
+                '$currentCount  ${data[i]}',
+                style: AppTextStyles.bodyLarge(
+                  context,
+                ).copyWith(color: theme.secondary),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ),
         ),
@@ -218,26 +222,27 @@ Widget _buildScreen({
                   ),
                   child: Row(
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            item.title,
-                            style: AppTextStyles.heading2(context),
-                          ),
-                          Text(
-                            item.importedAt
-                                .toIso8601String()
-                                .split('T')
-                                .first
-                                .replaceAll('-', '  '),
-                            style: AppTextStyles.caption(context),
-                          ),
-                        ],
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              item.title,
+                              style: AppTextStyles.heading2(context),
+                            ),
+                            Text(
+                              item.importedAt
+                                  .toIso8601String()
+                                  .split('T')
+                                  .first
+                                  .replaceAll('-', '  '),
+                              style: AppTextStyles.caption(context),
+                            ),
+                          ],
+                        ),
                       ),
-                      Spacer(),
                       Container(
                         margin: EdgeInsets.symmetric(horizontal: AppSpacing.xs),
                         padding: EdgeInsets.symmetric(

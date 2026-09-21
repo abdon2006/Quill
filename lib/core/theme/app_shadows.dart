@@ -58,4 +58,19 @@ abstract class AppShadows {
       color: Colors.black.withValues(alpha: 0.30),
     ),
   ];
+
+  static List<BoxShadow> circleButton = [
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.06),
+      blurRadius: 12,
+    ),
+  ];
+
+  static List<BoxShadow> bookCoverHeavy = [
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.22),
+      blurRadius: 35,
+      offset: const Offset(0, 18),
+    ),
+  ];
 }

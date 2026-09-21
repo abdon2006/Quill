@@ -5,6 +5,7 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:quill/core/theme/app_colors.dart';
 import 'package:quill/core/theme/app_duration.dart';
 import 'package:quill/core/theme/app_radius.dart';
+import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 import 'package:quill/features/auth/domain/entities/user_entity.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -98,7 +99,7 @@ class _HomeHeaderState extends State<HomeHeader> {
           style: AppTextStyles.displayMedium(context),
         ),
 
-        SizedBox(height: 6.h),
+        SizedBox(height: AppSpacing.xxs.h),
 
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -127,7 +128,10 @@ class _HomeHeaderState extends State<HomeHeader> {
     return Skeleton.ignore(
       child: Container(
         key: const ValueKey('has_streak'),
-        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+        padding: EdgeInsets.symmetric(
+          horizontal: AppSpacing.smPlus.w,
+          vertical: AppSpacing.xs.h,
+        ),
         decoration: BoxDecoration(
           color: theme.primary.withValues(alpha: 0.1),
           borderRadius: AppRadius.xl,
@@ -144,7 +148,7 @@ class _HomeHeaderState extends State<HomeHeader> {
               size: 16.sp,
               color: theme.primary,
             ),
-            SizedBox(width: 4.w),
+            SizedBox(width: AppSpacing.xs.w),
             Text(
               '$_currentStreak Day Streak',
               style: AppTextStyles.label(
@@ -161,7 +165,10 @@ class _HomeHeaderState extends State<HomeHeader> {
     return Skeleton.ignore(
       child: Container(
         key: const ValueKey('no_streak'),
-        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+        padding: EdgeInsets.symmetric(
+          horizontal: AppSpacing.smPlus.w,
+          vertical: AppSpacing.xs.h,
+        ),
         decoration: BoxDecoration(
           color: theme.onSurface.withValues(alpha: 0.05),
           borderRadius: AppRadius.xl,
@@ -174,7 +181,7 @@ class _HomeHeaderState extends State<HomeHeader> {
               size: 16.sp,
               color: theme.onSurface.withValues(alpha: 0.5),
             ),
-            SizedBox(width: 4.w),
+            SizedBox(width: AppSpacing.xs.w),
             Text(
               'Start your streak',
               style: AppTextStyles.caption(

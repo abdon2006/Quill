@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:quill/core/theme/app_radius.dart';
+import 'package:quill/core/theme/app_shadows.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/widgets/build_cover_placeholder.dart';
 
@@ -44,13 +45,7 @@ Widget buildCover(BuildContext context, String? coverImage) {
             decoration: BoxDecoration(
               borderRadius: AppRadius.lg,
               color: Theme.of(context).colorScheme.surfaceContainerHighest,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.22),
-                  blurRadius: 35,
-                  offset: const Offset(0, 18),
-                ),
-              ],
+              boxShadow: AppShadows.bookCoverHeavy,
             ),
             child: ClipRRect(
               borderRadius: AppRadius.lg,

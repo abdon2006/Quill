@@ -11,17 +11,19 @@ import 'package:skeletonizer/skeletonizer.dart';
 class BookGridCard extends StatelessWidget {
   final BookEntity book;
   final VoidCallback? onTap;
+  final double? width;
 
-  const BookGridCard({super.key, this.onTap, required this.book});
+  const BookGridCard({super.key, this.onTap, required this.book, this.width});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
         child: SizedBox(
-          width: 130.w,
+          width: width ?? 130.w,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -42,7 +44,9 @@ class BookGridCard extends StatelessWidget {
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: AppRadius.xl,
-                                color: Colors.grey[200],
+                                color: isDark
+                                    ? AppColors.darkImagePlaceholder
+                                    : AppColors.lightImagePlaceholder,
                               ),
                             ),
                           ),

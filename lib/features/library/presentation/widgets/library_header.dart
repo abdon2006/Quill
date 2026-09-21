@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:quill/core/router/app_router.dart';
+import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 import 'package:quill/features/library/presentation/widgets/import_book_bottom_sheet.dart';
 import 'package:quill/features/reader/presentation/bloc/reader_bloc.dart';
@@ -40,12 +43,12 @@ class LibraryHeader extends StatelessWidget {
             ),
             _HeaderIconButton(
               icon: HugeIcons.strokeRoundedSearch02,
-              onTap: () {},
+              onTap: () => context.push(AppRoutes.discover),
             ),
           ],
         ),
 
-        SizedBox(height: 6.h),
+        SizedBox(height: AppSpacing.xxs.h),
 
         Text(
           'A quiet place for the stories you keep.',
@@ -56,7 +59,7 @@ class LibraryHeader extends StatelessWidget {
           ),
         ),
 
-        SizedBox(height: 22.h),
+        SizedBox(height: AppSpacing.xlPlus.h),
 
         GestureDetector(
           onTap: () => _openImportSheet(context),
@@ -79,7 +82,7 @@ class LibraryHeader extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(width: 10.w),
+              SizedBox(width: AppSpacing.smPlus.w),
 
               Text(
                 'Import a book',

@@ -72,6 +72,8 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                     listener: (context, state) {
                       if (state is SearchHistoryLoaded) {
                         setState(() => displayedHistory = state.searchHistory);
+                      } else if (state is SearchHistoryError) {
+                        setState(() => displayedHistory = []);
                       }
                     },
                   ),

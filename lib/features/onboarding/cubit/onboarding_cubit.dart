@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:quill/core/theme/app_duration.dart';
 
 enum OnboardingStage {
   entering,
@@ -19,7 +20,7 @@ class OnboardingCubit extends Cubit<OnboardingStage> {
 
   Future<void> _startEntranceScene() async {
     // بندي للريشة ثانيتين عشان تنزل من فوق براحتها وتستقر
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(AppDuration.breathe);
 
     // بعد ما تستقر، نظهر الزرار الأولاني
     if (!isClosed) {
@@ -29,13 +30,13 @@ class OnboardingCubit extends Cubit<OnboardingStage> {
 
   Future<void> startJourney() async {
     emit(OnboardingStage.scene1);
-    await Future.delayed(const Duration(seconds: 4));
+    await Future.delayed(AppDuration.cue);
 
     emit(OnboardingStage.scene2);
-    await Future.delayed(const Duration(seconds: 4));
+    await Future.delayed(AppDuration.cue);
 
     emit(OnboardingStage.scene3);
-    await Future.delayed(const Duration(seconds: 4));
+    await Future.delayed(AppDuration.cue);
 
     emit(OnboardingStage.finale);
   }
@@ -43,12 +44,10 @@ class OnboardingCubit extends Cubit<OnboardingStage> {
   // الدالة الجديدة للخروج السينمائي المتدرج
   Future<void> endJourney() async {
     emit(OnboardingStage.leavingButton);
-    await Future.delayed(
-      const Duration(milliseconds: 300),
-    ); // استنى الزرار يختفي
+    await Future.delayed(AppDuration.normal); // استنى الزرار يختفي
 
     emit(OnboardingStage.leavingText);
-    await Future.delayed(const Duration(milliseconds: 400)); // استنى النص يختفي
+    await Future.delayed(AppDuration.switchOut); // استنى النص يختفي
 
     emit(OnboardingStage.leavingFeather); // طير الريشة واستعد للنقلة
   }
