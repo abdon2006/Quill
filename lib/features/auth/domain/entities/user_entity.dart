@@ -15,6 +15,14 @@ class UserEntity extends Equatable {
     required this.longestStreak,
   });
 
+  const UserEntity.dummy({
+    this.id = '',
+    this.name = 'abdallah',
+    this.email = 'example123@gmail.com',
+    this.currentStreak = 0,
+    this.longestStreak = 0,
+  });
+
   @override
   List<Object?> get props => [id, name, email, currentStreak, longestStreak];
 }

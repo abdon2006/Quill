@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quill/core/constants/app_constants.dart';
@@ -35,6 +34,8 @@ import 'package:quill/features/library/presentation/bloc/library_bloc.dart';
 import 'package:quill/features/library/presentation/bloc/library_event.dart';
 import 'package:quill/features/library/presentation/screens/library_screen.dart';
 import 'package:quill/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:quill/features/profile/presentation/screens/dashboard_screen.dart';
+import 'package:quill/features/profile/presentation/screens/profile_screen.dart';
 import 'package:quill/features/reader/domain/usecases/params/reader_book_params.dart';
 import 'package:quill/features/reader/presentation/screens/local_book_details_screen.dart';
 import 'package:quill/features/reader/presentation/screens/reader_screen.dart';
@@ -114,8 +115,7 @@ final appRouter = GoRouter(
             GoRoute(
               path: AppRoutes.profile,
               name: AppRoutes.profile,
-              builder: (context, state) =>
-                  const Scaffold(body: Center(child: Text('Profile'))),
+              builder: (context, state) => ProfileScreen(),
             ),
           ],
         ),
@@ -157,12 +157,29 @@ final appRouter = GoRouter(
           ),
         ),
 
+        /// category screen
         GoRoute(
           path: AppRoutes.category,
           name: AppRoutes.category,
           builder: (context, state) {
             return CategoryScreen(
               categoryParams: state.extra as CategoryParams,
+            );
+          },
+        ),
+
+        /// dashboard screen
+        GoRoute(
+          path: AppRoutes.dashboard,
+          name: AppRoutes.dashboard,
+          builder: (context, state) {
+            return BlocProvider(
+              create: (context) => HomeBloc(
+                fetchBooksUsecase: sl<FetchBooksUsecase>(),
+                bookRepository: sl<BookRepository>(),
+                getBookByIdUsecase: sl<GetBookByIdUsecase>(),
+              ),
+              child: DashboardScreen(),
             );
           },
         ),

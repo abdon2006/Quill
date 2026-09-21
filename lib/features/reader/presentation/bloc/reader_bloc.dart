@@ -143,6 +143,7 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
     on<UpdateServerProgressEvent>((event, emit) async {
       try {
         emit(ReaderLoading());
+        final finishedKey = 'finished';
         final prefs = await SharedPreferences.getInstance();
         final now = DateTime.now();
         final todayKey = now.toIso8601String().split('T').first;
@@ -162,6 +163,22 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
           prefs.setDouble(event.bookId, event.progress);
           print('✅ Saved Locally: ${event.progress}%');
         }
+        if (event.progress == 100) {
+          final finishedBooks = prefs.getStringList(finishedKey);
+          if (finishedBooks != null && finishedBooks.isNotEmpty) {
+            await prefs.setStringList(finishedKey, [
+              ...finishedBooks,
+              event.bookId,
+            ]);
+            print('✅ added the finished book to the list the current List');
+          } else {
+            await prefs.setStringList(finishedKey, [event.bookId]);
+            print(
+              '✅ added the first finished book to the list the current List',
+            );
+          }
+        }
+
         int chunkIndex = ((event.progress / 100) * event.totalChunks).floor();
         if (chunkIndex >= event.totalChunks) {
           chunkIndex = event.totalChunks - 1;

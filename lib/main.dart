@@ -11,8 +11,7 @@ import 'package:quill/core/router/app_router.dart';
 import 'package:quill/core/theme/app_theme.dart';
 import 'package:quill/core/theme/cubit/theme_cubit.dart';
 import 'package:quill/core/usecases/base_usecase.dart';
-import 'package:quill/features/auth/presentation/bloc/auth_bloc.dart'
-    show AuthBloc;
+import 'package:quill/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:quill/features/auth/presentation/bloc/auth_event.dart';
 import 'package:quill/features/reader/domain/usecases/fetch_local_book_usecase.dart';
 import 'package:quill/features/reader/domain/usecases/fetch_local_books_usecase.dart';
@@ -82,7 +81,7 @@ class QuillApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,
-        themeMode: ThemeMode.system,
+        themeMode: context.watch<ThemeCubit>().state.flutterThemeMode,
 
         /// Locale State بياخد اللغة الحالية من ال
         locale: localeState.locale,

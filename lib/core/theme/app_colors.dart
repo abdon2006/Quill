@@ -20,7 +20,7 @@ abstract class AppColors {
   static const Color lightGreen = Color(0xFF3D5A3E);
   static const Color lightGreenMuted = Color(0xFF8FAF8F);
   static const Color lightGold = Color(0xFFD4A017);
-  static const Color lightError = Color(0xFF6B1E0E);
+  static const Color lightError = Color(0xFFD32F2F);
 
   // ── Dark Mode ────────────────────────────────
   static const Color darkBgPrimary = Color(0xFF171415);
@@ -32,11 +32,11 @@ abstract class AppColors {
 
   static const Color darkAccentPrimary = Color(0xFFC4614A);
   static const Color darkAccentMedium = Color(0xFFD98A72);
-  static const Color darkAccentMuted = Color(0xFF5A403B);
+  static const Color darkAccentMuted = Color.fromARGB(255, 196, 156, 148);
 
   static const Color darkSuccess = Color(0xff46664A);
   static const Color darkGold = Color(0xFFE0B84A);
-  static const Color darkError = Color(0xff8B2500);
+  static const Color darkError = Color(0xFFEF5350);
 
   // ── Sentiment Glow ───────────────────────────
   static const Color glowJoy = Color(0xFFFFD166);

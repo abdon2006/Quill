@@ -122,7 +122,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                   AnimatedPadding(
                     duration: AppDuration.slow,
                     curve: Curves.easeInOutCubic,
-                    padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+                    padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
                     child: Row(
                       children: [
                         AnimatedContainer(

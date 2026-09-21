@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quill/core/constants/storage_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,12 +11,19 @@ class ThemeCubit extends Cubit<ThemeState> {
   ThemeCubit(this._prefs) : super(const ThemeState()) {
     _loadSavedTheme();
   }
+  void setSystem() {
+    _prefs.setString(StorageConstants.themeMode, AppThemeMode.system.name);
+    emit(state.copyWith(themeMode: AppThemeMode.system));
+  }
 
   void _loadSavedTheme() {
     final saved = _prefs.getString(StorageConstants.themeMode);
     if (saved == AppThemeMode.dark.name) {
       emit(state.copyWith(themeMode: AppThemeMode.dark));
+    } else if (saved == AppThemeMode.light.name) {
+      emit(state.copyWith(themeMode: AppThemeMode.light));
     }
+    // system = default, مش محتاج تعمل حاجة
   }
 
   void setLight() {

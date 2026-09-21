@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quill/core/router/app_router.dart';
@@ -7,8 +6,6 @@ import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/features/discover/presentation/widgets/recommended_tile.dart';
 import 'package:quill/features/discover/presentation/widgets/trending_book_card.dart';
 import 'package:quill/features/home/domain/entities/book_entity.dart';
-import 'package:quill/features/home/presentation/bloc/home_bloc.dart';
-import 'package:quill/features/home/presentation/bloc/home_state.dart';
 import 'package:quill/features/home/presentation/widgets/Home/section_header.dart';
 import 'package:quill/features/library/domain/entities/wishlist_entity.dart';
 import 'package:quill/features/library/presentation/widgets/staggerd_animation.dart';

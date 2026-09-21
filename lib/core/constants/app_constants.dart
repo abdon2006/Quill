@@ -14,4 +14,5 @@ abstract class AppConstants {
     'Self-Improvement',
     'Poetry',
   ];
+  static const weekDays = ['Mon', 'Tue', 'Wed', 'The', 'Fri', 'Sat', 'Sun'];
 }
