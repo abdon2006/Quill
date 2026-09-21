@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:quill/core/router/app_router.dart';
 import 'package:quill/core/theme/app_duration.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
@@ -90,6 +92,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       listener: (context, state) {
                         if (state is FetchUserDataSuccess) {
                           setState(() => user = state.userEntity);
+                        }
+                        if (state is SignoutSuccess) {
+                          context.go(AppRoutes.choose);
                         }
                       },
                     ),

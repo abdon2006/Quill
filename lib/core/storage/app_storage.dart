@@ -15,4 +15,7 @@ class AppStorage {
       await storage.read(key: AppConstants.accessToken);
   Future<String?> readRefreshToken() async =>
       await storage.read(key: AppConstants.refreshToken);
+
+  Future<void> deleteToken() async =>
+      await storage.delete(key: AppConstants.accessToken);
 }

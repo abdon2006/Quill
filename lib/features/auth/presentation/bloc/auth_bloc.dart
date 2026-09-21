@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:quill/core/di/injection_container.dart';
 import 'package:quill/core/storage/app_storage.dart';
 import 'package:quill/features/auth/domain/usecases/fetch_user_data_usecase.dart';
 import 'package:quill/features/auth/domain/usecases/login_usecase.dart';
@@ -54,6 +55,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(FetchUserDataSuccess(userEntity: success));
         },
       );
+    });
+
+    on<SignoutEvent>((event, emit) async {
+      emit(AuthLoading());
+      final storage = sl<AppStorage>();
+      await storage.deleteToken();
+      emit(SignoutSuccess());
     });
   }
 }

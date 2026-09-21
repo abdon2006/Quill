@@ -27,3 +27,8 @@ class FetchUserDataEvent extends AuthEvent {
   @override
   List<Object?> get props => [params];
 }
+
+class SignoutEvent extends AuthEvent {
+  @override
+  List<Object?> get props => [];
+}

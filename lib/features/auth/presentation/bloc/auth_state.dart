@@ -45,3 +45,8 @@ class FetchUserDataSuccess extends AuthState {
   @override
   List<Object?> get props => [userEntity];
 }
+
+class SignoutSuccess extends AuthState {
+  @override
+  List<Object?> get props => [];
+}
