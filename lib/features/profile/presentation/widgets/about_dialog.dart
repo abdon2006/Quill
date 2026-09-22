@@ -22,7 +22,7 @@ void showAboutQuillDialog(BuildContext context) {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Top section
+            
             Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(vertical: AppSpacing.xxxl),
@@ -53,7 +53,7 @@ void showAboutQuillDialog(BuildContext context) {
               ),
             ),
 
-            // Info rows
+            
             _infoRow(
               context: context,
               theme: theme,
@@ -74,7 +74,7 @@ void showAboutQuillDialog(BuildContext context) {
               value: 'Abdallah Saad',
             ),
 
-            // Footer
+            
             Padding(
               padding: EdgeInsets.fromLTRB(
                 AppSpacing.lg,

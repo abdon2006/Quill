@@ -23,7 +23,7 @@ class ThemeCubit extends Cubit<ThemeState> {
     } else if (saved == AppThemeMode.light.name) {
       emit(state.copyWith(themeMode: AppThemeMode.light));
     }
-    // system = default, مش محتاج تعمل حاجة
+    
   }
 
   void setLight() {

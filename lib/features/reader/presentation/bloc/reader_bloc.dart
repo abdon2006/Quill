@@ -65,9 +65,7 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
       final bool hasReadToday = prefs.getBool(todayKey) ?? false;
       if (!hasReadToday) {
         await prefs.setBool(todayKey, true);
-        print(
-          '✅ Streak Updated: First read of the day recorded for $todayKey!',
-        );
+        
       }
       final response = await updateBookUsecase(event.params);
       response.fold((failure) => emit(ReaderFailure(failure: failure)), (
@@ -148,18 +146,14 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
         final bool hasReadToday = prefs.getBool(todayKey) ?? false;
         if (!hasReadToday) {
           await prefs.setBool(todayKey, true);
-          print(
-            '✅ Streak Updated: First read of the day recorded for $todayKey!',
-          );
+          
         }
         final oldProgress = prefs.getDouble(event.bookId);
         if (oldProgress != null && oldProgress >= event.progress) {
-          print(
-            ' IGNORED THE NEW PROGRESS :new :  ${event.progress}% , old : $oldProgress}%',
-          );
+          
         } else {
           prefs.setDouble(event.bookId, event.progress);
-          print('✅ Saved Locally: ${event.progress}%');
+          
         }
         if (event.progress == 100) {
           final finishedBooks = prefs.getStringList(finishedKey);
@@ -168,12 +162,10 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
               ...finishedBooks,
               event.bookId,
             ]);
-            print('✅ added the finished book to the list the current List');
+            
           } else {
             await prefs.setStringList(finishedKey, [event.bookId]);
-            print(
-              '✅ added the first finished book to the list the current List',
-            );
+            
           }
         }
 
@@ -181,9 +173,7 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
         if (chunkIndex >= event.totalChunks) {
           chunkIndex = event.totalChunks - 1;
         }
-        print(
-          '👻 Sending Ghost Request to Chunk: $chunkIndex to trigger backend logic...',
-        );
+        
 
         await networkService.dioGet(
           '/books/${event.bookId}/chunks/$chunkIndex',

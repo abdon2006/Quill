@@ -109,7 +109,7 @@ class _BuildFileInfoState extends State<BuildFileInfo> {
               Divider(color: theme.onSurface.withValues(alpha: 0.06)),
               const SizedBox(height: AppSpacing.lg),
 
-              // Progress row
+              
               Row(
                 children: [
                   Container(
@@ -209,7 +209,7 @@ void showEditCoverImageBottomSheet({
               AppSpacing.lg,
               AppSpacing.sm,
               AppSpacing.lg,
-              MediaQuery.of(context).viewInsets.bottom + AppSpacing.xl, // ← كده
+              MediaQuery.of(context).viewInsets.bottom + AppSpacing.xl, 
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -258,7 +258,7 @@ void showEditCoverImageBottomSheet({
                   AppButton.primary(
                     text: 'Save Cover',
                     onPressed: () {
-                      onSave(sheetImage!); // بتبعت الـ path للـ parent
+                      onSave(sheetImage!); 
                       Navigator.pop(context);
                     },
                   ),

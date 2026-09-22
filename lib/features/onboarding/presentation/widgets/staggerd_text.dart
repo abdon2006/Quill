@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // ضفنا المكتبة دي عشان الـ Haptics
+import 'package:flutter/services.dart'; 
 import 'package:quill/core/theme/app_duration.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
@@ -52,7 +52,7 @@ class _StaggeredTextState extends State<StaggeredText>
       );
     });
 
-    // فصلنا التشغيل في دالة لوحده عشان نتحكم في الـ Haptics
+    
     _startAnimationWithHaptics();
   }
 
@@ -62,11 +62,11 @@ class _StaggeredTextState extends State<StaggeredText>
 
     _controller.forward();
 
-    // هنا الصياعة: لوب بيحسب وقت ظهور كل كلمة ويضرب نبضة خفيفة مع كل كلمة
+    
     for (int i = 0; i < _words.length; i++) {
       Future.delayed(Duration(milliseconds: i * AppDuration.focus.inMilliseconds), () {
         if (mounted) {
-          // selectionClick بتدي إحساس "التكة" السريعة والناعمة جداً
+          
           HapticFeedback.selectionClick();
         }
       });

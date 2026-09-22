@@ -7,7 +7,7 @@ Widget buildRulesRow(String text, bool isMet, bool isDark, bool isPristine) {
   return Row(
     children: [
       HugeIcon(
-        // لو متحقق: صح، لو لسه مبدأش: دايرة فاضية، لو كتب وغلط: علامة X
+        
         icon: isMet
             ? HugeIcons.strokeRoundedTick02
             : (isPristine

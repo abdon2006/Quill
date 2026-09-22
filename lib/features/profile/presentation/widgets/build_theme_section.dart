@@ -9,6 +9,7 @@ import 'package:quill/core/theme/app_shadows.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 
+// ignore: must_be_immutable
 class BuildThemeSection extends StatefulWidget {
   int selectedTheme;
   final ValueChanged<int> onSelectTheme;

@@ -16,7 +16,7 @@ class LibraryRemoteDataSourceImpl implements LibraryRemoteDataSource {
   Future<List<WishlistEntity>> fetchWishlist(NoParams params) async {
     final response = await networkService.dioGet('/wishlist/', {});
     final List data = response.data['data']['wishlist'];
-    print(response.data);
+    
     return data.map((book) => WishlistModel.fromJson(book)).toList();
   }
 

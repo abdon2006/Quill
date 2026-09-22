@@ -25,7 +25,7 @@ class AppButton extends StatelessWidget {
     required this.type,
     this.color,
     this.icon,
-    this.width = double.infinity, // الديفولت إنه بياخد عرض الشاشة
+    this.width = double.infinity, 
     this.isLoading = false,
     this.isEnabled = true,
   });
@@ -133,7 +133,7 @@ class AppButton extends StatelessWidget {
                               begin: const Offset(
                                 0.0,
                                 0.2,
-                              ), // النص الجديد بيطلع من تحت لفوق بهدوء
+                              ), 
                               end: Offset.zero,
                             ).animate(animation),
                             child: child,

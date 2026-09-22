@@ -1,5 +1,5 @@
 abstract final class AppDuration {
-  // ── Base scale ──────────────────────────────
+  
   static const fast = Duration(milliseconds: 150);
 
   static const normal = Duration(milliseconds: 300);
@@ -10,17 +10,17 @@ abstract final class AppDuration {
 
   static const splash = Duration(seconds: 2);
 
-  // ── Micro frames ────────────────────────────
+  
   static const frame = Duration(milliseconds: 20);
 
   static const micro = Duration(milliseconds: 50);
 
-  // ── Input & interactions ────────────────────
+  
   static const focus = Duration(milliseconds: 200);
 
   static const quickShift = Duration(milliseconds: 350);
 
-  // ── Transitions ─────────────────────────────
+  
   static const switchOut = Duration(milliseconds: 400);
 
   static const dock = Duration(milliseconds: 650);
@@ -33,7 +33,7 @@ abstract final class AppDuration {
 
   static const longEntrance = Duration(milliseconds: 1200);
 
-  // ── Cues & ambience ─────────────────────────
+  
   static const dialogPulse = Duration(milliseconds: 1500);
 
   static const logo = Duration(milliseconds: 1800);

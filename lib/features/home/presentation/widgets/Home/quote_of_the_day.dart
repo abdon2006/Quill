@@ -72,7 +72,7 @@ class QuoteOfTheDay extends StatelessWidget {
 
           SizedBox(height: AppSpacing.md),
 
-          // نص الاقتباس
+          
           Text(
             textAlign: TextAlign.center,
             "“${todayQuote.title}”",
@@ -83,7 +83,7 @@ class QuoteOfTheDay extends StatelessWidget {
 
           SizedBox(height: AppSpacing.lg),
 
-          // اسم الكاتب
+          
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

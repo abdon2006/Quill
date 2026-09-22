@@ -96,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: const SizedBox.shrink(),
                     ),
 
-                    /// 1. Header (Animated)
+                    
                     Align(
                       alignment: AlignmentGeometry.centerLeft,
                       child: Padding(
@@ -131,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     SizedBox(height: AppSpacing.xl),
 
-                    /// 2. Continue Reading (Animated)
+                    
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: AppSpacing.xl,
@@ -174,12 +174,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: AnimatedSwitcher(
                               duration: AppDuration.switchOut,
                               layoutBuilder: (currentChild, previousChildren) {
-                                // ده بيمنع الشاشة تنط بشكل حاد وقت التغيير
+                                
                                 return Stack(
                                   alignment: Alignment.topCenter,
                                   children: <Widget>[
                                     ...previousChildren,
-                                    if (currentChild != null) currentChild,
+                                    ?currentChild,
                                   ],
                                 );
                               },
@@ -192,7 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     SizedBox(height: AppSpacing.xl),
 
-                    /// Section Header - Recently Added
+                    
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: AppSpacing.xl,
@@ -204,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     SizedBox(height: AppSpacing.lg),
 
-                    /// 3. Recently Added (Animated)
+                    
                     BlocConsumer<HomeBloc, HomeState>(
                       listener: (context, state) {
                         if (state is HomeError) {
@@ -266,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     SizedBox(height: AppSpacing.lg),
 
-                    /// Quote
+                    
                     Padding(
                       padding: EdgeInsetsGeometry.symmetric(
                         horizontal: AppSpacing.xl,
@@ -287,7 +287,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
 
-                    /// 4. From Library (Animated)
+                    
                     BlocBuilder<LibraryBloc, LibraryState>(
                       builder: (context, state) {
                         Widget childWidget = const SizedBox(

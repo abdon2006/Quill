@@ -19,10 +19,10 @@ class _GoldenShimmerState extends State<GoldenShimmer>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: AppDuration.ambient, // سرعة اللمعة (بطيئة عشان الهدوء)
+      duration: AppDuration.ambient, 
     );
 
-    // بنستنى ثانية ونص عشان ندي فرصة للنص إنه يظهر الأول بـ StaggeredText
+    
     Future.delayed(AppDuration.dialogPulse, () {
       if (mounted) _controller.repeat();
     });
@@ -49,7 +49,7 @@ class _GoldenShimmerState extends State<GoldenShimmer>
                 AppColors.white.withValues(alpha: 0.0),
               ],
               stops: const [0.0, 0.5, 1.0],
-              // تحريك النور من الشمال لليمين
+              
               begin: Alignment(-2.0 + (_controller.value * 4), -0.5),
               end: Alignment(0.0 + (_controller.value * 4), 0.5),
             ).createShader(bounds);

@@ -20,21 +20,21 @@ class FeatherLogo extends StatefulWidget {
 
 class _FeatherLogoState extends State<FeatherLogo>
     with TickerProviderStateMixin {
-  // --- أنيميشن الدخول (الأساسي) ---
+  
   late final AnimationController _moveController;
   late final Animation<double> _moveUp;
   late final Animation<double> _wiggleRotation;
   late final Animation<double> _wiggleSide;
   late final List<InkParticle> _particles;
 
-  // --- أنيميشن الخروج (النقلة السينمائية) ---
+  
   late final AnimationController _exitController;
   late final Animation<double> _exitMoveUp;
   late final Animation<double> _exitWiggleRotation;
   late final Animation<double> _exitWiggleSide;
   late final List<InkParticle> _exitParticles;
 
-  // --- أنيميشن الظهور (Fade In) ---
+  
   late final AnimationController _controller;
   late final Animation<Offset> _slide;
   late final Animation<double> _opacity;
@@ -44,7 +44,7 @@ class _FeatherLogoState extends State<FeatherLogo>
   void initState() {
     super.initState();
 
-    // 1. إعدادات الدخول
+    
     _moveController = AnimationController(
       vsync: this,
       duration: AppDuration.logo,
@@ -79,12 +79,12 @@ class _FeatherLogoState extends State<FeatherLogo>
       );
     });
 
-    // 2. إعدادات الخروج (بتكمل من مكان ما الدخول وقف)
+    
     _exitController = AnimationController(
       vsync: this,
       duration: AppDuration.dialogPulse,
     );
-    // بتطير مسافة -400 عشان تخرج بره الشاشة بنعومة
+    
     _exitMoveUp = Tween<double>(
       begin: 0,
       end: -400,
@@ -105,21 +105,21 @@ class _FeatherLogoState extends State<FeatherLogo>
           CurvedAnimation(parent: _exitController, curve: Curves.easeInOut),
         );
 
-    // نقط حبر جديدة بتترسم في مسار الخروج (من -120 لحد -400)
+    
     _exitParticles = List.generate(40, (index) {
       return InkParticle(
         dx: (rand.nextDouble() - 0.5) * 40,
-        dy: -120 - (rand.nextDouble() * 280), // تبدأ من مكان وقوف الريشة وتطلع
+        dy: -120 - (rand.nextDouble() * 280), 
         size: rand.nextDouble() * 2.5 + 1.0,
         maxOpacity: rand.nextDouble() * 0.6 + 0.3,
         driftSpeed: (rand.nextDouble() - 0.5) * 15,
       );
     });
 
-    // 3. إعدادات الظهور الأولي
+    
     _controller = AnimationController(
       vsync: this,
-      duration: AppDuration.breathe, // نفس الوقت اللي الكوبيت بيستناه
+      duration: AppDuration.breathe, 
     );
 
     _opacity = Tween<double>(
@@ -131,10 +131,10 @@ class _FeatherLogoState extends State<FeatherLogo>
       CurvedAnimation(
         parent: _controller,
         curve: Curves.easeOutBack,
-      ), // بتعمل ارتداد خفيف
+      ), 
     );
 
-    // 👇 السحر هنا: الريشة بتنزل من فوق بره الشاشة (-3.0) لحد النص (0.0)
+    
     _slide = Tween<Offset>(
       begin: const Offset(0, -3.0),
       end: Offset.zero,
@@ -159,7 +159,7 @@ class _FeatherLogoState extends State<FeatherLogo>
       _moveController.forward();
     }
 
-    // أول ما الـ Cubit يدي أمر الخروج، نشغل أنيميشن الطيران التاني
+    
     if (!oldWidget.isExiting && widget.isExiting) {
       _exitController.forward();
     }
@@ -171,14 +171,14 @@ class _FeatherLogoState extends State<FeatherLogo>
       alignment: Alignment.center,
       clipBehavior: Clip.none,
       children: [
-        // الحبر
+        
         AnimatedBuilder(
-          // بنراقب الحركتين مع بعض (الدخول والخروج)
+          
           animation: Listenable.merge([_moveController, _exitController]),
           builder: (context, _) {
-            // بنجمع الإزاحة بتاعت الدخول + إزاحة الخروج
+            
             final totalY = _moveUp.value + _exitMoveUp.value;
-            // بنجمع الحبر القديم والجديد عشان يبان كأنه مسار واحد متصل
+            
             final allParticles = [..._particles, ..._exitParticles];
 
             return CustomPaint(
@@ -191,7 +191,7 @@ class _FeatherLogoState extends State<FeatherLogo>
           },
         ),
 
-        // الريشة
+        
         AnimatedBuilder(
           animation: Listenable.merge([_moveController, _exitController]),
           builder: (context, child) {

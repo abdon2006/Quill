@@ -11,13 +11,13 @@ class CinematicPageTransitionsBuilder extends PageTransitionsBuilder {
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
-    // 1. تأثير الذوبان (Fade)
+    
     final fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
     ).animate(CurvedAnimation(parent: animation, curve: Curves.easeInOut));
 
-    // 2. تأثير الزووم الخفيف لجوه (Scale)
+    
     final scaleAnimation = Tween<double>(
       begin: 0.95,
       end: 1.0,

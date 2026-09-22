@@ -62,7 +62,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) async {
     if (!isCached) {
       final cachedBooks = await bookRepository.getCachedBooks();
-      print('CACHED BOOKS : $cachedBooks');
+      
       emit(
         HomeError(
           failure: failure,

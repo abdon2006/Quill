@@ -1,9 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart'; // ضفنا الروتر
+import 'package:go_router/go_router.dart'; 
 import 'package:quill/core/constants/app_constants.dart';
-import 'package:quill/core/router/app_router.dart'; // مسار الروتس بتاعك
+import 'package:quill/core/router/app_router.dart'; 
 import 'package:quill/core/theme/app_duration.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_theme.dart';
@@ -29,7 +31,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: AppTheme.light, // أو lightTheme حسب اسم المتغير عندك
+      data: AppTheme.light, 
       child: BlocProvider(
         create: (_) => OnboardingCubit(),
         child: const _OnboardingView(),
@@ -50,14 +52,14 @@ class _OnboardingViewState extends State<_OnboardingView> {
   Widget build(BuildContext context) {
     final stage = context.watch<OnboardingCubit>().state;
 
-    // غلفنا الشاشة بـ BlocListener عشان نراقب حالة الريشة وهي بتطير
+    
     return BlocListener<OnboardingCubit, OnboardingStage>(
       listener: (context, state) {
         if (state == OnboardingStage.leavingFeather) {
-          // لما الريشة تبدأ تطير، نستنى ثانية ونص وبعدين نقلب الصفحة
+          
           Future.delayed(AppDuration.dialogPulse, () {
             if (context.mounted) {
-              context.go(AppRoutes.choose); // النقلة للـ Signup
+              context.go(AppRoutes.choose); 
             }
           });
         }
@@ -86,7 +88,7 @@ class _OnboardingViewState extends State<_OnboardingView> {
                   children: [
                     const Spacer(),
 
-                    // سحب الريشة لفوق بره الشاشة لما الحالة تكون leavingFeather
+                    
                     AnimatedSlide(
                       duration: AppDuration.dialogPulse,
                       curve: Curves.easeInOutCubic,
@@ -94,7 +96,7 @@ class _OnboardingViewState extends State<_OnboardingView> {
                           ? const Offset(0, -3.5)
                           : Offset.zero,
                       child: FeatherLogo(
-                        // الريشة تبدأ طيرانها الحقيقي بس لو عدينا مرحلة الـ entering والـ initial
+                        
                         hasStarted:
                             stage != OnboardingStage.initial &&
                             stage != OnboardingStage.entering,
@@ -104,7 +106,7 @@ class _OnboardingViewState extends State<_OnboardingView> {
 
                     SizedBox(height: AppSpacing.xxxxl.h),
 
-                    // إخفاء النص
+                    
                     AnimatedSwitcher(
                       duration: AppDuration.reveal,
                       transitionBuilder: (child, animation) => FadeTransition(
@@ -146,10 +148,10 @@ class _OnboardingViewState extends State<_OnboardingView> {
                         ),
                       ),
 
-                      // الزرار النهائي
+                      
                       AnimatedOpacity(
                         duration: AppDuration.slow,
-                        // الزرار ظاهر في الـ finale بس، وبيختفي أول ما نـ endJourney
+                        
                         opacity: stage == OnboardingStage.finale ? 1.0 : 0.0,
                         child: IgnorePointer(
                           ignoring: stage != OnboardingStage.finale,
@@ -181,7 +183,7 @@ class _OnboardingViewState extends State<_OnboardingView> {
   }
 
   Widget _buildText(OnboardingStage stage) {
-    // لو إحنا في مرحلة إخفاء النص أو طيران الريشة، بنخفي النص تماماً
+    
     if (stage == OnboardingStage.leavingText ||
         stage == OnboardingStage.leavingFeather) {
       return const SizedBox.shrink(key: ValueKey('empty'));
@@ -200,7 +202,7 @@ class _OnboardingViewState extends State<_OnboardingView> {
         key: const ValueKey('s3'),
         text: 'Every page has someone to ask.',
       ),
-      // بنخلي النص ظاهر في الـ finale وأثناء اختفاء الزرار
+      
       OnboardingStage.finale || OnboardingStage.leavingButton => GoldenShimmer(
         key: const ValueKey('s4'),
         child: const StaggeredText(text: 'Welcome to Quill.'),

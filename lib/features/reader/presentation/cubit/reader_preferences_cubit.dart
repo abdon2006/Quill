@@ -24,7 +24,7 @@ class ReaderPreferencesCubit extends Cubit<ReaderPreferencesState> {
     final savedState = prefs.getString('readerPrefs');
     if (savedState != null) {
       final map = jsonDecode(savedState);
-      print('----------LOADED THE OLD PREFERENCES ----------');
+      
       emit(
         ReaderPreferencesState(
           fontSize: map['fontSize'],

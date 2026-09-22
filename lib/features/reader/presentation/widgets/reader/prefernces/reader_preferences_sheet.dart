@@ -212,23 +212,23 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
     final List<Map<String, dynamic>> bgSelectionData = [
       {
         'label': 'Warm', 'color': AppColors.warm, 'value': ReaderBgColor.warm,
-        // 'fgColor' :
+        
       },
       {
         'label': 'Cream',
         'color': AppColors.cream,
         'value': ReaderBgColor.cream,
-        // 'fgColor' :
+        
       },
       {
         'label': 'White',
         'color': AppColors.white,
         'value': ReaderBgColor.white,
-        // 'fgColor' :
+        
       },
       {
         'label': 'Dark', 'color': AppColors.dark, 'value': ReaderBgColor.dark,
-        // 'fgColor' :
+        
       },
     ];
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -761,7 +761,7 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
             ],
           ),
 
-          /// linear fade
+          
           Positioned(
             bottom: 0,
             left: 0,

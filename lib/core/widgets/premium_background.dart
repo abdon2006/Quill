@@ -16,7 +16,7 @@ class PremiumAuroraBackground extends StatefulWidget {
 }
 
 class _PremiumAuroraBackgroundState extends State<PremiumAuroraBackground> {
-  // Alignments for the moving orbs
+  
   Alignment _alignment1 = Alignment.topLeft;
   Alignment _alignment2 = Alignment.bottomRight;
   Alignment _alignment3 = Alignment.centerLeft;
@@ -27,7 +27,7 @@ class _PremiumAuroraBackgroundState extends State<PremiumAuroraBackground> {
   @override
   void initState() {
     super.initState();
-    // Change positions every 4 seconds to create a slow, breathing movement
+    
     _timer = Timer.periodic(AppDuration.cue, (timer) {
       setState(() {
         _alignment1 = _getRandomAlignment();
@@ -56,13 +56,13 @@ class _PremiumAuroraBackgroundState extends State<PremiumAuroraBackground> {
 
     return Stack(
       children: [
-        // ─── Background Color ───
+        
         Container(color: theme.scaffoldBackgroundColor),
 
-        // ─── Animated Orb 1 (Primary Color) ───
+        
         AnimatedAlign(
           duration: AppDuration.aurora,
-          curve: Curves.easeInOutSine, // Smooth natural movement
+          curve: Curves.easeInOutSine, 
           alignment: _alignment1,
           child: Container(
             width: 250.w,
@@ -74,7 +74,7 @@ class _PremiumAuroraBackgroundState extends State<PremiumAuroraBackground> {
           ),
         ),
 
-        // ─── Animated Orb 2 (Accent/Secondary Color) ───
+        
         AnimatedAlign(
           duration: AppDuration.auroraFade,
           curve: Curves.easeInOutSine,
@@ -84,13 +84,13 @@ class _PremiumAuroraBackgroundState extends State<PremiumAuroraBackground> {
             height: 300.w,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              // You can use another color here to make it mix nicely
+              
               color: theme.colorScheme.secondary.withValues(alpha: 0.15),
             ),
           ),
         ),
 
-        // ─── Animated Orb 3 (Optional extra pop) ───
+        
         AnimatedAlign(
           duration: AppDuration.auroraGold,
           curve: Curves.easeInOutSine,
@@ -105,13 +105,13 @@ class _PremiumAuroraBackgroundState extends State<PremiumAuroraBackground> {
           ),
         ),
 
-        // ─── The Magic Blur Layer ───
+        
         BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 80, sigmaY: 80), // Extreme blur
+          filter: ImageFilter.blur(sigmaX: 80, sigmaY: 80), 
           child: Container(color: Colors.transparent),
         ),
 
-        // ─── The Actual Screen Content ───
+        
         widget.child,
       ],
     );

@@ -57,22 +57,22 @@ class _ReaderScreenState extends State<ReaderScreen> {
   ReaderUiStates _uiState = ReaderUiStates.controlsVisible;
   Timer? _uiHideTimer;
 
-  /// Page Slider
+  
   int _currentPage = 0;
   int _totalPages = 0;
   final ValueNotifier<int> _jumpToPageNotifier = ValueNotifier(-1);
 
-  /// Books
+  
   BookEntity? _serverBook;
   LocalBook? _book;
 
-  /// variable for local progress
+  
   int? _currentProgress;
 
-  /// ReaderBloc Instance To Update The Local Progress on Dispose
+  
   late final ReaderBloc _bloc;
 
-  /// Errors
+  
   bool _bookError = false;
   bool _readerError = false;
 
@@ -272,7 +272,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
             body: SafeArea(
               child: Stack(
                 children: [
-                  /// Bloc Listener
+                  
                   BlocListener<ReaderBloc, ReaderState>(
                     listener: (context, state) {
                       if (state is FetchLocalBookSuccess) {
@@ -295,7 +295,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                           _paragraphs = state.paragraphs;
                         });
 
-                        /// عشان نتاكد ان الكتاب جه مالسيرفر الاول initState مكتبناش الريكويست دي في ال
+                        
                         context.read<ReaderBloc>().add(
                           FetchProgressEvent(
                             bookId: widget.bookId.serverId!,
@@ -330,7 +330,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                     },
                   ),
 
-                  /// Reader Surface
+                  
                   NotificationListener<UserScrollNotification>(
                     onNotification: _handleScroll,
                     child: _paragraphs.isEmpty || _currentProgress == null
@@ -350,7 +350,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                             state: state,
                             updateProgress: (int progress) {
                               _currentProgress = progress;
-                              print(' Progress : ${progress.round()}');
+                              
                             },
                             isFocusMode:
                                 _uiState == ReaderUiStates.focusExitReveal ||
@@ -373,7 +373,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                           ),
                   ),
 
-                  // 3. Top Bar
+                  
                   Positioned(
                     top: 10.h,
                     left: 20.w,
@@ -398,7 +398,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                     ),
                   ),
 
-                  // 4. Bottom Actions
+                  
                   Positioned(
                     bottom: 10.h,
                     left: 20.w,
@@ -426,7 +426,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                     ),
                   ),
 
-                  // 5. Exit Focus Hint (Tiny Control)
+                  
                   Positioned(
                     bottom: 40.h,
                     left: 0,
@@ -482,7 +482,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                     ),
                   ),
 
-                  /// transition Overlay
+                  
                   AnimatedSwitcher(
                     duration: AppDuration.readerGlow,
                     switchInCurve: Curves.easeIn,
@@ -529,7 +529,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                     },
                   ),
 
-                  /// Error State for Bloc reader Failure
+                  
                   if (_readerError)
                     AnimatedOpacity(
                       opacity: _readerError ? 1 : 0,
@@ -542,12 +542,12 @@ class _ReaderScreenState extends State<ReaderScreen> {
                           subtitle:
                               "Something went wrong while loading. Please try again.",
                           image: AppAssets.bookWithGlasses,
-                          // textColor: _getTextColor(state, context),
+                          
                         ),
                       ),
                     ),
 
-                  /// Back Button appears in every error state
+                  
                   if (_bookError || _readerError)
                     Positioned(
                       top: 10.h,
@@ -555,7 +555,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                       child: _errorBackButton(context: context, theme: theme),
                     ),
 
-                  /// Error State for empty paragraphs
+                  
                   if (_bookError)
                     AnimatedOpacity(
                       opacity: _bookError ? 1 : 0,
@@ -568,7 +568,7 @@ class _ReaderScreenState extends State<ReaderScreen> {
                           subtitle:
                               "We couldn't read any text from this file. It may be unsupported or corrupted.",
                           image: AppAssets.bookWithGlasses,
-                          // textColor: _getTextColor(state, context),
+                          
                         ),
                       ),
                     ),
@@ -599,7 +599,7 @@ Widget _errorBackButton({
       child: HugeIcon(
         icon: AppIcons.back,
         color: theme.secondary.withValues(alpha: 0.7),
-        // getIconsFgColor(state: state, context: context, theme: theme),
+        
       ),
     ),
   ),

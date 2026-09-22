@@ -19,7 +19,7 @@ class _BreathingWidgetState extends State<BreathingWidget>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: AppDuration.breathe, // نفس هادي
+      duration: AppDuration.breathe, 
     )..repeat(reverse: true);
 
     _scale = Tween<double>(

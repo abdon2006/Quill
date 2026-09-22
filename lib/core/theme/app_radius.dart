@@ -9,7 +9,7 @@ abstract final class AppRadius {
   static BorderRadius xl = BorderRadius.circular(24);
   static BorderRadius xxl = BorderRadius.circular(32);
 
-  // Bottom sheets pull their top corners with a harder curve (design size 28).
+  
   static BorderRadius sheetSm = BorderRadius.vertical(top: Radius.circular(24.r));
   static BorderRadius sheet = BorderRadius.vertical(top: Radius.circular(28.r));
 }

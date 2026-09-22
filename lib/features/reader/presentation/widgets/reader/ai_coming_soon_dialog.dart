@@ -121,7 +121,7 @@ class _AiComingSoonDialogState extends State<_AiComingSoonDialog>
 
             SizedBox(height: AppSpacing.xxl),
 
-            /// Text Content
+            
             Text(
               'Quill AI is Learning',
               textAlign: TextAlign.center,
@@ -141,7 +141,7 @@ class _AiComingSoonDialogState extends State<_AiComingSoonDialog>
 
             SizedBox(height: AppSpacing.xxl),
 
-            /// Action Button
+            
             AppButton.secondary(
               text: 'Got it, Thanks',
               onPressed: () => Navigator.of(context).pop(),

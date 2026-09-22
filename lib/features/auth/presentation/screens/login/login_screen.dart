@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -142,8 +142,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   currentIndex++;
                                 });
                               } else {
-                                print("Email: ${email.text}");
-                                print("Pass: ${pass.text}");
+                                
+                                
                                 context.read<AuthBloc>().add(
                                   LoginEvent(
                                     params: LoginParams(

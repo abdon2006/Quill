@@ -6,7 +6,7 @@ import 'app_colors.dart';
 import 'app_spacing.dart';
 
 abstract class AppTheme {
-  // ── Light Theme ──────────────────────────────
+  
   static ThemeData get light => ThemeData(
     useMaterial3: true,
     splashColor: AppColors.lightAccentPrimary.withValues(alpha: 0.08),
@@ -118,7 +118,7 @@ abstract class AppTheme {
     ),
   );
 
-  // ── Dark Theme ───────────────────────────────
+  
   static ThemeData get dark => ThemeData(
     useMaterial3: true,
     splashColor: AppColors.darkAccentPrimary.withValues(alpha: 0.10),

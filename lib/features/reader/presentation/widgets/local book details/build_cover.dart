@@ -16,7 +16,7 @@ Widget buildCover(BuildContext context, String? coverImage) {
     child: Stack(
       alignment: Alignment.center,
       children: [
-        // Blurred background
+        
         if (hasImage)
           Positioned.fill(
             child: ImageFiltered(
@@ -33,7 +33,7 @@ Widget buildCover(BuildContext context, String? coverImage) {
             ),
           ),
 
-        // Cover card
+        
         Padding(
           padding: const EdgeInsets.only(
             top: AppSpacing.xxxl,

@@ -26,7 +26,7 @@ class DiscoverDefaultContent extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        /// section Header 'Trending'
+        
         Padding(
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
           child: Column(
@@ -38,7 +38,7 @@ class DiscoverDefaultContent extends StatelessWidget {
           ),
         ),
 
-        /// Trending Books
+        
         Column(
           children: [
             SizedBox(
@@ -70,7 +70,7 @@ class DiscoverDefaultContent extends StatelessWidget {
               ),
             ),
 
-            /// section Header 'Recommended'
+            
             Padding(
               padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
               child: Column(
@@ -82,7 +82,7 @@ class DiscoverDefaultContent extends StatelessWidget {
               ),
             ),
 
-            /// Recommended Books
+            
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
               child: ListView.builder(

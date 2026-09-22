@@ -112,7 +112,7 @@ Widget _buildTopBarButton({
         child: HugeIcon(
           icon: icon,
           color: theme.secondary.withValues(alpha: 0.7),
-          // getIconsFgColor(state: state, context: context, theme: theme),
+          
         ),
       ),
     ),

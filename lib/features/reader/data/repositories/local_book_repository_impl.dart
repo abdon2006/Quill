@@ -40,20 +40,20 @@ class LocalBookRepositoryImpl implements LocalBookRepository {
   @override
   Future<Either<Failure, void>> updateBook(UpdateBookParams params) async {
     try {
-      /// هنا انا باخد المسار الامن في التطبيق عشان احفظ فيه كل الملفات بشكل دائم وفي مكان امن
+      
       final dir = await getApplicationDocumentsDirectory();
 
-      /// باخد اسم الملف من المسار الطويل اللي جبته من
+      
       final fileName = params.coverImagePath.split('/').last;
 
-      /// ببني المسار الجديد الامن
+      
       final savedPath = '${dir.path}/$fileName';
       if (params.isCoverImageChange) {
-        /// لو الصورة اتغيرت فعلا بنسخ الملف نفسه اللي هي الصورة من المسار المؤقت اللي هي فيه للمسار الامن اللي انا جبته
+        
         await File(params.coverImagePath).copy(savedPath);
       }
 
-      /// لو الصورة اتغيرت الستخدم المسار الجديد الامن لو متغيرتش خلاص استخدم المسار بتاعها القديم
+      
       final coverPath = params.isCoverImageChange
           ? savedPath
           : params.coverImagePath;
@@ -87,9 +87,7 @@ class LocalBookRepositoryImpl implements LocalBookRepository {
         _extractParagraphs,
         savedPath,
       );
-      print(
-        '----------- num of Paragraphs : ${paragraphs.length} -------------',
-      );
+      
       localBook.paragraphs = paragraphs;
       localBook.totalPages = paragraphs.length;
       final response = await bookLocalDataSource.uploadBook(localBook);
@@ -133,17 +131,17 @@ Future<List<String>> _extractParagraphs(String path) async {
 
     final List<String> pages = [];
 
-    print('----------- num of pages : ${doc.pages.count} -------------');
+    
     for (int i = 0; i < doc.pages.count; i++) {
       final raw = extractor
           .extractText(startPageIndex: i, endPageIndex: i)
           .trim();
       final text = _cleanPageText(raw);
-      print('Page $i cleaned: ${text.substring(0, text.length.clamp(0, 100))}');
+      
 
       if (_isUsefulPage(text)) pages.add(text);
     }
-    print('----------------- Pages : $pages ---------------');
+    
 
     doc.dispose();
     return pages;
@@ -155,10 +153,8 @@ Future<List<String>> _extractParagraphs(String path) async {
         await EpubReader.readTextContentFiles(epub.Content!.Html!);
     List<String> htmlList = [];
     for (var i in cont.values) {
-      print(' ----------------- EPUB page : $i -------------- ');
-      print(
-        ' ----------------- EPUB PAGE CONTENT  : ${i.Content} -------------- ',
-      );
+      
+      
       htmlList.add(i.Content!);
     }
     final doc = html_parser.parse(htmlList.join());
@@ -173,13 +169,13 @@ Future<List<String>> _extractParagraphs(String path) async {
             )
             .toList() ??
         <String>[];
-    print('----------------- Pages EPUB : $paragraphs ---------------');
+    
     return paragraphs;
   }
 }
 
 String _cleanPageText(String text) {
-  // بنوحد السطور المتقطعة - لو السطر أقل من 3 حروف بنلحقه بالسطر اللي بعده
+  
   final lines = text.split('\n');
   final buffer = StringBuffer();
 
@@ -189,7 +185,7 @@ String _cleanPageText(String text) {
       buffer.write('\n');
       continue;
     }
-    // سطر قصير جداً = جزء من كلمة متقطعة
+    
     if (line.length <= 3 && i < lines.length - 1) {
       buffer.write(line);
     } else {
@@ -199,8 +195,8 @@ String _cleanPageText(String text) {
 
   return buffer
       .toString()
-      .replaceAll(RegExp(r'[əˈä·]'), '') // شيل رموز الـ pronunciation
-      .replaceAll(RegExp(r'\s{2,}'), ' ') // شيل المسافات الزيادة
+      .replaceAll(RegExp(r'[əˈä·]'), '') 
+      .replaceAll(RegExp(r'\s{2,}'), ' ') 
       .trim();
 }
 

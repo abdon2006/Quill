@@ -167,7 +167,7 @@ class TrendingBookCard extends StatelessWidget {
                                                     Curves.easeInOutCubic,
                                                 switchOutCurve: Curves.easeIn,
 
-                                                /// في مشكل هنا اني لما بدوس علي اي حاجة سواء اضافة او ازالة من المكتبة كل الكتب بتحمل
+                                                
                                                 child: isLoading
                                                     ? LoadingAnimationWidget.flickr(
                                                         key: ValueKey(

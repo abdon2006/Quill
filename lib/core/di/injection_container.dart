@@ -65,22 +65,22 @@ Future<Isar> initIsar() async {
 }
 
 Future<void> setupDI() async {
-  // ── External ─────────────────────────────────
+  
   final prefs = await SharedPreferences.getInstance();
   sl.registerSingleton<SharedPreferences>(prefs);
 
-  // ── Core Cubits ──────────────────────────────
+  
   sl.registerLazySingleton<ThemeCubit>(() => ThemeCubit(sl()));
   sl.registerLazySingleton<LocaleCubit>(() => LocaleCubit(sl()));
 
-  /// App Storage
+  
   sl.registerLazySingleton<AppStorage>(() => AppStorage());
 
-  /// isar instance
+  
   final isar = await initIsar();
   sl.registerLazySingleton<Isar>(() => isar);
 
-  /// Dio
+  
   sl.registerLazySingleton<Dio>(
     () => Dio(
       BaseOptions(
@@ -92,17 +92,17 @@ Future<void> setupDI() async {
     ),
   );
 
-  /// AuthInterceptor
+  
   sl.registerLazySingleton<AuthInterceptor>(
     () => AuthInterceptor(appStorage: sl()),
   );
 
-  /// Network Service
+  
   sl.registerLazySingleton<NetworkService>(
     () => NetworkService(authInterceptor: sl(), dio: sl()),
   );
 
-  /// Book & Home
+  
   sl.registerLazySingleton<BookLocalDataSource>(
     () => BookLocalDataSourceImpl(isarInstance: sl()),
   );
@@ -131,7 +131,7 @@ Future<void> setupDI() async {
     () => RecommendationCubit(fetchBooksUsecase: sl()),
   );
 
-  /// Auth
+  
   sl.registerLazySingleton<AuthRemoteDatasource>(
     () => AuthRemoteDatasourceImpl(networkService: sl()),
   );
@@ -156,7 +156,7 @@ Future<void> setupDI() async {
     ),
   );
 
-  /// Library
+  
   sl.registerLazySingleton<LibraryRemoteDataSource>(
     () => LibraryRemoteDataSourceImpl(networkService: sl()),
   );
@@ -188,7 +188,7 @@ Future<void> setupDI() async {
     ),
   );
 
-  /// READER
+  
   sl.registerLazySingleton<LocalBookDataSource>(
     () => LocalBookDataSourceImpl(isarInstance: isar),
   );

@@ -45,14 +45,14 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     final currentId = widget.bookId ?? widget.book?.id;
     context.read<RecommendationCubit>().getRecommendation(currentId!);
     if (widget.book == null) {
-      /// if came to display server book dispatch the request
+      
       context.read<HomeBloc>().add(GetBookByIdEvent(bookId: widget.bookId!));
     }
     final wishliststate = context.read<LibraryBloc>().state;
     if (wishliststate is FetchSuccessState) {
       setState(() {
-        /// check this book of the all library books to know is it exist or not
-        /// to handle the remove & add to library button
+        
+        
         isInWishlist = wishliststate.books.any((book) {
           if (widget.book == null) {
             return book.bookId == widget.bookId;
@@ -220,7 +220,7 @@ Widget _errorBackButton({
       child: HugeIcon(
         icon: AppIcons.back,
         color: theme.secondary.withValues(alpha: 0.7),
-        // getIconsFgColor(state: state, context: context, theme: theme),
+        
       ),
     ),
   ),

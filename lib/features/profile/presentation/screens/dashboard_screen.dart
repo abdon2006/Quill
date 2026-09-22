@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -78,13 +80,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final List<String>? finishedBooks = prefs.getStringList('finished');
     if (finishedBooks != null) {
       setState(() => _finishedList = finishedBooks);
-      print(
-        '---------------- finished books now$_finishedList -------------------',
-      );
+      
     }
     if (_finishedList.isNotEmpty) {
       for (String id in _finishedList) {
-        print('---------------- sending request to book $id');
+        
         context.read<HomeBloc>().add(GetBookByIdEvent(bookId: id));
       }
     }
@@ -96,7 +96,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final today = DateTime.now().toIso8601String().split('T').first;
     final day = DateTime.parse(today);
     final dayPositionInWeek = day.weekday;
-    print(DateTime.now().weekday);
+    
     for (var i = dayPositionInWeek; i > 0; i--) {
       final today = DateTime.now()
           .subtract(Duration(days: dayPositionInWeek - i))

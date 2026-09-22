@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 abstract class AppShadows {
-  // ── Light Mode ───────────────────────────────
+  
   static List<BoxShadow> card = [
     BoxShadow(
       color: Colors.black.withValues(alpha: 0.06),
@@ -34,7 +34,7 @@ abstract class AppShadows {
     ),
   ];
 
-  // ── Dark Mode ───────────────────────────────
+  
   static List<BoxShadow> cardDark = [
     BoxShadow(
       color: Colors.black.withValues(alpha: 0.20),

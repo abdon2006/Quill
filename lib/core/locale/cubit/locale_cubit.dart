@@ -32,7 +32,7 @@ class LocaleCubit extends Cubit<LocaleState> {
     emit(state.copyWith(locale: const Locale('ar')));
   }
 
-  /// دي اللي هننده عليها اصلا وهنستعملها
+  
   void toggle(BuildContext context) {
     state.isArabic ? setEnglish(context) : setArabic(context);
   }

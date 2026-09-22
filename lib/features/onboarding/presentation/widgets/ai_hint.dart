@@ -11,15 +11,15 @@ class AIHints extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // لو مش في المشهد التالت، بنخفي المساحة دي خالص
+    
 
     return SizedBox(
-      height: 180.h, // مساحة كافية عشان الأفكار تتنطور فيها براحتها
+      height: 180.h, 
       width: double.infinity,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          // توزيع الأفكار في أماكن عشوائية في الشاشة (بتنطور)
+          
           Positioned(
             top: 0,
             left: 20.w,
@@ -30,7 +30,7 @@ class AIHints extends StatelessWidget {
             right: 20.w,
             child: _FloatingBlurredHint(
               text: 'Who is...',
-              delay: 800, // بتظهر بعدها بشوية
+              delay: 800, 
             ),
           ),
           Positioned(
@@ -71,20 +71,20 @@ class _FloatingBlurredHintState extends State<_FloatingBlurredHint>
   @override
   void initState() {
     super.initState();
-    // الكلمة بتاخد 4 ثواني تظهر، تعوم لفوق، وتختفي
+    
     _controller = AnimationController(
       vsync: this,
       duration: AppDuration.cue,
     );
 
-    // Fade in -> hold -> Fade out
+    
     _opacity = TweenSequence<double>([
       TweenSequenceItem(tween: Tween(begin: 0.0, end: 1.0), weight: 20),
       TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.0), weight: 50),
       TweenSequenceItem(tween: Tween(begin: 1.0, end: 0.0), weight: 30),
     ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
-    // حركة طفو بطيئة جداً من تحت لفوق كأن الفكرة بتطير
+    
     _position = Tween<Offset>(
       begin: const Offset(0, 0.4),
       end: const Offset(0, -0.4),
@@ -112,13 +112,13 @@ class _FloatingBlurredHintState extends State<_FloatingBlurredHint>
       opacity: _opacity,
       child: SlideTransition(
         position: _position,
-        // الصياعة كلها هنا: ImageFiltered بتعمل Blur حقيقي للعنصر كأنه برة الفوكس
+        
         child: ImageFiltered(
           imageFilter: ImageFilter.blur(sigmaX: 2.5, sigmaY: 2.5),
           child: Text(
             widget.text,
             style: AppTextStyles.heading1(context).copyWith(
-              // الخط كبير بس شفافيته مدياله إحساس إنه ورا النص الأساسي
+              
               color: AppColors.lightTextMuted.withValues(alpha: 0.5),
               fontStyle: FontStyle.italic,
               letterSpacing: 1.2,

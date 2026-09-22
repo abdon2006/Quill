@@ -1,6 +1,6 @@
 part of 'locale_cubit.dart';
 
-/// ده الفيال اللي بيشي حالة اللغ الحالية بتاعة الابلكيشن
+
 class LocaleState {
   final Locale locale;
 

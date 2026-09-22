@@ -33,7 +33,7 @@ void main() async {
   runApp(
     EasyLocalization(
       supportedLocales: const [Locale('en'), Locale('ar')],
-      // دي لغة الطوارئ، لو حصلت مشكلة أو النظام شغال بلغة تالتة خالص، افتح التطبيق بالإنجليزي
+      
       fallbackLocale: const Locale('en'),
       path: 'assets/translations',
       child: MultiBlocProvider(
@@ -67,12 +67,12 @@ class QuillApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /// عشان يسمعو لاي تغيير في الحالة سواء اللغو او الثيم context.watch() هنا احنا خليناهم
+    
     final localeState = context.watch<LocaleCubit>().state;
     return ScreenUtilInit(
       designSize: const Size(390, 844),
 
-      /// بتخلي الخطوط تظبط نفسها لو اليوزر غير حجم خط النظام، وبتدعم الشاشة المقسومة.
+      
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) => MaterialApp.router(
@@ -83,10 +83,10 @@ class QuillApp extends StatelessWidget {
         darkTheme: AppTheme.dark,
         themeMode: context.watch<ThemeCubit>().state.flutterThemeMode,
 
-        /// Locale State بياخد اللغة الحالية من ال
+        
         locale: localeState.locale,
 
-        /// اللي اتظبط فوق context بياخدو القيم بتاعتهم من ال
+        
         localizationsDelegates: context.localizationDelegates,
         supportedLocales: context.supportedLocales,
       ),

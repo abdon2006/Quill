@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-// شلنا الـ Positioned عشان ندي حرية للـ Stack بره
+
 Widget overlayGradient({
   required Color bgColor,
   required bool isTop,

@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
 
 abstract class AppColors {
-  // ── Backgrounds ──────────────────────────────
+  
   static const Color lightBgPrimary = Color(0xFFF5F0E8);
   static const Color lightBgSurface = Color(0xFFFFFFFF);
   static const Color lightBgSurfaceAlt = Color(0xFFEDE8DF);
 
-  // ── Accent ───────────────────────────────────
+  
   static const Color lightAccentPrimary = Color(0xFF8B3A2A);
   static const Color lightAccentMedium = Color(0xFFC4614A);
   static const Color lightAccentMuted = Color(0xFFE8C4B8);
 
-  // ── Text ─────────────────────────────────────
+  
   static const Color lightTextPrimary = Color(0xFF1A1A1A);
   static const Color lightTextSecondary = Color(0xFF6B6B6B);
   static const Color lightTextMuted = Color(0xFFA0A0A0);
 
-  // ── Status ───────────────────────────────────
+  
   static const Color lightGreen = Color(0xFF3D5A3E);
   static const Color lightGreenMuted = Color(0xFF8FAF8F);
   static const Color lightGold = Color(0xFFD4A017);
   static const Color lightError = Color(0xFFD32F2F);
 
-  // ── Dark Mode ────────────────────────────────
+  
   static const Color darkBgPrimary = Color(0xFF171415);
   static const Color darkBgSurface = Color(0xFF231F20);
   static const Color darkBgSurfaceAlt = Color(0xFF30292B);
@@ -38,20 +38,20 @@ abstract class AppColors {
   static const Color darkGold = Color(0xFFE0B84A);
   static const Color darkError = Color(0xFFEF5350);
 
-  // ── Placeholder (image loading boxes) ───────
+  
   static const Color lightImagePlaceholder = Color(0xFFEDE8DF);
   static const Color darkImagePlaceholder = Color(0xFF30292B);
 
-  // ── Shimmer highlight (onboarding golden text) ──
+  
   static const Color shimmerHighlight = Color(0xFFD98A6C);
 
-  // ── Sentiment Glow ───────────────────────────
+  
   static const Color glowJoy = Color(0xFFFFD166);
   static const Color glowSadness = Color(0xFF4A90D9);
   static const Color glowTension = Color(0xFFEF476F);
   static const Color glowCalm = Color(0xFF06D6A0);
   static const Color glowMystery = Color(0xFFB56BF7);
-  // ── Reader Bg Colors  ───────────────────────────
+  
   static const Color cream = Color(0xFFF4F1E7);
   static const Color warm = Color(0xFFF0E6C8);
   static const Color white = Color(0xFFFFFFFF);

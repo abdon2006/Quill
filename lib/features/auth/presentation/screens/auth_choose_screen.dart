@@ -18,11 +18,11 @@ class _AuthChooseScreenState extends State<AuthChooseScreen>
     with TickerProviderStateMixin {
   late final AnimationController _controller;
 
-  // أنيميشن الزرار الأول (Sign Up)
+  
   late final Animation<Offset> _slideButton1;
   late final Animation<double> _fadeButton1;
 
-  // أنيميشن الزرار التاني (Log In)
+  
   late final Animation<Offset> _slideButton2;
   late final Animation<double> _fadeButton2;
 
@@ -32,10 +32,10 @@ class _AuthChooseScreenState extends State<AuthChooseScreen>
 
     _controller = AnimationController(
       vsync: this,
-      duration: AppDuration.entrance, // وقت دخول الزرارين مع بعض
+      duration: AppDuration.entrance, 
     );
 
-    // الزرار الأول بيبدأ من الصفر لـ 60% من وقت الأنيميشن
+    
     _fadeButton1 = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
@@ -50,7 +50,7 @@ class _AuthChooseScreenState extends State<AuthChooseScreen>
           ),
         );
 
-    // الصياعة هنا: الزرار التاني بيبدأ متأخر شوية (من 40% لـ 100%) عشان يدي شكل الـ Staggered
+    
     _fadeButton2 = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
@@ -65,7 +65,7 @@ class _AuthChooseScreenState extends State<AuthChooseScreen>
           ),
         );
 
-    // بنستنى 800 ملي ثانية عشان ندي فرصة للـ StaggeredText يظهر الأول، وبعدين نشغل الزراير
+    
     Future.delayed(AppDuration.longPause, () {
       if (mounted) _controller.forward();
     });
@@ -100,7 +100,7 @@ class _AuthChooseScreenState extends State<AuthChooseScreen>
                   child: SlideTransition(
                     position: _slideButton1,
                     child: AppButton.primary(
-                      // أو الزرار اللي إنت حاطه
+                      
                       text: 'Sign Up',
                       onPressed: () {
                         context.push(AppRoutes.signup);
@@ -113,7 +113,7 @@ class _AuthChooseScreenState extends State<AuthChooseScreen>
                   child: SlideTransition(
                     position: _slideButton2,
                     child: TextButton(
-                      // أو الزرار اللي إنت حاطه
+                      
                       onPressed: () {
                         context.push(AppRoutes.login);
                       },

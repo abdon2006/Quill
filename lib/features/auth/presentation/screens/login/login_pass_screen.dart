@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/widgets/app_text_field.dart';
 import 'package:quill/features/auth/presentation/widgets/build_auth_screen.dart';
@@ -14,7 +13,6 @@ class LoginPassScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final theme = Theme.of(context);
     return Column(
       children: [
         buildAuthScreens(
@@ -58,26 +56,6 @@ class LoginPassScreen extends StatelessWidget {
             ],
           ),
           "Unlock your Current Story.",
-        ),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: InkWell(
-            borderRadius: AppRadius.xl,
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.sm,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: AppRadius.xl,
-                color: theme.colorScheme.primary.withValues(alpha: 0.1),
-              ),
-              child: Text(
-                "Forgot Your Password ? ",
-                style: TextStyle(color: theme.colorScheme.primary),
-              ),
-            ),
-          ),
         ),
       ],
     );

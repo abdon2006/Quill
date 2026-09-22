@@ -4,8 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
 abstract class AppTextStyles {
-  // ── Display (للعناوين الضخمة والترحيب في بداية الشاشات) ──
-  // الاستخدام: ترحيب الهوم (Good Morning) أو أرقام ضخمة.
+  
+  
   static TextStyle displayLarge(BuildContext context) =>
       GoogleFonts.plusJakartaSans(
         fontSize: 32,
@@ -14,7 +14,7 @@ abstract class AppTextStyles {
         color: Theme.of(context).colorScheme.onSurface,
       );
 
-  // الاستخدام: عناوين الشاشات الأساسية لو مش هنستخدم الـ Large.
+  
   static TextStyle displayMedium(BuildContext context) =>
       GoogleFonts.plusJakartaSans(
         fontSize: 24,
@@ -23,8 +23,8 @@ abstract class AppTextStyles {
         color: Theme.of(context).colorScheme.onSurface,
       );
 
-  // ── Headings (لعناوين السكاشن البارزة وأسماء الكتب) ──
-  // الاستخدام: SectionHeader (زي Your Library, Popular Books)
+  
+  
   static TextStyle heading1(BuildContext context) =>
       GoogleFonts.plusJakartaSans(
         fontSize: 20,
@@ -33,25 +33,25 @@ abstract class AppTextStyles {
         color: Theme.of(context).colorScheme.onSurface,
       );
 
-  // الاستخدام: عناوين الكتب في الكروت (Continue Reading أو Grid)
+  
   static TextStyle heading2(BuildContext context) =>
       GoogleFonts.plusJakartaSans(
         fontSize: 16,
-        fontWeight: FontWeight.w600, // خليتها 600 عشان تبرز كعنوان
+        fontWeight: FontWeight.w600, 
         color: Theme.of(context).colorScheme.onSurface,
       );
 
-  // ── Body (للنصوص العادية، الوصف، والتفاصيل الثانوية) ──
-  // الاستخدام: فقرات القراءة، وصف الكتاب (Synopsis)
+  
+  
   static TextStyle bodyLarge(BuildContext context) =>
       GoogleFonts.plusJakartaSans(
-        fontSize: 16, // الستاندرد المريح للعين
+        fontSize: 16, 
         fontWeight: FontWeight.w400,
         height: 1.6,
         color: Theme.of(context).colorScheme.onSurface,
       );
 
-  // الاستخدام: أسماء الكُتّاب (Authors)، العناوين الفرعية (Subtitles)
+  
   static TextStyle bodyMedium(BuildContext context) =>
       GoogleFonts.plusJakartaSans(
         fontSize: 14,
@@ -60,16 +60,16 @@ abstract class AppTextStyles {
         color: Theme.of(context).colorScheme.onSurface,
       );
 
-  // ── Labels & Captions (للبادجات، التواريخ، والكلمات الدليلية) ──
-  // الاستخدام: التاريخ، كلمة CURRENT BOOK، أزرار See All (غالباً بتبقى كابيتال)
+  
+  
   static TextStyle label(BuildContext context) => GoogleFonts.plusJakartaSans(
     fontSize: 12,
-    fontWeight: FontWeight.w600, // خليتها 600 عشان تبان رغم صغرها
+    fontWeight: FontWeight.w600, 
     letterSpacing: 1.2,
     color: Theme.of(context).colorScheme.onSurface,
   );
 
-  // الاستخدام: التلميحات الصغيرة جداً، نسب التقدم (64%)
+  
   static TextStyle caption(BuildContext context) => GoogleFonts.plusJakartaSans(
     fontSize: 10,
     fontWeight: FontWeight.w500,
@@ -77,7 +77,7 @@ abstract class AppTextStyles {
     color: AppColors.lightTextMuted,
   );
 
-  /// للقراية
+  
   static TextStyle defaultReading(BuildContext context) =>
       GoogleFonts.plusJakartaSans(
         fontSize: 16.sp,
@@ -86,7 +86,7 @@ abstract class AppTextStyles {
         color: Theme.of(context).colorScheme.onSurface,
       );
 
-  /// رموز زخرفية (مثل ✦ في حالات الفارغة)
+  
   static TextStyle symbol(BuildContext context) => TextStyle(
     fontSize: 32.sp,
     color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),

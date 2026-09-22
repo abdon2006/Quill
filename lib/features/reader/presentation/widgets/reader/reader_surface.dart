@@ -1,4 +1,6 @@
-// ignore_for_file: unused_field
+
+
+// ignore_for_file: use_build_context_synchronously, unused_field
 
 import 'package:flutter/foundation.dart' as foundation show compute;
 import 'package:flutter/material.dart';
@@ -155,7 +157,7 @@ class _ReaderSurfaceState extends State<ReaderSurface>
 
     _initMilestones();
 
-    /// link the nitifier to the listener which will call that mthid on change
+    
     widget.jumpToPageNotifier.addListener(_handleScrollJump);
 
     listener.itemPositions.addListener(() {
@@ -181,7 +183,7 @@ class _ReaderSurfaceState extends State<ReaderSurface>
         }
       }
 
-      /// عشان الليسنر كمان يبعت هو كمان رقم الصفحة زي مزامنة يعني
+      
       if (_pages != null) {
         final pageIndex = _pages!.pages.indexWhere(
           (p) => p.contains(currentCell),
@@ -195,7 +197,7 @@ class _ReaderSurfaceState extends State<ReaderSurface>
     _loadCache();
   }
 
-  /// that is the mithod which called when the slider call us
+  
   void _handleScrollJump() {
     if (widget.state.scrollMode == ReaderScrollMode.scroll) {
       final targetPage = widget.jumpToPageNotifier.value;
@@ -204,7 +206,7 @@ class _ReaderSurfaceState extends State<ReaderSurface>
           targetPage < _pages!.pages.length) {
         final targetCell = _pages!.pages[targetPage].first;
         scrollController.scrollTo(
-          index: targetCell + 1, // +1 عشان الـ Header اللي فوق
+          index: targetCell + 1, 
           duration: AppDuration.readerGlow,
           curve: Curves.easeInOutCubic,
         );
@@ -284,7 +286,7 @@ class _ReaderSurfaceState extends State<ReaderSurface>
 
     setState(() => _pages = result.cache);
 
-    /// السطر ده مهمته يعرف الصفحة باجمالي عدد الصفحات عشان لو في وضع السكرول
+    
     widget.sendTotalPages(result.cache.pages.length);
 
     await Future.delayed(AppDuration.micro);
@@ -392,7 +394,7 @@ class _ReaderSurfaceState extends State<ReaderSurface>
                 ),
         ),
 
-        /// Bottom Focus Overlay
+        
         Positioned(
           left: 0,
           right: 0,
@@ -408,7 +410,7 @@ class _ReaderSurfaceState extends State<ReaderSurface>
           ),
         ),
 
-        /// Top Focus Overlay
+        
         Positioned(
           left: 0,
           right: 0,
@@ -511,7 +513,7 @@ class _BionicCell extends StatelessWidget {
   }
 }
 
-// النط بيكون فوري من غير Animation عشان منقلجلش الشاشة
+
 class CellPageView extends StatefulWidget {
   final CellCache cache;
   final BionicCache bionicCache;
@@ -628,20 +630,22 @@ class _CellPageViewState extends State<CellPageView>
       _outgoingIndex = currentIndex;
       currentIndex = nextIndex;
 
+      
+      
       _inAnimation =
           Tween<Offset>(
-            begin: isNext ? const Offset(1, 0) : const Offset(-1, 0),
+            begin: isNext ? const Offset(0.05, 0) : const Offset(-0.05, 0),
             end: Offset.zero,
           ).animate(
-            CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic),
+            CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
           );
 
       _outAnimation =
           Tween<Offset>(
             begin: Offset.zero,
-            end: isNext ? const Offset(-0.3, 0) : const Offset(0.3, 0),
+            end: isNext ? const Offset(-0.05, 0) : const Offset(0.05, 0),
           ).animate(
-            CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic),
+            CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
           );
     });
 
@@ -727,7 +731,7 @@ class _CellPageViewState extends State<CellPageView>
             padding: EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
             child: Stack(
               children: [
-                // الصفحة القديمة بتتحرك للخلف
+                
                 if (_outgoingIndex != null)
                   SlideTransition(
                     position: _outAnimation,
@@ -735,18 +739,28 @@ class _CellPageViewState extends State<CellPageView>
                       opacity: Tween<double>(begin: 1, end: 0).animate(
                         CurvedAnimation(
                           parent: _controller,
-                          curve: const Interval(0, 0.5),
+                          curve: Curves.easeOut, 
                         ),
                       ),
                       child: _buildPageContent(_outgoingIndex!),
                     ),
                   ),
-                // الصفحة الجديدة بتيجي من الجنب
+                
                 SlideTransition(
                   position: _outgoingIndex != null
                       ? _inAnimation
                       : AlwaysStoppedAnimation(Offset.zero),
-                  child: _buildPageContent(currentIndex),
+                  child: FadeTransition(
+                    opacity: _outgoingIndex != null
+                        ? Tween<double>(begin: 0, end: 1).animate(
+                            CurvedAnimation(
+                              parent: _controller,
+                              curve: Curves.easeOut,
+                            ),
+                          )
+                        : const AlwaysStoppedAnimation(1.0),
+                    child: _buildPageContent(currentIndex),
+                  ),
                 ),
               ],
             ),

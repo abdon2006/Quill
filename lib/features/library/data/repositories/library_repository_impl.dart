@@ -21,7 +21,7 @@ class LibraryRepositoryImpl implements LibraryRepository {
     try {
       final response = await libraryRemoteDataSource.addToWishlist(bookId);
 
-      /// هنا مسحنا عشان بعد كده لما يفتح يلاقيها فاضية يكلم السيرفر
+      
       await libraryLocalDataSource.cacheWishlist([]);
       return Right(response);
     } on Failure catch (f) {
@@ -40,7 +40,7 @@ class LibraryRepositoryImpl implements LibraryRepository {
 
       final cachedBooks = await libraryLocalDataSource.fetchWishlist();
       if (cachedBooks.isEmpty) {
-        print('Loaded The Wishlist From The SERVER');
+        
 
         final response = await libraryRemoteDataSource.fetchWishlist(params);
 
@@ -49,9 +49,9 @@ class LibraryRepositoryImpl implements LibraryRepository {
         );
         await libraryLocalDataSource.cacheWishlist(cachedFromTheServer);
         finalBooks = response;
-        // return Right(response);
+        
       } else {
-        print('Loaded The Wishlist From The CACHE');
+        
         finalBooks = WishlistMapper.mapToWishlistEntityBooks(cachedBooks);
       }
 

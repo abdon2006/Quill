@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -151,9 +151,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       builder: (context, state) {
                         bool isLoading = state is AuthLoading;
                         if (state is AuthError) {
-                          print(
-                            '====================== ${state.message} =======================',
-                          );
+                          
                         }
                         return Padding(
                           padding: const EdgeInsets.only(

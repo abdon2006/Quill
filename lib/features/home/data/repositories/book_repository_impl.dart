@@ -19,11 +19,11 @@ class BookRepositoryImpl implements BookRepository {
     try {
       final isCached = await bookLocalDataSource.isCached();
       if (isCached) {
-        print('Loaded From Cached ..........');
+        
         final localBooks = await bookLocalDataSource.readBooks();
         return Right(BookMapper.mapBooksToBookEntity(localBooks));
       } else {
-        print('calling the server ..........');
+        
         final response = await remoteDatasource.fetchBooks();
         final cachedBooks = BookMapper.mapBooksToBookCache(response);
         await bookLocalDataSource.cacheBook(cachedBooks);
@@ -37,7 +37,7 @@ class BookRepositoryImpl implements BookRepository {
   @override
   Future<Either<Failure, List<BookEntity>>> refreshBooks() async {
     try {
-      print('Refreshing the server ..........');
+      
       final response = await remoteDatasource.fetchBooks();
       final cachedBooks = BookMapper.mapBooksToBookCache(response);
       await bookLocalDataSource.cacheBook(cachedBooks);

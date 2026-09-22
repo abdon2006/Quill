@@ -43,7 +43,7 @@ Widget milestoneNotch({
               ),
               SizedBox(width: AppSpacing.sm),
 
-              // خط فاصل صغير جداً
+              
               Container(
                 height: 12.h,
                 width: 1.w,

@@ -109,7 +109,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                 child: SizedBox(),
               ),
 
-              /// Header & Search Bar / ثابت
+              
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -177,7 +177,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                 ],
               ),
 
-              /// Filter Chips / ثابتة
+              
               AnimatedSwitcher(
                 duration: AppDuration.slow,
                 switchInCurve: Curves.easeInOutCubic,
@@ -191,7 +191,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                       ),
               ),
 
-              /// category محتوي الصفحة بقا الي بيتغير مع كل حالة واء بحث او اختيار
+              
               BlocBuilder<HomeBloc, HomeState>(
                 builder: (context, state) {
                   if (state is FetchBooksSuccess) {

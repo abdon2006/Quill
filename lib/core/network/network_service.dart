@@ -2,10 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:quill/core/errors/failures.dart';
 import 'package:quill/core/network/auth_interceptor.dart';
 
-/// GET  → query params  (بتطلب/بتفلتر)
-/// POST → body data     (بتبعت/بتنشئ)
-/// PUT  → body data     (بتستبدل كامل)
-/// PATCH → body data    (بتعدل جزء)
+
+
+
+
 
 class NetworkService {
   final AuthInterceptor authInterceptor;
@@ -63,7 +63,7 @@ class NetworkService {
   }
 
   Failure _handleDioErrors(DioException error) {
-    print("Error Type : ${error.type}");
+    
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
         return const TimeoutFailure(message: 'Connection timeout');

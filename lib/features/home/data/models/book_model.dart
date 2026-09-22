@@ -21,7 +21,7 @@ class BookModel extends BookEntity {
 
   factory BookModel.fromJson(Map<String, dynamic> json) {
     return BookModel(
-      id: json['_id'] as String, // MongoDB بيبعت _id مش id
+      id: json['_id'] as String, 
       title: json['title'] as String,
       author: json['author'] as String,
       coverImage: json['coverImage'] as String,

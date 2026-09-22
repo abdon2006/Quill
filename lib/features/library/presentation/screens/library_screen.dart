@@ -36,16 +36,16 @@ class _LibraryScreenState extends State<LibraryScreen> {
     List<LibraryBookDisplayModel> allBooks,
   ) {
     return switch (selectedIndex) {
-      /// All
+      
       0 => allBooks,
 
-      /// in Progress
+      
       1 =>
         allBooks
             .where((book) => book.progress > 0 && book.progress < 100)
             .toList(),
 
-      /// completed
+      
       2 => allBooks.where((book) => book.progress >= 100).toList(),
       _ => throw UnimplementedError(),
     };

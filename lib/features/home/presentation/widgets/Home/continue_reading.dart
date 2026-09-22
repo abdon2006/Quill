@@ -105,7 +105,7 @@ class ContinueReading extends StatelessWidget {
                             child: ClipRRect(
                               borderRadius: AppRadius.xl,
                               child: LinearProgressIndicator(
-                                /// will be handled to adapt the current progress
+                                
                                 value: book.progress / 100,
                                 minHeight: 5,
                                 backgroundColor: colors.onSurface.withValues(
@@ -121,7 +121,7 @@ class ContinueReading extends StatelessWidget {
                           SizedBox(width: AppSpacing.sm),
 
                           Text(
-                            /// will be handled to adapt the current progress
+                            
                             '${book.progress}%',
                             style: AppTextStyles.caption(context).copyWith(
                               color: colors.onSurface.withValues(alpha: 0.55),

@@ -8,9 +8,9 @@ enum OnboardingStage {
   scene2,
   scene3,
   finale,
-  leavingButton, // مرحلة اختفاء الزرار
-  leavingText, // مرحلة اختفاء النص
-  leavingFeather, // مرحلة طيران الريشة
+  leavingButton, 
+  leavingText, 
+  leavingFeather, 
 }
 
 class OnboardingCubit extends Cubit<OnboardingStage> {
@@ -19,10 +19,10 @@ class OnboardingCubit extends Cubit<OnboardingStage> {
   }
 
   Future<void> _startEntranceScene() async {
-    // بندي للريشة ثانيتين عشان تنزل من فوق براحتها وتستقر
+    
     await Future.delayed(AppDuration.breathe);
 
-    // بعد ما تستقر، نظهر الزرار الأولاني
+    
     if (!isClosed) {
       emit(OnboardingStage.initial);
     }
@@ -41,14 +41,14 @@ class OnboardingCubit extends Cubit<OnboardingStage> {
     emit(OnboardingStage.finale);
   }
 
-  // الدالة الجديدة للخروج السينمائي المتدرج
+  
   Future<void> endJourney() async {
     emit(OnboardingStage.leavingButton);
-    await Future.delayed(AppDuration.normal); // استنى الزرار يختفي
+    await Future.delayed(AppDuration.normal); 
 
     emit(OnboardingStage.leavingText);
-    await Future.delayed(AppDuration.switchOut); // استنى النص يختفي
+    await Future.delayed(AppDuration.switchOut); 
 
-    emit(OnboardingStage.leavingFeather); // طير الريشة واستعد للنقلة
+    emit(OnboardingStage.leavingFeather); 
   }
 }

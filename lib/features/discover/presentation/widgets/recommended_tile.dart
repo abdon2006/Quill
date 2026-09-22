@@ -50,7 +50,7 @@ class RecommendedBookTile extends StatelessWidget {
     final theme = Theme.of(context).colorScheme;
     return SizedBox(
       height: 140.h,
-      // color: Colors.red.withValues(alpha: 0.1),
+      
       child: Stack(
         children: [
           Positioned(
@@ -84,7 +84,7 @@ class RecommendedBookTile extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                // 1. صورة الغلاف المصغرة
+                
                 Container(
                   decoration: BoxDecoration(
                   ),

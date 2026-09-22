@@ -88,16 +88,12 @@ Future<void> uploadAllBooks() async {
   final String token =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhYTY3ZGM4ODQ3MmMyNWViZTEzODEyYiIsImlhdCI6MTc4OTczMjMxMCwiZXhwIjoxNzkwMzM3MTEwfQ.hjvp1UpEoLhYV2WkXvm41e_dZEQ94SOiEwzH9dXGL8Y";
 
-  print("Starting bulk upload for ${booksToUpload.length} books...");
-
   for (int i = 0; i < booksToUpload.length; i++) {
     final book = booksToUpload[i];
-    print("Uploading book ${i + 1}/${booksToUpload.length}: ${book['title']}");
 
     try {
       FormData formData = FormData();
 
-      // ضفنا الحقلين الجداد هنا للـ FormData
       formData.fields.addAll([
         MapEntry("title", book["title"].toString()),
         MapEntry("author", book["author"].toString()),
@@ -136,29 +132,11 @@ Future<void> uploadAllBooks() async {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print("✅ Success: ${book['title']} uploaded!");
-      } else {
-        print(
-          "⚠️ Warning: ${book['title']} uploaded with status ${response.statusCode}",
-        );
-      }
-    } on DioException catch (e) {
-      print("❌ Failed to upload: ${book['title']}");
-
-      if (e.response != null) {
-        print("➡️ Status Code: ${e.response?.statusCode}");
-        print("➡️ Server Response: ${e.response?.data}");
-      } else {
-        print("➡️ Dio Error: ${e.message}");
-      }
-    } catch (e) {
-      print("❌ Unknown Error: $e");
-    }
+      } else {}
+    } on DioException {}
 
     await Future.delayed(const Duration(seconds: 1));
   }
-
-  print("🎉 All done!");
 }
 
 void main() async {

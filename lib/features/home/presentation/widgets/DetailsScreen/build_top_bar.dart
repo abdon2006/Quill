@@ -41,7 +41,7 @@ Widget buildTopBar({required BuildContext context, required BookEntity book}) {
                 background: theme.surface.withValues(alpha: 0.88),
                 foreground: theme.onSurface,
 
-                /// send simple Text maybe upgrade it in the future
+                
                 onTap: () => SharePlus.instance.share(
                   ShareParams(
                     text:

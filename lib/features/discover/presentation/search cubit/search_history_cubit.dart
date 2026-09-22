@@ -8,7 +8,7 @@ class SearchHistoryCubit extends Cubit<SearchHistoryState> {
   static const String _historyKey = 'history';
   static const int _maxHistoryLength = 5;
 
-  // 1. تحميل الهيستوري من الكاش
+  
   Future<void> loadHistory() async {
     try {
       emit(SearchHistoryLoading());
@@ -42,7 +42,7 @@ class SearchHistoryCubit extends Cubit<SearchHistoryState> {
     }
   }
 
-  // 3. حذف كلمة معينة من الهيستوري
+  
   Future<void> deleteSearch(String query) async {
     try {
       final prefs = await SharedPreferences.getInstance();

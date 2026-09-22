@@ -93,7 +93,7 @@ class DiscoverCategoryContent extends StatelessWidget {
                 },
               ),
 
-              /// 2. عرض الكتب المتفلترة
+              
             ],
           );
         }

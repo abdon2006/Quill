@@ -52,7 +52,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 part 'app_routes.dart';
 
 final appRouter = GoRouter(
-  // initialLocation: AppRoutes.choose,
+  
   debugLogDiagnostics: true,
 
   routes: [
@@ -83,7 +83,7 @@ final appRouter = GoRouter(
           builder: (context, state, child) =>
               MainShell(state: state, child: child),
           routes: [
-            /// Home
+            
             GoRoute(
               path: AppRoutes.home,
               name: AppRoutes.home,
@@ -93,14 +93,14 @@ final appRouter = GoRouter(
               ),
             ),
 
-            /// Library
+            
             GoRoute(
               path: AppRoutes.library,
               name: AppRoutes.library,
               builder: (context, state) => LibraryScreen(),
             ),
 
-            /// Discover
+            
             GoRoute(
               path: AppRoutes.discover,
               name: AppRoutes.discover,
@@ -119,7 +119,7 @@ final appRouter = GoRouter(
               ),
             ),
 
-            /// Profile
+            
             GoRoute(
               path: AppRoutes.profile,
               name: AppRoutes.profile,
@@ -128,7 +128,7 @@ final appRouter = GoRouter(
           ],
         ),
 
-        /// Book Details
+        
         GoRoute(
           path: AppRoutes.bookDeatails,
           name: AppRoutes.bookDeatails,
@@ -156,7 +156,7 @@ final appRouter = GoRouter(
           },
         ),
 
-        /// Local Book Details
+        
         GoRoute(
           path: AppRoutes.localBookDetails,
           name: AppRoutes.localBookDetails,
@@ -165,7 +165,7 @@ final appRouter = GoRouter(
           ),
         ),
 
-        /// category screen
+        
         GoRoute(
           path: AppRoutes.category,
           name: AppRoutes.category,
@@ -176,7 +176,7 @@ final appRouter = GoRouter(
           },
         ),
 
-        /// dashboard screen
+        
         GoRoute(
           path: AppRoutes.dashboard,
           name: AppRoutes.dashboard,
@@ -192,7 +192,7 @@ final appRouter = GoRouter(
           },
         ),
 
-        /// imports screen
+        
         GoRoute(
           path: AppRoutes.imports,
           name: AppRoutes.imports,
@@ -211,7 +211,7 @@ final appRouter = GoRouter(
           },
         ),
 
-        /// Reader
+        
         GoRoute(
           path: AppRoutes.reader,
           name: AppRoutes.reader,
@@ -229,18 +229,18 @@ final appRouter = GoRouter(
           ),
         ),
 
-        /// Home
+        
       ],
     ),
 
-    /// OnBoarding
+    
     GoRoute(
       path: AppRoutes.onboarding,
       name: AppRoutes.onboarding,
       builder: (context, state) => OnboardingPage(),
     ),
 
-    /// Signup
+    
     GoRoute(
       path: AppRoutes.signup,
       name: AppRoutes.signup,
@@ -250,14 +250,14 @@ final appRouter = GoRouter(
       ),
     ),
 
-    /// choose
+    
     GoRoute(
       path: AppRoutes.choose,
       name: AppRoutes.choose,
       builder: (context, state) => AuthChooseScreen(),
     ),
 
-    /// login
+    
     GoRoute(
       path: AppRoutes.login,
       name: AppRoutes.login,
@@ -302,4 +302,4 @@ final appRouter = GoRouter(
   },
 );
 
-// ),
+
