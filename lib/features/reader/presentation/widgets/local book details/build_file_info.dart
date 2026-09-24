@@ -49,8 +49,7 @@ class _BuildFileInfoState extends State<BuildFileInfo> {
             Row(
               children: [
                 Container(
-                  width: 38.w,
-                  height: 38.w,
+                  padding: EdgeInsets.all(AppSpacing.lg),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: theme.primary.withValues(alpha: 0.08),
@@ -72,7 +71,7 @@ class _BuildFileInfoState extends State<BuildFileInfo> {
                 ),
                 InkWell(
                   borderRadius: AppRadius.xl,
-                  hoverColor: theme.primary,
+                  hoverColor: theme.secondary.withValues(alpha: 0.5),
                   onTap: () => showEditCoverImageBottomSheet(
                     context: context,
                     theme: theme,
@@ -94,27 +93,28 @@ class _BuildFileInfoState extends State<BuildFileInfo> {
                       );
                     },
                   ),
-                  child: Text(
-                    'Change',
-                    style: AppTextStyles.bodyMedium(
-                      context,
-                    ).copyWith(color: theme.primary),
+                  child: Padding(
+                    padding: EdgeInsetsGeometry.all(AppSpacing.sm),
+                    child: Text(
+                      'Change',
+                      style: AppTextStyles.bodyMedium(
+                        context,
+                      ).copyWith(color: theme.primary),
+                    ),
                   ),
                 ),
               ],
             ),
 
-            if (widget.book.pages != null ) ...[
+            if (widget.book.pages != null) ...[
               const SizedBox(height: AppSpacing.lg),
               Divider(color: theme.onSurface.withValues(alpha: 0.06)),
               const SizedBox(height: AppSpacing.lg),
 
-              
               Row(
                 children: [
                   Container(
-                    width: 38.w,
-                    height: 38.w,
+                    padding: EdgeInsets.all(AppSpacing.lg),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: theme.primary.withValues(alpha: 0.08),
@@ -209,7 +209,7 @@ void showEditCoverImageBottomSheet({
               AppSpacing.lg,
               AppSpacing.sm,
               AppSpacing.lg,
-              MediaQuery.of(context).viewInsets.bottom + AppSpacing.xl, 
+              MediaQuery.of(context).viewInsets.bottom + AppSpacing.xl,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -258,7 +258,7 @@ void showEditCoverImageBottomSheet({
                   AppButton.primary(
                     text: 'Save Cover',
                     onPressed: () {
-                      onSave(sheetImage!); 
+                      onSave(sheetImage!);
                       Navigator.pop(context);
                     },
                   ),

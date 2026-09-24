@@ -1,5 +1,6 @@
 abstract class ApiConstants {
-  static const String baseUrl = 'http://192.168.1.14:5000/api/v1';
+  static const String baseUrl =
+      'https://quill-api-production-a70e.up.railway.app/api/v1';
   static const Duration connectTimeout = Duration(seconds: 30);
   static const Duration receiveTimeout = Duration(seconds: 30);
   static const Map<String, String> headers = {

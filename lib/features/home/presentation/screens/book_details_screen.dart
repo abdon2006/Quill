@@ -45,14 +45,11 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     final currentId = widget.bookId ?? widget.book?.id;
     context.read<RecommendationCubit>().getRecommendation(currentId!);
     if (widget.book == null) {
-      
       context.read<HomeBloc>().add(GetBookByIdEvent(bookId: widget.bookId!));
     }
     final wishliststate = context.read<LibraryBloc>().state;
     if (wishliststate is FetchSuccessState) {
       setState(() {
-        
-        
         isInWishlist = wishliststate.books.any((book) {
           if (widget.book == null) {
             return book.bookId == widget.bookId;
@@ -187,7 +184,13 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
           ),
         ),
 
-        buildTopBar(context: context, book: book),
+        Positioned(
+          top: 2.h,
+          left: 5.w,
+          right: 5.w,
+
+          child: buildTopBar(context: context, book: book),
+        ),
 
         Positioned(
           left: 5.w,
@@ -220,7 +223,6 @@ Widget _errorBackButton({
       child: HugeIcon(
         icon: AppIcons.back,
         color: theme.secondary.withValues(alpha: 0.7),
-        
       ),
     ),
   ),
@@ -240,8 +242,8 @@ Widget _buildErrorState({
         image: AppAssets.errorBookDetails,
       ),
       Positioned(
-        top: 10.h,
-        left: 20.w,
+        top: 5.h,
+        left: 5.w,
         child: _errorBackButton(context: context, theme: theme),
       ),
     ],

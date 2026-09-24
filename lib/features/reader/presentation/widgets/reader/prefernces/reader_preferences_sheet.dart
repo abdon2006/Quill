@@ -10,7 +10,6 @@ import 'package:quill/core/theme/app_text_style.dart';
 import 'package:quill/features/reader/presentation/cubit/reader_preferences_cubit.dart';
 import 'package:quill/features/reader/presentation/cubit/reader_preferences_state.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/prefernces/alignment_selection.dart';
-import 'package:quill/features/reader/presentation/widgets/reader/prefernces/apply_button.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/prefernces/bg_selection.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/prefernces/build_font_badge.dart';
 import 'package:quill/features/reader/presentation/widgets/reader/prefernces/theme_selection.dart';
@@ -210,26 +209,18 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
     }
 
     final List<Map<String, dynamic>> bgSelectionData = [
-      {
-        'label': 'Warm', 'color': AppColors.warm, 'value': ReaderBgColor.warm,
-        
-      },
+      {'label': 'Warm', 'color': AppColors.warm, 'value': ReaderBgColor.warm},
       {
         'label': 'Cream',
         'color': AppColors.cream,
         'value': ReaderBgColor.cream,
-        
       },
       {
         'label': 'White',
         'color': AppColors.white,
         'value': ReaderBgColor.white,
-        
       },
-      {
-        'label': 'Dark', 'color': AppColors.dark, 'value': ReaderBgColor.dark,
-        
-      },
+      {'label': 'Dark', 'color': AppColors.dark, 'value': ReaderBgColor.dark},
     ];
     final isDark = Theme.of(context).brightness == Brightness.dark;
     bool isEnabled = _tempState.theme == ReaderTheme.system;
@@ -714,27 +705,29 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
     final isDark = theme.brightness == Brightness.dark;
     final originalState = context.read<ReaderPreferencesCubit>().state;
     bool isStateChanged = _tempState != originalState;
+
     return Container(
       padding: EdgeInsets.fromLTRB(
         AppSpacing.lg,
         AppSpacing.sm,
         AppSpacing.lg,
-        AppSpacing.xxl,
+        AppSpacing.lg,
       ),
       decoration: BoxDecoration(
         color: theme.surface,
         borderRadius: AppRadius.sheetSm,
       ),
-      child: Stack(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Column(
-            children: [
-              _buildIndicator(theme),
-              const SizedBox(height: AppSpacing.xxl),
-              _buildPreview(theme: theme),
-              const SizedBox(height: AppSpacing.xl),
-              Expanded(
-                child: SingleChildScrollView(
+          _buildIndicator(theme),
+          const SizedBox(height: AppSpacing.xxl),
+          _buildPreview(theme: theme),
+          const SizedBox(height: AppSpacing.xl),
+          Expanded(
+            child: Stack(
+              children: [
+                SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -753,43 +746,80 @@ class _ReaderPreferencesSheetState extends State<ReaderPreferencesSheet> {
                       _buildAlignmentSection(context: context),
                       const SizedBox(height: AppSpacing.xl),
                       _buildScrollSelectionChip(theme: theme),
-                      SizedBox(height: isStateChanged ? 80.h : AppSpacing.xxxl),
+                      SizedBox(height: AppSpacing.xxxl),
                     ],
                   ),
                 ),
-              ),
-            ],
-          ),
-
-          
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: IgnorePointer(
-              child: Container(
-                height: 60.h,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [theme.surface.withValues(alpha: 0), theme.surface],
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: IgnorePointer(
+                    child: Container(
+                      height: 60.h,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            theme.surface.withValues(alpha: 0),
+                            theme.surface,
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
           ),
-          applyButton(
-            context: context,
-            isStateChanged: isStateChanged,
-            theme: theme,
-            isDark: isDark,
-            onTap: () {
-              widget.onApply();
-
-              Navigator.of(context).pop();
-              context.read<ReaderPreferencesCubit>().applynewTheme(_tempState);
-            },
+          AnimatedSize(
+            duration: AppDuration.normal,
+            curve: Curves.easeInOutCubic,
+            child: isStateChanged
+                ? Padding(
+                    padding: EdgeInsets.only(top: AppSpacing.md),
+                    child: Material(
+                      color: theme.secondary,
+                      borderRadius: AppRadius.xl,
+                      elevation: 4,
+                      shadowColor: theme.secondary.withValues(alpha: 0.3),
+                      child: InkWell(
+                        borderRadius: AppRadius.xl,
+                        onTap: () {
+                          widget.onApply();
+                          Navigator.of(context).pop();
+                          context.read<ReaderPreferencesCubit>().applynewTheme(
+                            _tempState,
+                          );
+                        },
+                        child: Container(
+                          height: 55.h,
+                          width: double.infinity,
+                          alignment: Alignment.center,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              HugeIcon(
+                                icon: HugeIcons.strokeRoundedAiBeautify,
+                                color: isDark ? theme.onSurface : theme.surface,
+                              ),
+                              SizedBox(width: AppSpacing.sm),
+                              Text(
+                                "Apply",
+                                style: AppTextStyles.heading1(context).copyWith(
+                                  color: isDark
+                                      ? theme.onSurface
+                                      : theme.surface,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                : SizedBox(width: double.infinity, height: 0),
           ),
         ],
       ),

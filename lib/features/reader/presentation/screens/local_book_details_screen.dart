@@ -44,46 +44,48 @@ class _LocalBookDetailsScreenState extends State<LocalBookDetailsScreen> {
         extendBody: true,
         body: Stack(
           children: [
-            ListView(
-              padding: EdgeInsets.zero,
-              children: [
-                buildCover(
-                  context,
-                  newCover == null ? widget.book.coverImage : newCover!.path,
-                ),
+            SafeArea(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  buildCover(
+                    context,
+                    newCover == null ? widget.book.coverImage : newCover!.path,
+                  ),
 
-                const SizedBox(height: AppSpacing.xxl),
+                  const SizedBox(height: AppSpacing.xxl),
 
-                BuildIdentity(
-                  book: widget.book,
-                  authorController: author,
-                  titleController: title,
-                ),
+                  BuildIdentity(
+                    book: widget.book,
+                    authorController: author,
+                    titleController: title,
+                  ),
 
-                const SizedBox(height: AppSpacing.xxl),
+                  const SizedBox(height: AppSpacing.xxl),
 
-                BuildFileInfo(
-                  book: widget.book,
-                  updateBookCoverUi: (XFile selectedImage) {
-                    setState(() {
-                      newCover = selectedImage;
-                    });
-                  },
-                ),
+                  BuildFileInfo(
+                    book: widget.book,
+                    updateBookCoverUi: (XFile selectedImage) {
+                      setState(() {
+                        newCover = selectedImage;
+                      });
+                    },
+                  ),
 
-                const SizedBox(height: AppSpacing.xxl),
+                  const SizedBox(height: AppSpacing.xxl),
 
-                buildDeleteSection(context, widget.book),
+                  buildDeleteSection(context, widget.book),
 
-                SizedBox(height: 150.h),
-              ],
+                  SizedBox(height: 150.h),
+                ],
+              ),
             ),
 
-            buildTopBar(context),
+            Positioned(top: 5.h, left: 5.w, child: buildTopBar(context)),
 
             Positioned(
               left: 5.w,
-              right: 5.w,
+              right: 0.w,
               bottom: 10.h,
               child: SafeArea(
                 top: false,
@@ -123,9 +125,7 @@ void showEditBottomSheet({
     isScrollControlled: true,
     context: context,
     backgroundColor: theme.surface,
-    shape: RoundedRectangleBorder(
-      borderRadius: AppRadius.sheet,
-    ),
+    shape: RoundedRectangleBorder(borderRadius: AppRadius.sheet),
     builder: (context) {
       controller.text = content;
       return Padding(

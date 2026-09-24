@@ -29,85 +29,75 @@ class _CategoryScreenState extends State<CategoryScreen> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                InkWell(
-                  customBorder: const CircleBorder(),
-                  onTap: () => context.pop(),
-                  child: Container(
-                    width: 42.w,
-                    height: 42.w,
-                    margin: EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                    decoration: BoxDecoration(shape: BoxShape.circle),
-                    child: Center(
-                      child: HugeIcon(
-                        icon: AppIcons.back,
-                        size: 32.sp,
-                        color: theme.secondary,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              InkWell(
+                customBorder: const CircleBorder(),
+                onTap: () => context.pop(),
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                  padding: EdgeInsets.all(AppSpacing.lg),
+                  decoration: BoxDecoration(shape: BoxShape.circle),
+                  child: HugeIcon(
+                    icon: AppIcons.back,
+                    size: 32.sp,
+                    color: theme.secondary,
+                  ),
+                ),
+              ),
+              SizedBox(height: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.lg,
+                      ),
+                      child: Text(
+                        widget.categoryParams.category,
+                        style: AppTextStyles.displayLarge(context),
                       ),
                     ),
-                  ),
-                ),
-                SizedBox(height: AppSpacing.md),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.lg,
-                        ),
-                        child: Text(
-                          widget.categoryParams.category,
-                          style: AppTextStyles.displayLarge(context),
-                        ),
-                      ),
-                      SizedBox(height: AppSpacing.xs),
-                      Expanded(
-                        child: widget.categoryParams.books.isEmpty
-                            ? AppEmpty(
-                                title:
-                                    'No books in this category yet. Check back soon.',
-                                image: AppAssets.noResults,
-                              )
-                            : GridView.builder(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: AppSpacing.sm,
-                                ),
-                                itemCount: widget.categoryParams.books.length,
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 3,
-                                      mainAxisSpacing: 16.h,
-                                      childAspectRatio: 0.6,
-                                    ),
-                                itemBuilder: (context, i) {
-                                  final item =
-                                      widget.categoryParams.books[i];
-                                  return StaggerdAnimation(
-                                    index: i * 2,
-                                    child: GestureDetector(
-                                      onTap: () => context.push(
-                                        AppRoutes.bookDeatails,
-                                        extra: item,
-                                      ),
-                                      child: BookGridCard(
-                                        book: item,
-                                        width: double.infinity,
-                                      ),
-                                    ),
-                                  );
-                                },
+                    SizedBox(height: AppSpacing.md),
+                    Expanded(
+                      child: widget.categoryParams.books.isEmpty
+                          ? AppEmpty(
+                              title:
+                                  'No books in this category yet. Check back soon.',
+                              image: AppAssets.noResults,
+                            )
+                          : GridView.builder(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: AppSpacing.sm,
                               ),
-                      ),
-                    ],
-                  ),
+                              itemCount: widget.categoryParams.books.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 3,
+                                    mainAxisSpacing: 16.h,
+                                    childAspectRatio: 0.6,
+                                  ),
+                              itemBuilder: (context, i) {
+                                final item = widget.categoryParams.books[i];
+                                return StaggerdAnimation(
+                                  index: i,
+                                  child: GestureDetector(
+                                    onTap: () => context.push(
+                                      AppRoutes.bookDeatails,
+                                      extra: item,
+                                    ),
+                                    child: BookGridCard(book: item),
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

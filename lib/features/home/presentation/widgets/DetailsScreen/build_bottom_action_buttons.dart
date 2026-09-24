@@ -65,7 +65,7 @@ class _BuildBottomActionsState extends State<BuildBottomActions> {
                           color: Colors.transparent,
                           child: InkWell(
                             customBorder: CircleBorder(),
-                            hoverColor: theme.secondary,
+                            hoverColor: theme.secondary.withValues(alpha: 0.02),
                             splashColor: theme.secondary.withValues(
                               alpha: 0.02,
                             ),
@@ -80,11 +80,9 @@ class _BuildBottomActionsState extends State<BuildBottomActions> {
                               );
                             },
                             child: AnimatedContainer(
-                              height: 55.w,
-                              width: 55.w,
+                              padding: EdgeInsets.all(AppSpacing.lg),
                               curve: Curves.easeInOutCubic,
                               duration: AppDuration.normal,
-                              padding: EdgeInsets.all(AppSpacing.lg),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: theme.secondary.withValues(alpha: 0.1),

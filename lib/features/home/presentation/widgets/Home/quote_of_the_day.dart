@@ -72,25 +72,26 @@ class QuoteOfTheDay extends StatelessWidget {
 
           SizedBox(height: AppSpacing.md),
 
-          
-          Text(
-            textAlign: TextAlign.center,
-            "“${todayQuote.title}”",
-            style: AppTextStyles.heading2(
-              context,
-            ).copyWith(fontWeight: FontWeight.bold),
+          Center(
+            child: Text(
+              textAlign: TextAlign.center,
+              "“${todayQuote.title}”",
+              style: AppTextStyles.heading2(
+                context,
+              ).copyWith(fontWeight: FontWeight.bold),
+            ),
           ),
 
           SizedBox(height: AppSpacing.lg),
 
-          
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                width: 24.w,
-                height: 1,
-                color: theme.primary.withValues(alpha: 0.3),
+              Expanded(
+                child: Container(
+                  height: 1,
+                  color: theme.primary.withValues(alpha: 0.3),
+                ),
               ),
               SizedBox(width: AppSpacing.sm),
               Text(
@@ -102,10 +103,11 @@ class QuoteOfTheDay extends StatelessWidget {
                 ),
               ),
               SizedBox(width: AppSpacing.sm),
-              Container(
-                width: 24.w,
-                height: 1,
-                color: theme.primary.withValues(alpha: 0.3),
+              Expanded(
+                child: Container(
+                  height: 1,
+                  color: theme.primary.withValues(alpha: 0.3),
+                ),
               ),
             ],
           ),

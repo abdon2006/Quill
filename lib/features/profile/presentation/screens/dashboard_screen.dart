@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -80,11 +78,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final List<String>? finishedBooks = prefs.getStringList('finished');
     if (finishedBooks != null) {
       setState(() => _finishedList = finishedBooks);
-      
     }
+    if (!mounted) return;
     if (_finishedList.isNotEmpty) {
       for (String id in _finishedList) {
-        
         context.read<HomeBloc>().add(GetBookByIdEvent(bookId: id));
       }
     }
@@ -96,7 +93,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final today = DateTime.now().toIso8601String().split('T').first;
     final day = DateTime.parse(today);
     final dayPositionInWeek = day.weekday;
-    
+
     for (var i = dayPositionInWeek; i > 0; i--) {
       final today = DateTime.now()
           .subtract(Duration(days: dayPositionInWeek - i))
@@ -123,80 +120,85 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              BlocListener<HomeBloc, HomeState>(
-                listener: (context, state) {
-                  if (state is GetBookByIdSuccess) {
-                    final book = state.book;
-                    final hours = (book.totalChunks * 1000) ~/ 200 ~/ 60;
-                    setState(() {
-                      _finishedBooks.add(book);
-                      totalReadTime += hours;
-                    });
-                  }
-                },
-                child: SizedBox.shrink(),
-              ),
-              backButton(context, theme),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Dashboard',
-                      style: AppTextStyles.displayLarge(context),
-                    ),
-                    SizedBox(height: AppSpacing.lg),
-                    StaggerdAnimation(
-                      index: 1,
-                      child: _streakCard(
-                        context: context,
-                        streakCount: _currentStreak,
-                        theme: theme,
-                      ),
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: StaggerdAnimation(
-                            index: 2,
-                            child: _finishedBooksCard(
-                              theme: theme,
-                              context: context,
-                              booksLength: _finishedBooks.length,
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: AppSpacing.md),
-                        Expanded(
-                          child: StaggerdAnimation(
-                            index: 3,
-                            child: _readingTimeCard(
-                              theme: theme,
-                              context: context,
-                              readingTime: totalReadTime,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    StaggerdAnimation(
-                      index: 4,
-                      child: _weekCheckPointsStreakCard(
-                        context: context,
-                        theme: theme,
-                        weekDays: weekdaysStreak,
-                      ),
-                    ),
-                  ],
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                BlocListener<HomeBloc, HomeState>(
+                  listener: (context, state) {
+                    if (state is GetBookByIdSuccess) {
+                      final book = state.book;
+                      final hours = (book.totalChunks * 1000) ~/ 200 ~/ 60;
+                      setState(() {
+                        _finishedBooks.add(book);
+                        totalReadTime += hours;
+                      });
+                    }
+                  },
+                  child: SizedBox.shrink(),
                 ),
-              ),
-            ],
+                Row(children: [backButton(context, theme)]),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xl,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Dashboard',
+                        style: AppTextStyles.displayLarge(context),
+                      ),
+                      SizedBox(height: AppSpacing.lg),
+                      StaggerdAnimation(
+                        index: 1,
+                        child: _streakCard(
+                          context: context,
+                          streakCount: _currentStreak,
+                          theme: theme,
+                        ),
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: StaggerdAnimation(
+                              index: 2,
+                              child: _finishedBooksCard(
+                                theme: theme,
+                                context: context,
+                                booksLength: _finishedBooks.length,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: AppSpacing.md),
+                          Expanded(
+                            child: StaggerdAnimation(
+                              index: 3,
+                              child: _readingTimeCard(
+                                theme: theme,
+                                context: context,
+                                readingTime: totalReadTime,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      StaggerdAnimation(
+                        index: 4,
+                        child: _weekCheckPointsStreakCard(
+                          context: context,
+                          theme: theme,
+                          weekDays: weekdaysStreak,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -342,34 +344,45 @@ Widget _weekCheckPointsStreakCard({
 
         SizedBox(height: AppSpacing.lg),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: List.generate(AppConstants.weekDays.length, (i) {
             final item = AppConstants.weekDays[i];
             bool isRead = weekDays[i + 1];
             bool isToday = (i + 1) == today;
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                StaggerdAnimation(
-                  index: i * 2,
-                  child: Container(
-                    height: 24.w,
-                    width: 24.w,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: isRead
-                          ? theme.secondary
-                          : theme.onSurface.withValues(alpha: 0.1),
-                      border: Border.all(
-                        color: isToday && !isRead
-                            ? theme.secondary
-                            : theme.surface,
+            return Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  StaggerdAnimation(
+                    index: i * 2,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                      child: Container(
+                        height: 0.06.sw,
+                        width: 0.06.sw,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: isRead
+                              ? theme.secondary
+                              : theme.onSurface.withValues(alpha: 0.1),
+                          border: Border.all(
+                            color: isToday && !isRead
+                                ? theme.secondary
+                                : theme.surface,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Text(item, style: AppTextStyles.defaultReading(context)),
-              ],
+                  Text(
+                    item,
+                    style: AppTextStyles.caption(
+                      context,
+                    ).copyWith(fontSize: 12.sp),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             );
           }),
         ),

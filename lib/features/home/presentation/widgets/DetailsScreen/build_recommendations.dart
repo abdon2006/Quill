@@ -42,13 +42,14 @@ Widget buildRecommendations(BuildContext context) {
                 separatorBuilder: (_, _) =>
                     const SizedBox(width: AppSpacing.md),
                 itemBuilder: (context, i) {
-                  return SizedBox(
-                    width: 170.w,
-                    child: StaggerdAnimation(
-                      index: i,
-                      child: BookGridCard(
-                        onTap: ()=> context.push(AppRoutes.bookDeatails , extra: state.books[i]),
-                        book: state.books[i]),
+                  return StaggerdAnimation(
+                    index: i,
+                    child: BookGridCard(
+                      onTap: () => context.push(
+                        AppRoutes.bookDeatails,
+                        extra: state.books[i],
+                      ),
+                      book: state.books[i],
                     ),
                   );
                 },

@@ -1,4 +1,6 @@
+import 'package:device_preview/device_preview.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,32 +33,35 @@ void main() async {
   );
 
   runApp(
-    EasyLocalization(
-      supportedLocales: const [Locale('en'), Locale('ar')],
-      
-      fallbackLocale: const Locale('en'),
-      path: 'assets/translations',
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (_) =>
-                sl<AuthBloc>()..add(FetchUserDataEvent(params: NoParams())),
-          ),
-          BlocProvider(
-            create: ((context) => ReaderBloc(
-              uploadBookUsecase: sl<UploadBookUsecase>(),
-              removeBookUsecase: sl<RemoveBookUsecase>(),
-              fetchLocalBookUsecase: sl<FetchLocalBookUsecase>(),
-              updateBookUsecase: sl<UpdateBookUsecase>(),
-              fetchLocalBooksUsecase: sl<FetchLocalBooksUsecase>(),
-              networkService: sl<NetworkService>(),
-            )),
-          ),
-          BlocProvider(create: (_) => sl<ReaderPreferencesCubit>()),
-          BlocProvider(create: (_) => sl<ThemeCubit>()),
-          BlocProvider(create: (_) => sl<LocaleCubit>()),
-        ],
-        child: QuillApp(),
+    DevicePreview(
+      enabled: !kReleaseMode,
+      builder: (context) => EasyLocalization(
+        supportedLocales: const [Locale('en'), Locale('ar')],
+
+        fallbackLocale: const Locale('en'),
+        path: 'assets/translations',
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (_) =>
+                  sl<AuthBloc>()..add(FetchUserDataEvent(params: NoParams())),
+            ),
+            BlocProvider(
+              create: ((context) => ReaderBloc(
+                uploadBookUsecase: sl<UploadBookUsecase>(),
+                removeBookUsecase: sl<RemoveBookUsecase>(),
+                fetchLocalBookUsecase: sl<FetchLocalBookUsecase>(),
+                updateBookUsecase: sl<UpdateBookUsecase>(),
+                fetchLocalBooksUsecase: sl<FetchLocalBooksUsecase>(),
+                networkService: sl<NetworkService>(),
+              )),
+            ),
+            BlocProvider(create: (_) => sl<ReaderPreferencesCubit>()),
+            BlocProvider(create: (_) => sl<ThemeCubit>()),
+            BlocProvider(create: (_) => sl<LocaleCubit>()),
+          ],
+          child: QuillApp(),
+        ),
       ),
     ),
   );
@@ -67,29 +72,40 @@ class QuillApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     final localeState = context.watch<LocaleCubit>().state;
-    return ScreenUtilInit(
-      designSize: const Size(390, 844),
 
-      
-      minTextAdapt: true,
-      splitScreenMode: true,
-      builder: (context, child) => MaterialApp.router(
-        routerConfig: appRouter,
-        title: 'Quill',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.light,
-        darkTheme: AppTheme.dark,
-        themeMode: context.watch<ThemeCubit>().state.flutterThemeMode,
+    return MaterialApp.router(
+      builder: (context, widget) {
+        return DevicePreview.appBuilder(
+          context,
+          Builder(
+            builder: (fakeContext) {
+              ScreenUtil.init(
+                fakeContext,
+                designSize: const Size(390, 844),
+                minTextAdapt: true,
+                splitScreenMode: true,
+              );
 
-        
-        locale: localeState.locale,
-
-        
-        localizationsDelegates: context.localizationDelegates,
-        supportedLocales: context.supportedLocales,
-      ),
+              return MediaQuery(
+                data: MediaQuery.of(
+                  fakeContext,
+                ).copyWith(textScaler: const TextScaler.linear(1.0)),
+                child: widget!,
+              );
+            },
+          ),
+        );
+      },
+      locale: DevicePreview.locale(context) ?? localeState.locale,
+      routerConfig: appRouter,
+      title: 'Quill',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: context.watch<ThemeCubit>().state.flutterThemeMode,
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
     );
   }
 }

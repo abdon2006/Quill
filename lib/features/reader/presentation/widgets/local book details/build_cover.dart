@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:quill/core/theme/app_radius.dart';
@@ -16,7 +15,6 @@ Widget buildCover(BuildContext context, String? coverImage) {
     child: Stack(
       alignment: Alignment.center,
       children: [
-        
         if (hasImage)
           Positioned.fill(
             child: ImageFiltered(
@@ -33,15 +31,12 @@ Widget buildCover(BuildContext context, String? coverImage) {
             ),
           ),
 
-        
         Padding(
-          padding: const EdgeInsets.only(
-            top: AppSpacing.xxxl,
-            bottom: AppSpacing.xl,
+          padding: EdgeInsets.symmetric(
+            horizontal: AppSpacing.xxxl + 16.w,
+            vertical: AppSpacing.xl,
           ),
           child: Container(
-            width: 170.w,
-            height: 240.h,
             decoration: BoxDecoration(
               borderRadius: AppRadius.lg,
               color: Theme.of(context).colorScheme.surfaceContainerHighest,

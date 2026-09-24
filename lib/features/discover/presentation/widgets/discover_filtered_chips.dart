@@ -26,7 +26,7 @@ class _DiscoverFilteredChipsState extends State<DiscoverFilteredChips> {
     final theme = Theme.of(context).colorScheme;
     final isDark = theme.brightness == Brightness.dark;
     return SizedBox(
-      height: 40.h,
+      height: 50.h,
       child: ListView.separated(
         padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
         scrollDirection: Axis.horizontal,
@@ -41,14 +41,11 @@ class _DiscoverFilteredChipsState extends State<DiscoverFilteredChips> {
               child: AnimatedScale(
                 duration: AppDuration.slow,
                 curve: Curves.easeInOutCubic,
-                scale: isSelected ? 0.97 : 1,
+                scale: isSelected ? 1 : 1.02,
                 child: AnimatedContainer(
                   duration: AppDuration.normal,
                   curve: Curves.easeInOutCubic,
-                  padding: EdgeInsets.symmetric(
-                    vertical: AppSpacing.md,
-                    horizontal: AppSpacing.lg,
-                  ),
+                  padding: EdgeInsets.all(AppSpacing.md),
                   decoration: BoxDecoration(
                     color: isSelected ? theme.secondary : theme.surface,
                     borderRadius: AppRadius.xxl,
@@ -61,10 +58,11 @@ class _DiscoverFilteredChipsState extends State<DiscoverFilteredChips> {
                       style: AppTextStyles.bodyMedium(context).copyWith(
                         fontWeight: FontWeight.w600,
                         color: isSelected
-                            ? theme.surface
+                            ? AppColors.darkTextPrimary
                             : isDark
                             ? AppColors.darkTextMuted
                             : AppColors.lightTextMuted,
+                        fontSize: 16.sp,
                       ),
                       child: Text(item),
                     ),

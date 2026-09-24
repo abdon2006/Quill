@@ -25,7 +25,7 @@ class AppButton extends StatelessWidget {
     required this.type,
     this.color,
     this.icon,
-    this.width = double.infinity, 
+    this.width = double.infinity,
     this.isLoading = false,
     this.isEnabled = true,
   });
@@ -130,10 +130,7 @@ class AppButton extends StatelessWidget {
                           opacity: animation,
                           child: SlideTransition(
                             position: Tween<Offset>(
-                              begin: const Offset(
-                                0.0,
-                                0.2,
-                              ), 
+                              begin: const Offset(0.0, 0.2),
                               end: Offset.zero,
                             ).animate(animation),
                             child: child,

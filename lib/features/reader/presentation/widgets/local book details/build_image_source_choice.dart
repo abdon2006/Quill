@@ -16,7 +16,7 @@ Widget buildImageSourceChoice(
     children: [
       InkWell(
         onTap: onTap,
-        hoverColor: theme.primary,
+        hoverColor: theme.secondary.withValues(alpha: 0.1),
         borderRadius: AppRadius.xl,
         child: Container(
           padding: EdgeInsets.all(AppSpacing.xxl),

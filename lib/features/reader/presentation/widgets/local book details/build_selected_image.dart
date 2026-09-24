@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:quill/core/theme/app_radius.dart';
+import 'package:quill/core/theme/app_spacing.dart';
 
 class BuildSelectedImage extends StatefulWidget {
   final XFile? image;
@@ -19,20 +19,14 @@ class _BuildSelectedImageState extends State<BuildSelectedImage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
     return Container(
-      width: 140.w,
-      height: 180.h,
-
+      margin: EdgeInsets.symmetric(horizontal: AppSpacing.xxxxl),
       decoration: BoxDecoration(
         borderRadius: AppRadius.xl,
         color: theme.onSurface.withValues(alpha: 0.1),
       ),
       child: Center(
         child: widget.image == null
-            ? HugeIcon(
-                icon: HugeIcons.strokeRoundedLibrary,
-                color: theme.onSurface.withValues(alpha: 0.4),
-                size: 28.sp,
-              )
+            ? null
             : ClipRRect(
                 borderRadius: AppRadius.xl,
                 child: Image.file(

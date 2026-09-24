@@ -57,22 +57,17 @@ class _ReaderScreenState extends State<ReaderScreen> {
   ReaderUiStates _uiState = ReaderUiStates.controlsVisible;
   Timer? _uiHideTimer;
 
-  
   int _currentPage = 0;
   int _totalPages = 0;
   final ValueNotifier<int> _jumpToPageNotifier = ValueNotifier(-1);
 
-  
   BookEntity? _serverBook;
   LocalBook? _book;
 
-  
   int? _currentProgress;
 
-  
   late final ReaderBloc _bloc;
 
-  
   bool _bookError = false;
   bool _readerError = false;
 
@@ -226,9 +221,14 @@ class _ReaderScreenState extends State<ReaderScreen> {
   void _openPreferencesSheet() {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (_) => BlocProvider.value(
         value: context.read<ReaderPreferencesCubit>(),
-        child: ReaderPreferencesSheet(onApply: () => _startEditAnimation()),
+        child: FractionallySizedBox(
+          heightFactor: 0.85,
+          child: ReaderPreferencesSheet(onApply: () => _startEditAnimation()),
+        ),
       ),
     );
   }
@@ -272,7 +272,6 @@ class _ReaderScreenState extends State<ReaderScreen> {
             body: SafeArea(
               child: Stack(
                 children: [
-                  
                   BlocListener<ReaderBloc, ReaderState>(
                     listener: (context, state) {
                       if (state is FetchLocalBookSuccess) {
@@ -295,7 +294,6 @@ class _ReaderScreenState extends State<ReaderScreen> {
                           _paragraphs = state.paragraphs;
                         });
 
-                        
                         context.read<ReaderBloc>().add(
                           FetchProgressEvent(
                             bookId: widget.bookId.serverId!,
@@ -320,7 +318,8 @@ class _ReaderScreenState extends State<ReaderScreen> {
 
                   BlocBuilder<ReaderBloc, ReaderState>(
                     builder: (context, state) {
-                      bool isLoading = state is ReaderLoading && _paragraphs.isEmpty;
+                      bool isLoading =
+                          state is ReaderLoading && _paragraphs.isEmpty;
                       return AnimatedSwitcher(
                         duration: AppDuration.slow,
                         child: isLoading
@@ -330,7 +329,6 @@ class _ReaderScreenState extends State<ReaderScreen> {
                     },
                   ),
 
-                  
                   NotificationListener<UserScrollNotification>(
                     onNotification: _handleScroll,
                     child: _paragraphs.isEmpty || _currentProgress == null
@@ -350,7 +348,6 @@ class _ReaderScreenState extends State<ReaderScreen> {
                             state: state,
                             updateProgress: (int progress) {
                               _currentProgress = progress;
-                              
                             },
                             isFocusMode:
                                 _uiState == ReaderUiStates.focusExitReveal ||
@@ -373,11 +370,10 @@ class _ReaderScreenState extends State<ReaderScreen> {
                           ),
                   ),
 
-                  
                   Positioned(
                     top: 10.h,
-                    left: 20.w,
-                    right: 20.w,
+                    left: 10.w,
+                    right: 10.w,
                     child: IgnorePointer(
                       ignoring: !showControls,
                       child: AnimatedSlide(
@@ -398,11 +394,10 @@ class _ReaderScreenState extends State<ReaderScreen> {
                     ),
                   ),
 
-                  
                   Positioned(
                     bottom: 10.h,
-                    left: 20.w,
-                    right: 20.w,
+                    left: 5.w,
+                    right: 5.w,
                     child: IgnorePointer(
                       ignoring: !showControls,
                       child: AnimatedSlide(
@@ -426,7 +421,6 @@ class _ReaderScreenState extends State<ReaderScreen> {
                     ),
                   ),
 
-                  
                   Positioned(
                     bottom: 40.h,
                     left: 0,
@@ -482,7 +476,6 @@ class _ReaderScreenState extends State<ReaderScreen> {
                     ),
                   ),
 
-                  
                   AnimatedSwitcher(
                     duration: AppDuration.readerGlow,
                     switchInCurve: Curves.easeIn,
@@ -529,7 +522,6 @@ class _ReaderScreenState extends State<ReaderScreen> {
                     },
                   ),
 
-                  
                   if (_readerError)
                     AnimatedOpacity(
                       opacity: _readerError ? 1 : 0,
@@ -542,12 +534,10 @@ class _ReaderScreenState extends State<ReaderScreen> {
                           subtitle:
                               "Something went wrong while loading. Please try again.",
                           image: AppAssets.bookWithGlasses,
-                          
                         ),
                       ),
                     ),
 
-                  
                   if (_bookError || _readerError)
                     Positioned(
                       top: 10.h,
@@ -555,7 +545,6 @@ class _ReaderScreenState extends State<ReaderScreen> {
                       child: _errorBackButton(context: context, theme: theme),
                     ),
 
-                  
                   if (_bookError)
                     AnimatedOpacity(
                       opacity: _bookError ? 1 : 0,
@@ -568,7 +557,6 @@ class _ReaderScreenState extends State<ReaderScreen> {
                           subtitle:
                               "We couldn't read any text from this file. It may be unsupported or corrupted.",
                           image: AppAssets.bookWithGlasses,
-                          
                         ),
                       ),
                     ),
@@ -599,7 +587,6 @@ Widget _errorBackButton({
       child: HugeIcon(
         icon: AppIcons.back,
         color: theme.secondary.withValues(alpha: 0.7),
-        
       ),
     ),
   ),

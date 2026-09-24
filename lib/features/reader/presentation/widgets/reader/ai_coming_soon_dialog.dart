@@ -76,7 +76,7 @@ class _AiComingSoonDialogState extends State<_AiComingSoonDialog>
       backgroundColor: Colors.transparent,
       elevation: 0,
       child: Container(
-        padding: const EdgeInsets.all(AppSpacing.xl),
+        padding: EdgeInsets.all(AppSpacing.xl),
         decoration: BoxDecoration(
           color: theme.surface,
           borderRadius: AppRadius.xxl,
@@ -95,8 +95,7 @@ class _AiComingSoonDialogState extends State<_AiComingSoonDialog>
               animation: _glowAnimation,
               builder: (context, child) {
                 return Container(
-                  width: 70.w,
-                  height: 70.w,
+                  padding: EdgeInsets.all(AppSpacing.lg),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: theme.secondary.withValues(alpha: 0.1),
@@ -121,7 +120,6 @@ class _AiComingSoonDialogState extends State<_AiComingSoonDialog>
 
             SizedBox(height: AppSpacing.xxl),
 
-            
             Text(
               'Quill AI is Learning',
               textAlign: TextAlign.center,
@@ -141,7 +139,6 @@ class _AiComingSoonDialogState extends State<_AiComingSoonDialog>
 
             SizedBox(height: AppSpacing.xxl),
 
-            
             AppButton.secondary(
               text: 'Got it, Thanks',
               onPressed: () => Navigator.of(context).pop(),

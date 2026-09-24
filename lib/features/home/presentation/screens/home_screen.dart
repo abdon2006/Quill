@@ -96,7 +96,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: const SizedBox.shrink(),
                     ),
 
-                    
                     Align(
                       alignment: AlignmentGeometry.centerLeft,
                       child: Padding(
@@ -131,7 +130,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     SizedBox(height: AppSpacing.xl),
 
-                    
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: AppSpacing.xl,
@@ -174,7 +172,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: AnimatedSwitcher(
                               duration: AppDuration.switchOut,
                               layoutBuilder: (currentChild, previousChildren) {
-                                
                                 return Stack(
                                   alignment: Alignment.topCenter,
                                   children: <Widget>[
@@ -192,7 +189,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     SizedBox(height: AppSpacing.xl),
 
-                    
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: AppSpacing.xl,
@@ -204,7 +200,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     SizedBox(height: AppSpacing.lg),
 
-                    
                     BlocConsumer<HomeBloc, HomeState>(
                       listener: (context, state) {
                         if (state is HomeError) {
@@ -266,7 +261,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     SizedBox(height: AppSpacing.lg),
 
-                    
                     Padding(
                       padding: EdgeInsetsGeometry.symmetric(
                         horizontal: AppSpacing.xl,
@@ -287,7 +281,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
 
-                    
                     BlocBuilder<LibraryBloc, LibraryState>(
                       builder: (context, state) {
                         Widget childWidget = const SizedBox(
@@ -351,7 +344,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildRecentlyUsedDataLoadingState(List<Widget> data) {
     return SizedBox(
-      height: 230.h,
+      height: 320.h,
       child: ListView(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
@@ -366,7 +359,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }) {
     return SizedBox(
       key: key,
-      height: 230.h,
+      height: 320.h,
       child: ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
         scrollDirection: Axis.horizontal,

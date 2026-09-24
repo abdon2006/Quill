@@ -1,6 +1,5 @@
 
 
-// ignore_for_file: use_build_context_synchronously, unused_field
 
 import 'package:flutter/foundation.dart' as foundation show compute;
 import 'package:flutter/material.dart';
@@ -65,9 +64,6 @@ class _ReaderSurfaceState extends State<ReaderSurface>
   bool _cacheReady = false;
   int? initialCell;
   CellCache? _pages;
-
-  bool _cacheError = false;
-  bool _pagesError = false;
 
   bool isAnimationReady = false;
   String _currentMessage = '';
@@ -216,7 +212,6 @@ class _ReaderSurfaceState extends State<ReaderSurface>
 
   Future<void> _loadCache() async {
     if (widget.paragraphs.isEmpty) {
-      setState(() => _cacheError = true);
       return;
     }
     final cache = await BionicCache.compute(widget.paragraphs);
@@ -247,11 +242,11 @@ class _ReaderSurfaceState extends State<ReaderSurface>
 
   Future<void> _loadPages([double? newFontSize]) async {
     if (_cache == null || _cache!.cellCount == 0) {
-      setState(() => _pagesError = true);
       return;
     }
     setState(() => _pages = null);
     await Future.delayed(AppDuration.frame);
+    if (!mounted) return;
 
     final textScalar = MediaQuery.textScalerOf(context).scale(1.0);
     final safeArea = MediaQuery.of(context).padding;
@@ -552,7 +547,6 @@ class _CellPageViewState extends State<CellPageView>
     with SingleTickerProviderStateMixin {
   int currentIndex = 0;
   int? _outgoingIndex;
-  bool _nextIsForward = true;
   String _dockMessage = '';
   int _totalParts = 5;
   int _currentPart = 1;
@@ -626,7 +620,6 @@ class _CellPageViewState extends State<CellPageView>
     final nextIndex = isNext ? currentIndex + 1 : currentIndex - 1;
 
     setState(() {
-      _nextIsForward = isNext;
       _outgoingIndex = currentIndex;
       currentIndex = nextIndex;
 

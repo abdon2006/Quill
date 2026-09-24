@@ -22,18 +22,16 @@ void showAboutQuillDialog(BuildContext context) {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            
             Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(vertical: AppSpacing.xxxl),
-              decoration: BoxDecoration(
-                borderRadius: AppRadius.sheetSm,
-              ),
+              decoration: BoxDecoration(borderRadius: AppRadius.sheetSm),
               child: Column(
                 children: [
                   Container(
-                    height: 56.w,
-                    width: 56.w,
+                    height: 24.w,
+                    width: 24.w,
+                    padding: EdgeInsets.all(AppSpacing.md),
                     decoration: BoxDecoration(
                       borderRadius: AppRadius.xl,
                       color: theme.secondary,
@@ -53,7 +51,6 @@ void showAboutQuillDialog(BuildContext context) {
               ),
             ),
 
-            
             _infoRow(
               context: context,
               theme: theme,
@@ -74,7 +71,6 @@ void showAboutQuillDialog(BuildContext context) {
               value: 'Abdallah Saad',
             ),
 
-            
             Padding(
               padding: EdgeInsets.fromLTRB(
                 AppSpacing.lg,

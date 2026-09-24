@@ -28,7 +28,7 @@ class BookModel extends BookEntity {
       description: json['description'] as String,
       language: json['language'] as String,
       totalChunks: json['totalChunks'] as int,
-      ratingAverage: (json['ratingsAverage'] as num).toDouble(),
+      ratingAverage: (json['ratingAverage'] as num).toDouble(),
       ratingCount: json['ratingsCount'] as int,
       isPublic: json['isPublic'] as bool,
       categories: List<String>.from(json['categories'] ?? []),

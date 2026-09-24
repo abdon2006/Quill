@@ -206,8 +206,7 @@ Widget _buildIdleContent({
     key: key,
     children: [
       Container(
-        width: 64.w,
-        height: 64.w,
+        padding: EdgeInsets.all(AppSpacing.lg),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: theme.primary.withValues(alpha: 0.08),
@@ -291,8 +290,7 @@ Widget _buildPreviewContent({
     key: key,
     children: [
       Container(
-        width: 64.w,
-        height: 64.w,
+        padding: EdgeInsets.all(AppSpacing.lg),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: theme.primary.withValues(alpha: 0.08),

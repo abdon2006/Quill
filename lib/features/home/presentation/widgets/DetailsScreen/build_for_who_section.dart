@@ -23,8 +23,7 @@ Widget buildForWhoSection(BuildContext context, String fowWho) {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: 42.w,
-              height: 42.w,
+              padding: EdgeInsets.all(AppSpacing.lg),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: theme.primary.withValues(alpha: 0.10),

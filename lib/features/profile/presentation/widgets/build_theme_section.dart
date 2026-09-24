@@ -9,11 +9,10 @@ import 'package:quill/core/theme/app_shadows.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
 
-// ignore: must_be_immutable
 class BuildThemeSection extends StatefulWidget {
-  int selectedTheme;
+  final int selectedTheme;
   final ValueChanged<int> onSelectTheme;
-  BuildThemeSection({
+  const BuildThemeSection({
     super.key,
     required this.selectedTheme,
     required this.onSelectTheme,
@@ -24,6 +23,14 @@ class BuildThemeSection extends StatefulWidget {
 }
 
 class _BuildThemeSectionState extends State<BuildThemeSection> {
+  late int _selectedTheme;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedTheme = widget.selectedTheme;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
@@ -43,17 +50,13 @@ class _BuildThemeSectionState extends State<BuildThemeSection> {
           padding: EdgeInsetsGeometry.symmetric(horizontal: AppSpacing.sm),
           child: Row(
             children: [
-              Text('Theme', style: AppTextStyles.heading1(context)),
-
-              Spacer(),
-              SizedBox(
-                width: 200.w,
+              Expanded(
                 child: _themeChipsControl(
                   theme: theme,
-                  selectedTheme: widget.selectedTheme,
+                  selectedTheme: _selectedTheme,
                   onChangeTheme: (index) {
                     setState(() {
-                      widget.selectedTheme = index;
+                      _selectedTheme = index;
                       widget.onSelectTheme(index);
                     });
                   },
@@ -84,7 +87,7 @@ Widget _themeChipsControl({
         alignment: Alignment.center,
         children: [
           Container(
-            height: 50.h,
+            height: 70.h,
             padding: EdgeInsets.all(AppSpacing.md),
             decoration: BoxDecoration(
               borderRadius: AppRadius.md,
@@ -97,7 +100,7 @@ Widget _themeChipsControl({
             duration: AppDuration.normal,
             curve: Curves.easeInOutCubic,
             child: Container(
-              height: 50.h,
+              height: 70.h,
               decoration: BoxDecoration(
                 borderRadius: AppRadius.md,
                 color: theme.secondary,
@@ -113,7 +116,7 @@ Widget _themeChipsControl({
                 behavior: HitTestBehavior.opaque,
                 onTap: () => onChangeTheme(i),
                 child: SizedBox(
-                  height: 50.h,
+                  height: 70.h,
                   width: itemWidth,
                   child: AnimatedContainer(
                     duration: AppDuration.normal,

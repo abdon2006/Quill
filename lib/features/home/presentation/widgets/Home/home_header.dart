@@ -99,24 +99,27 @@ class _HomeHeaderState extends State<HomeHeader> {
           style: AppTextStyles.displayMedium(context),
         ),
 
-        SizedBox(height: AppSpacing.xxs.h),
+        SizedBox(height: AppSpacing.xxs),
 
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              date,
-              style: AppTextStyles.label(
-                context,
-              ).copyWith(color: AppColors.lightTextMuted, letterSpacing: 1.1),
+            Expanded(
+              child: Text(
+                date,
+                style: AppTextStyles.label(
+                  context,
+                ).copyWith(color: AppColors.lightTextMuted, letterSpacing: 1.1),
+              ),
             ),
-
-            AnimatedSwitcher(
-              duration: AppDuration.normal,
-              child: _currentStreak == 0
-                  ? _buildEmptyStreakBadge(theme)
-                  : _buildStreakBadge(theme),
+            SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: AnimatedSwitcher(
+                duration: AppDuration.normal,
+                child: _currentStreak == 0
+                    ? _buildEmptyStreakBadge(theme)
+                    : _buildStreakBadge(theme),
+              ),
             ),
           ],
         ),
@@ -129,8 +132,8 @@ class _HomeHeaderState extends State<HomeHeader> {
       child: Container(
         key: const ValueKey('has_streak'),
         padding: EdgeInsets.symmetric(
-          horizontal: AppSpacing.smPlus.w,
           vertical: AppSpacing.xs.h,
+          horizontal: AppSpacing.xs,
         ),
         decoration: BoxDecoration(
           color: theme.primary.withValues(alpha: 0.1),
@@ -140,22 +143,28 @@ class _HomeHeaderState extends State<HomeHeader> {
             width: 1,
           ),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            HugeIcon(
-              icon: HugeIcons.strokeRoundedFire,
-              size: 16.sp,
-              color: theme.primary,
-            ),
-            SizedBox(width: AppSpacing.xs.w),
-            Text(
-              '$_currentStreak Day Streak',
-              style: AppTextStyles.label(
-                context,
-              ).copyWith(color: theme.primary, fontWeight: FontWeight.bold),
-            ),
-          ],
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: HugeIcon(
+                  icon: HugeIcons.strokeRoundedFire,
+                  size: 24.sp,
+                  color: theme.primary,
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: Text(
+                  '$_currentStreak Day Streak',
+                  style: AppTextStyles.label(
+                    context,
+                  ).copyWith(color: theme.primary, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -174,19 +183,23 @@ class _HomeHeaderState extends State<HomeHeader> {
           borderRadius: AppRadius.xl,
         ),
         child: Row(
-          mainAxisSize: MainAxisSize.min,
           children: [
-            HugeIcon(
-              icon: HugeIcons.strokeRoundedBookOpen01,
-              size: 16.sp,
-              color: theme.onSurface.withValues(alpha: 0.5),
+            Expanded(
+              child: HugeIcon(
+                icon: HugeIcons.strokeRoundedBookOpen01,
+                size: 16.sp,
+                color: theme.onSurface.withValues(alpha: 0.5),
+              ),
             ),
             SizedBox(width: AppSpacing.xs.w),
-            Text(
-              'Start your streak',
-              style: AppTextStyles.caption(
-                context,
-              ).copyWith(color: theme.onSurface.withValues(alpha: 0.6)),
+            Expanded(
+              flex: 2,
+              child: Text(
+                'Start your streak',
+                style: AppTextStyles.caption(
+                  context,
+                ).copyWith(color: theme.onSurface.withValues(alpha: 0.6)),
+              ),
             ),
           ],
         ),

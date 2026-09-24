@@ -1,101 +1,126 @@
+import 'dart:io';
 import 'package:dio/dio.dart';
 
 final List<Map<String, dynamic>> booksToUpload = [
   {
-    "title": "The Power of Now",
-    "author": "Eckhart Tolle",
+    "title": "The Collected Poems of Emily Dickinson",
+    "author": "Emily Dickinson",
     "description":
-        "A guide to spiritual enlightenment that emphasizes the importance of living in the present moment to achieve happiness.",
-    "brief": "A spiritual guide to living fully in the present.",
-    "forWho": "People seeking mindfulness and inner peace.",
+        "An extensive collection of lyrical, poignant, and unconventional poems exploring themes of death, immortality, and nature.",
+    "brief": "Masterpieces of 19th-century American lyrical poetry.",
+    "forWho": "Classic literature and poetry connoisseurs.",
     "language": "en",
-    "categories": '["Philosophy", "Self-Improvement"]',
-    "coverPath":
-        "/home/abdallah/Downloads/Quill/books_to_upload/The Power of Now.jpg",
-    "pdfPath":
-        "/home/abdallah/Downloads/Quill/books_to_upload/The Power Of Now - Eckhart Tolle.pdf",
+    "categories": '["Poetry"]',
   },
+  // {
+  //   "title": "The 48 Laws of Power",
+  //   "author": "Robert Greene",
+  //   "description":
+  //       "A pragmatic distillation of 3000 years of history on how to acquire, defend, and master power dynamics.",
+  //   "brief": "Mastering strategy, influence, and social power dynamics.",
+  //   "forWho": "Strategists, leaders, and history enthusiasts.",
+  //   "language": "en",
+  //   "categories": '["Self-Improvement", "Philosophy"]',
+  // },
+  // {
+  //   "title": "Ariel",
+  //   "author": "Sylvia Plath",
+  //   "description":
+  //       "Plath's famous and intense collection of poetry reflecting inner turmoil, raw emotion, and striking imagery.",
+  //   "brief": "Powerful confessional poetry by Sylvia Plath.",
+  //   "forWho": "Lovers of deep, confessional, and emotional poetry.",
+  //   "language": "en",
+  //   "categories": '["Poetry"]',
+  // },
   {
-    "title": "1984",
-    "author": "George Orwell",
+    "title": "The Collected Poems of Dylan Thomas",
+    "author": "Dylan Thomas",
     "description":
-        "A dystopian social science fiction novel that explores the dangers of totalitarianism, mass surveillance, and repressive regimentation.",
-    "brief": "A chilling dystopian warning about totalitarianism.",
-    "forWho": "Fans of dystopian fiction and political philosophy.",
+        "Passionate, lyrical, and rich musical verse by the famous Welsh poet, including Do not go gentle into that good night.",
+    "brief": "Lyrical and emotionally charged classic poetry.",
+    "forWho": "Lovers of passionate and musical verse.",
     "language": "en",
-    "categories": '["Fiction", "Science Fiction"]',
-    "coverPath": "/home/abdallah/Downloads/Quill/books_to_upload/1984.jpg",
-    "pdfPath": "/home/abdallah/Downloads/Quill/books_to_upload/1984.pdf",
-  },
-  {
-    "title": "Rich Dad Poor Dad",
-    "author": "Robert T. Kiyosaki",
-    "description":
-        "A book that advocates the importance of financial literacy, financial independence, and building wealth through investing.",
-    "brief": "Lessons on wealth, assets, and financial independence.",
-    "forWho": "Aspiring entrepreneurs and those seeking financial literacy.",
-    "language": "en",
-    "categories": '["Self-Improvement", "Finance"]',
-    "coverPath":
-        "/home/abdallah/Downloads/Quill/books_to_upload/Rich Dad Poor Dad.jpg",
-    "pdfPath":
-        "/home/abdallah/Downloads/Quill/books_to_upload/Rich Dad Poor Dad.pdf",
-  },
-  {
-    "title": "Dune",
-    "author": "Frank Herbert",
-    "description":
-        "A masterpiece of science fiction that tells the complex story of a young nobleman on a dangerous desert planet.",
-    "brief": "An epic sci-fi adventure on the desert planet Arrakis.",
-    "forWho": "Sci-fi fans and lovers of complex world-building.",
-    "language": "en",
-    "categories": '["Fiction", "Science Fiction"]',
-    "coverPath": "/home/abdallah/Downloads/Quill/books_to_upload/Dune.jpg",
-    "pdfPath": "/home/abdallah/Downloads/Quill/books_to_upload/Dune.pdf",
-  },
-  {
-    "title": "Clean Code",
-    "author": "Robert C. Martin",
-    "description":
-        "A handbook of agile software craftsmanship, teaching developers how to write readable, maintainable, and efficient code.",
-    "brief": "A manual for writing readable and maintainable software.",
-    "forWho": "Software engineers and developers.",
-    "language": "en",
-    "categories": '["Science", "Programming"]',
-    "coverPath":
-        "/home/abdallah/Downloads/Quill/books_to_upload/Clean Code.webp",
-    "pdfPath": "/home/abdallah/Downloads/Quill/books_to_upload/clean-code.pdf",
-  },
-  {
-    "title": "Fahrenheit 451",
-    "author": "Ray Bradbury",
-    "description":
-        "A dystopian novel about a future American society where books are outlawed and 'firemen' burn any that are found.",
-    "brief": "A dystopian tale where books are banned and burned.",
-    "forWho": "Sci-fi readers and free speech advocates.",
-    "language": "en",
-    "categories": '["Fiction", "Science Fiction"]',
-    "coverPath":
-        "/home/abdallah/Downloads/Quill/books_to_upload/Fahrenheit 451.jpg",
-    "pdfPath":
-        "/home/abdallah/Downloads/Quill/books_to_upload/Fahrenheit 451.pdf",
+    "categories": '["Poetry"]',
   },
 ];
 
-Future<void> uploadAllBooks() async {
+void main() async {
+  final directoryPath =
+      '/media/abdallah/New Data/my projects/Flutter/Temps/Quill/books_to_upload';
+  final dir = Directory(directoryPath);
+
+  if (!dir.existsSync()) {
+    print('❌ Error: Directory not found -> $directoryPath');
+    return;
+  }
+
+  final files = dir.listSync();
   final dio = Dio();
-  final String url = "http://192.168.1.5:5000/api/v1/books";
+  final String url =
+      'https://quill-api-production-a70e.up.railway.app/api/v1/books';
   final String token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhYTY3ZGM4ODQ3MmMyNWViZTEzODEyYiIsImlhdCI6MTc4OTczMjMxMCwiZXhwIjoxNzkwMzM3MTEwfQ.hjvp1UpEoLhYV2WkXvm41e_dZEQ94SOiEwzH9dXGL8Y";
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhYjFkZDg5MWJjYTVjZGVkNzg4NTNjMSIsImlhdCI6MTc5MDA3NTI4NiwiZXhwIjoxNzkwNjgwMDg2fQ.Ecb_X9kVJiYyinzfAqV-G5f6gBn4NFk8k2YBWldWMKA";
+
+  print(
+    '🚀 Starting smart auto-upload process for ${booksToUpload.length} books...\n',
+  );
 
   for (int i = 0; i < booksToUpload.length; i++) {
     final book = booksToUpload[i];
+    final String title = book["title"];
+
+    // تنظيف اسم الكتاب للبحث عنه بسلاسة داخل أسماء الملفات العشوائية
+    final String searchQuery = title.toLowerCase().replaceAll(
+      RegExp(r'[^a-z0-9]'),
+      '',
+    );
+
+    File? pdfFile;
+    File? coverFile;
+
+    // البحث الذكي داخل الفولدر عن الملفات المطابقة
+    for (var entity in files) {
+      if (entity is File) {
+        String fileNameLower = entity.path.toLowerCase();
+        String cleanFileName = fileNameLower.replaceAll(
+          RegExp(r'[^a-z0-9]'),
+          '',
+        );
+
+        // لو اسم الملف بيحتوي على أجزاء رئيسية من اسم الكتاب
+        if (cleanFileName.contains(
+          searchQuery.substring(
+            0,
+            (searchQuery.length > 10 ? 10 : searchQuery.length),
+          ),
+        )) {
+          if (fileNameLower.endsWith('.pdf')) {
+            pdfFile = entity;
+          } else if (fileNameLower.endsWith('.jpg') ||
+              fileNameLower.endsWith('.png') ||
+              fileNameLower.endsWith('.webp')) {
+            coverFile = entity;
+          }
+        }
+      }
+    }
+
+    if (pdfFile == null || coverFile == null) {
+      print(
+        '⚠️ Skipped "$title": Could not find matching PDF or Cover automatically.',
+      );
+      continue;
+    }
+
+    print('⏳ [${i + 1}] Uploading: "$title"...');
+    print('   📄 PDF: ${pdfFile.path.split('/').last}');
+    print('   🖼️ Cover: ${coverFile.path.split('/').last}');
 
     try {
       FormData formData = FormData();
 
       formData.fields.addAll([
-        MapEntry("title", book["title"].toString()),
+        MapEntry("title", title),
         MapEntry("author", book["author"].toString()),
         MapEntry("description", book["description"].toString()),
         MapEntry("brief", book["brief"].toString()),
@@ -108,15 +133,15 @@ Future<void> uploadAllBooks() async {
         MapEntry(
           "cover",
           await MultipartFile.fromFile(
-            book["coverPath"],
-            filename: book["coverPath"].split('/').last,
+            coverFile.path,
+            filename: coverFile.path.split('/').last,
           ),
         ),
         MapEntry(
           "pdf",
           await MultipartFile.fromFile(
-            book["pdfPath"],
-            filename: book["pdfPath"].split('/').last,
+            pdfFile.path,
+            filename: pdfFile.path.split('/').last,
           ),
         ),
       ]);
@@ -131,14 +156,13 @@ Future<void> uploadAllBooks() async {
         ),
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-      } else {}
-    } on DioException {}
+      print('✅ Success! Uploaded: "$title" (Status: ${response.statusCode})\n');
+    } catch (e) {
+      print('❌ Error uploading "$title": $e\n');
+    }
 
     await Future.delayed(const Duration(seconds: 1));
   }
-}
 
-void main() async {
-  await uploadAllBooks();
+  print('🎉 All files processing finished!');
 }

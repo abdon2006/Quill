@@ -26,7 +26,6 @@ class DiscoverDefaultContent extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        
         Padding(
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
           child: Column(
@@ -38,7 +37,6 @@ class DiscoverDefaultContent extends StatelessWidget {
           ),
         ),
 
-        
         Column(
           children: [
             SizedBox(
@@ -50,7 +48,7 @@ class DiscoverDefaultContent extends StatelessWidget {
                 itemBuilder: (context, i) {
                   final item = bestSellerBooks[i];
                   return Padding(
-                    padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                    padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs),
                     child: StaggerdAnimation(
                       index: i * 2,
                       child: TrendingBookCard(
@@ -70,7 +68,6 @@ class DiscoverDefaultContent extends StatelessWidget {
               ),
             ),
 
-            
             Padding(
               padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
               child: Column(
@@ -82,7 +79,6 @@ class DiscoverDefaultContent extends StatelessWidget {
               ),
             ),
 
-            
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
               child: ListView.builder(
@@ -90,9 +86,14 @@ class DiscoverDefaultContent extends StatelessWidget {
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: recommendedBooks.length,
                 itemBuilder: (context, index) {
-                  return StaggerdAnimation(
-                    index: index * 2,
-                    child: RecommendedBookTile(book: recommendedBooks[index]),
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.md,
+                    ),
+                    child: StaggerdAnimation(
+                      index: index * 2,
+                      child: RecommendedBookTile(book: recommendedBooks[index]),
+                    ),
                   );
                 },
               ),

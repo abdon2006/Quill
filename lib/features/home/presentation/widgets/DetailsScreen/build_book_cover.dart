@@ -31,34 +31,34 @@ Widget builBookCover(BuildContext context, String coverImage) {
             top: AppSpacing.xxxl,
             bottom: AppSpacing.xl,
           ),
-          child: StaggerdAnimation(
-            index: 0,
-            child: Container(
-              width: 190.w,
-              decoration: BoxDecoration(
-                borderRadius: AppRadius.lg,
-                boxShadow: AppShadows.bookCoverHeavy,
-              ),
-              child: Skeleton.leaf(
-                child: ClipRRect(
+          child: Skeleton.leaf(
+            child: StaggerdAnimation(
+              index: 0,
+              child: Container(
+                decoration: BoxDecoration(
                   borderRadius: AppRadius.lg,
-                  child: Image.network(
-                    coverImage,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        width: 190.w,
-                        height: 260.h,
-                        decoration: BoxDecoration(
-                          color: Theme.of(
-                            context,
-                          ).brightness == Brightness.dark
-                              ? AppColors.darkImagePlaceholder
-                              : AppColors.lightImagePlaceholder,
-                          borderRadius: AppRadius.lg,
-                        ),
-                      );
-                    },
+                  boxShadow: AppShadows.bookCoverHeavy,
+                ),
+                child: Skeleton.leaf(
+                  child: ClipRRect(
+                    borderRadius: AppRadius.lg,
+                    child: Image.network(
+                      coverImage,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: 190.w,
+                          height: 260.h,
+                          decoration: BoxDecoration(
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                ? AppColors.darkImagePlaceholder
+                                : AppColors.lightImagePlaceholder,
+                            borderRadius: AppRadius.lg,
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),

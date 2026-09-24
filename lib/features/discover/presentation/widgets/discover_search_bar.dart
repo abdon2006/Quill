@@ -114,28 +114,20 @@ class _DiscoverSearchBarState extends State<DiscoverSearchBar> {
                       widget.controller.clear();
                       widget.onChanged?.call('');
                     },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.sm,
+                    child: AnimatedContainer(
+                      duration: AppDuration.slow,
+                      curve: Curves.easeInOutCubic,
+                      padding: EdgeInsets.all(AppSpacing.lg),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: theme.colorScheme.secondary.withValues(
+                          alpha: 0.1,
+                        ),
                       ),
-                      child: AnimatedContainer(
-                        duration: AppDuration.slow,
-                        curve: Curves.easeInOutCubic,
-                        height: 24.w,
-                        width: 24.w,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: theme.colorScheme.secondary.withValues(
-                            alpha: 0.1,
-                          ),
-                        ),
-                        child: Center(
-                          child: HugeIcon(
-                            icon: HugeIcons.strokeRoundedCancel01,
-                            color: theme.colorScheme.secondary,
-                            size: 16.sp,
-                          ),
-                        ),
+                      child: HugeIcon(
+                        icon: HugeIcons.strokeRoundedCancel01,
+                        color: theme.colorScheme.secondary,
+                        size: 16.sp,
                       ),
                     ),
                   )

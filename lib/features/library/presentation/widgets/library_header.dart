@@ -48,7 +48,7 @@ class LibraryHeader extends StatelessWidget {
           ],
         ),
 
-        SizedBox(height: AppSpacing.xxs.h),
+        SizedBox(height: AppSpacing.xxs),
 
         Text(
           'A quiet place for the stories you keep.',
@@ -59,7 +59,7 @@ class LibraryHeader extends StatelessWidget {
           ),
         ),
 
-        SizedBox(height: AppSpacing.xlPlus.h),
+        SizedBox(height: AppSpacing.xlPlus),
 
         GestureDetector(
           onTap: () => _openImportSheet(context),
@@ -67,8 +67,7 @@ class LibraryHeader extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: 38.w,
-                height: 38.w,
+                padding: EdgeInsets.all(AppSpacing.lg),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: theme.primary,
@@ -82,7 +81,7 @@ class LibraryHeader extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(width: AppSpacing.smPlus.w),
+              SizedBox(width: AppSpacing.smPlus),
 
               Text(
                 'Import a book',
@@ -115,8 +114,7 @@ class _HeaderIconButton extends StatelessWidget {
         customBorder: const CircleBorder(),
         onTap: onTap,
         child: Container(
-          width: 42.w,
-          height: 42.w,
+          padding: EdgeInsets.all(AppSpacing.lg),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: theme.onSurface.withValues(alpha: 0.05),

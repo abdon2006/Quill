@@ -1,4 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -165,7 +164,10 @@ class _OnboardingViewState extends State<_OnboardingView> {
                                   AppConstants.seenOnboarding,
                                   true,
                                 );
-                                context.read<OnboardingCubit>().endJourney();
+                                if (!context.mounted) return;
+                                context
+                                    .read<OnboardingCubit>()
+                                    .endJourney();
                               },
                             ),
                           ),

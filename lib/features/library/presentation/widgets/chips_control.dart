@@ -27,7 +27,7 @@ class _ChipsControlState extends State<ChipsControl> {
           alignment: Alignment.center,
           children: [
             Container(
-              height: 50.h,
+              height: 55.h,
               padding: EdgeInsets.all(AppSpacing.md),
               decoration: BoxDecoration(
                 borderRadius: AppRadius.xxl,
@@ -40,7 +40,7 @@ class _ChipsControlState extends State<ChipsControl> {
               duration: AppDuration.normal,
               curve: Curves.easeInOutCubic,
               child: Container(
-                height: 50.h,
+                height: 55.h,
                 decoration: BoxDecoration(
                   borderRadius: AppRadius.xxl,
                   color: theme.primary,
@@ -61,7 +61,7 @@ class _ChipsControlState extends State<ChipsControl> {
                     });
                   },
                   child: SizedBox(
-                    height: 50.h,
+                    height: 55.h,
                     width: itemWidth,
                     child: Center(
                       child: AnimatedDefaultTextStyle(

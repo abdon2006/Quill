@@ -38,9 +38,9 @@ class ReaderHeader extends StatelessWidget {
     return _getTextColor(state, context).withValues(alpha: 0.45);
   }
 
-  Widget _buildCover() {
+  Widget? _buildCover() {
     if (coverImage == null || coverImage!.isEmpty) {
-      return Builder(builder: (context) => buildCoverPlaceholder(context));
+      return null;
     }
     if (coverImage!.startsWith('http')) {
       return Image.network(coverImage!, fit: BoxFit.cover);
@@ -59,8 +59,6 @@ class ReaderHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            height: 220.h,
-            width: 155.w,
             decoration: BoxDecoration(
               borderRadius: AppRadius.lg,
               boxShadow: AppShadows.bookCover,
@@ -70,11 +68,12 @@ class ReaderHeader extends StatelessWidget {
 
           SizedBox(height: AppSpacing.xl),
 
-          Container(
-            width: 32.w,
-            height: 1,
-            color: textColor.withValues(alpha: 0.15),
-          ),
+          if (coverImage != null)
+            Container(
+              width: 32.w,
+              height: 1,
+              color: textColor.withValues(alpha: 0.15),
+            ),
 
           SizedBox(height: AppSpacing.lg),
 

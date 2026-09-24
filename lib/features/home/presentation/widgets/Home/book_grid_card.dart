@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:quill/core/theme/app_colors.dart';
 import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_shadows.dart';
@@ -11,9 +10,8 @@ import 'package:skeletonizer/skeletonizer.dart';
 class BookGridCard extends StatelessWidget {
   final BookEntity book;
   final VoidCallback? onTap;
-  final double? width;
 
-  const BookGridCard({super.key, this.onTap, required this.book, this.width});
+  const BookGridCard({super.key, this.onTap, required this.book});
 
   @override
   Widget build(BuildContext context) {
@@ -22,18 +20,17 @@ class BookGridCard extends StatelessWidget {
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-        child: SizedBox(
-          width: width ?? 130.w,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: AppRadius.xl,
-                    boxShadow: AppShadows.bookCover,
-                  ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: AppRadius.xl,
+                  boxShadow: AppShadows.bookCover,
+                ),
+                child: AspectRatio(
+                  aspectRatio: 2 / 3,
                   child: ClipRRect(
                     borderRadius: AppRadius.xl,
                     child: Image.network(
@@ -54,26 +51,34 @@ class BookGridCard extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: AppSpacing.sm),
-              Skeleton.leaf(
-                child: Text(
-                  book.title,
-                  style: AppTextStyles.heading2(context),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Skeleton.leaf(
+              child: SizedBox(
+                width: 100,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      book.title,
+                      style: AppTextStyles.heading2(context),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      book.author,
+
+                      style: AppTextStyles.bodyMedium(
+                        context,
+                      ).copyWith(color: AppColors.lightTextMuted),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
               ),
-              Text(
-                book.author,
-
-                style: AppTextStyles.bodyMedium(
-                  context,
-                ).copyWith(color: AppColors.lightTextMuted),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

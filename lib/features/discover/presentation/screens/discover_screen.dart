@@ -109,7 +109,6 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                 child: SizedBox(),
               ),
 
-              
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -124,13 +123,13 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                   AnimatedPadding(
                     duration: AppDuration.slow,
                     curve: Curves.easeInOutCubic,
-                    padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                    padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs),
                     child: Row(
                       children: [
                         AnimatedContainer(
                           duration: AppDuration.slow,
                           curve: Curves.easeInOutCubic,
-                          width: _isFocused ? 40.w + AppSpacing.lg : 0,
+                          width: _isFocused ? AppSpacing.lg + 30.w : 0,
                           child: _isFocused
                               ? InkWell(
                                   customBorder: CircleBorder(),
@@ -177,7 +176,6 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                 ],
               ),
 
-              
               AnimatedSwitcher(
                 duration: AppDuration.slow,
                 switchInCurve: Curves.easeInOutCubic,
@@ -191,7 +189,6 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                       ),
               ),
 
-              
               BlocBuilder<HomeBloc, HomeState>(
                 builder: (context, state) {
                   if (state is FetchBooksSuccess) {

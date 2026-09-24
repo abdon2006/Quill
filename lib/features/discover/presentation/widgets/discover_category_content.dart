@@ -79,6 +79,7 @@ class DiscoverCategoryContent extends StatelessWidget {
                 ),
 
               ListView.builder(
+                padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: books.length,
@@ -92,15 +93,12 @@ class DiscoverCategoryContent extends StatelessWidget {
                   );
                 },
               ),
-
-              
             ],
           );
         }
         if (state is HomeError) {
           return AppError(
-            title:
-                "Our library is currently taking a pause. Check back later.",
+            title: "Our library is currently taking a pause. Check back later.",
             image: AppAssets.errorBookDetails,
           );
         }

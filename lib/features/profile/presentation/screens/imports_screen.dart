@@ -49,7 +49,7 @@ class _ImportsScreenState extends State<ImportsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              backButton(context, theme),
+              Row(children: [backButton(context, theme)]),
 
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
