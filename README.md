@@ -28,8 +28,8 @@ Import any book. Build your personal library. Control every detail of your readi
 | Feature | Description |
 |---|---|
 | 📚 Personal Library | Import PDF & ePub files and keep them in one place |
-| 🌍 Discover | Browse classic books from Project Gutenberg |
-| 🎨 Full Customization | Control font, background, theme, and size |
+| 🌍 Discover | Browse Hundreds of classic books |
+| 🎨 Full Customization | Control font, background, theme, and size & more |
 | ⚡ Bionic Reading | Read faster with guided eye movement |
 | 🎯 Focus Mode | Block everything. Just you and the book |
 | 📊 Reading Tracker | Track your streak, time, and progress |
@@ -61,28 +61,38 @@ flutter_screenutil
 
 ## ✦ Screenshots
 
-> Coming soon
+<div align="center">
+  <img src="1.png" width="30%"/>
+  <img src="2.png" width="30%"/>
+  <img src="3.png" width="30%"/>
+  <img src="4.png" width="30%"/>
+  <img src="5.png" width="30%"/>
+  <img src="6.png" width="30%"/>
+</div>
 
 ---
 
 ## ✦ Project Structure
 
+```
 lib/
 ├── core/
-│ ├── constants/
-│ ├── di/
-│ ├── errors/
-│ ├── locale/
-│ ├── network/
-│ ├── router/
-│ └── theme/
+│   ├── constants/
+│   ├── DI/
+│   ├── errors/
+│   ├── locale/
+│   ├── network/
+│   ├── router/
+│   └── theme/
 ├── features/
-│ ├── home/
-│ ├── library/
-│ ├── discover/
-│ ├── reader/
-│ └── profile/
+│   ├── home/
+│   ├── library/
+│   ├── discover/
+│   ├── reader/
+│   ├── onboarding/
+│   └── profile/
 └── main.dart
+```
 
 
 ---
