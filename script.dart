@@ -1,52 +1,12 @@
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 import 'package:dio/dio.dart';
 
-final List<Map<String, dynamic>> booksToUpload = [
-  {
-    "title": "The Collected Poems of Emily Dickinson",
-    "author": "Emily Dickinson",
-    "description":
-        "An extensive collection of lyrical, poignant, and unconventional poems exploring themes of death, immortality, and nature.",
-    "brief": "Masterpieces of 19th-century American lyrical poetry.",
-    "forWho": "Classic literature and poetry connoisseurs.",
-    "language": "en",
-    "categories": '["Poetry"]',
-  },
-  // {
-  //   "title": "The 48 Laws of Power",
-  //   "author": "Robert Greene",
-  //   "description":
-  //       "A pragmatic distillation of 3000 years of history on how to acquire, defend, and master power dynamics.",
-  //   "brief": "Mastering strategy, influence, and social power dynamics.",
-  //   "forWho": "Strategists, leaders, and history enthusiasts.",
-  //   "language": "en",
-  //   "categories": '["Self-Improvement", "Philosophy"]',
-  // },
-  // {
-  //   "title": "Ariel",
-  //   "author": "Sylvia Plath",
-  //   "description":
-  //       "Plath's famous and intense collection of poetry reflecting inner turmoil, raw emotion, and striking imagery.",
-  //   "brief": "Powerful confessional poetry by Sylvia Plath.",
-  //   "forWho": "Lovers of deep, confessional, and emotional poetry.",
-  //   "language": "en",
-  //   "categories": '["Poetry"]',
-  // },
-  {
-    "title": "The Collected Poems of Dylan Thomas",
-    "author": "Dylan Thomas",
-    "description":
-        "Passionate, lyrical, and rich musical verse by the famous Welsh poet, including Do not go gentle into that good night.",
-    "brief": "Lyrical and emotionally charged classic poetry.",
-    "forWho": "Lovers of passionate and musical verse.",
-    "language": "en",
-    "categories": '["Poetry"]',
-  },
-];
 
+// ... كمل باقي السكريبت عادي جداً
 void main() async {
-  final directoryPath =
-      '/media/abdallah/New Data/my projects/Flutter/Temps/Quill/books_to_upload';
+  final directoryPath = '/home/abdallah/Downloads';
   final dir = Directory(directoryPath);
 
   if (!dir.existsSync()) {
@@ -59,7 +19,7 @@ void main() async {
   final String url =
       'https://quill-api-production-a70e.up.railway.app/api/v1/books';
   final String token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhYjFkZDg5MWJjYTVjZGVkNzg4NTNjMSIsImlhdCI6MTc5MDA3NTI4NiwiZXhwIjoxNzkwNjgwMDg2fQ.Ecb_X9kVJiYyinzfAqV-G5f6gBn4NFk8k2YBWldWMKA";
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhYjFkZDg5MWJjYTVjZGVkNzg4NTNjMSIsImlhdCI6MTc5MTE4MDQ0NCwiZXhwIjoxNzkxNzg1MjQ0fQ.Uzw3xRPCX_QTDZLuULKE9t3vX_mmdxcVSiUU5tJG7OY";
 
   print(
     '🚀 Starting smart auto-upload process for ${booksToUpload.length} books...\n',
@@ -69,7 +29,6 @@ void main() async {
     final book = booksToUpload[i];
     final String title = book["title"];
 
-    // تنظيف اسم الكتاب للبحث عنه بسلاسة داخل أسماء الملفات العشوائية
     final String searchQuery = title.toLowerCase().replaceAll(
       RegExp(r'[^a-z0-9]'),
       '',
@@ -78,7 +37,6 @@ void main() async {
     File? pdfFile;
     File? coverFile;
 
-    // البحث الذكي داخل الفولدر عن الملفات المطابقة
     for (var entity in files) {
       if (entity is File) {
         String fileNameLower = entity.path.toLowerCase();
@@ -87,7 +45,6 @@ void main() async {
           '',
         );
 
-        // لو اسم الملف بيحتوي على أجزاء رئيسية من اسم الكتاب
         if (cleanFileName.contains(
           searchQuery.substring(
             0,

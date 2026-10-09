@@ -6,7 +6,6 @@ import 'package:quill/core/theme/app_radius.dart';
 import 'package:quill/core/theme/app_shadows.dart';
 import 'package:quill/core/theme/app_spacing.dart';
 import 'package:quill/core/theme/app_text_style.dart';
-import 'package:quill/core/widgets/build_cover_placeholder.dart';
 import 'package:quill/features/reader/presentation/cubit/reader_preferences_state.dart';
 
 class ReaderHeader extends StatelessWidget {
