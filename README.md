@@ -97,7 +97,13 @@ lib/
 
 ---
 
+## Architecture
+
+![Clean Architecture](assets/images/architecture.png)
 ## ✦ Author
+
+---
+
 
 **Abdallah Saad**
 Flutter Developer • CS Student @ Alexandria University
